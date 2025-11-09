@@ -254,6 +254,7 @@ export default function BuilderPage() {
   const [resumeTitle, setResumeTitle] = useState('');
   const [isLoadingResume, setIsLoadingResume] = useState(!!resumeId);
   const [showATSModal, setShowATSModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('builder');
 
   // Load sample data when creating a new resume
   useEffect(() => {
@@ -333,6 +334,12 @@ export default function BuilderPage() {
     } catch (error) {
       console.error('BuilderPage: Error updating resume data:', error);
     }
+  };
+
+  const handleUploadComplete = (data: ResumeData) => {
+    handleDataChange(data);
+    // Switch to builder tab after successful upload
+    setActiveTab('builder');
   };
 
   const handleExportPDF = async () => {
@@ -593,7 +600,7 @@ export default function BuilderPage() {
             animate="show"
             className="rounded-[32px] border border-blue-100 bg-white/85 p-6 shadow-2xl shadow-blue-500/10 backdrop-blur"
           >
-            <Tabs defaultValue="builder" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 rounded-2xl border border-blue-100 bg-blue-50/60 text-sm font-semibold text-blue-700">
                 <TabsTrigger value="builder">Resume Builder</TabsTrigger>
                 <TabsTrigger value="upload">Upload & Analyze PDF</TabsTrigger>
@@ -685,7 +692,7 @@ export default function BuilderPage() {
                   variants={fadeInUp}
                   className="rounded-3xl border border-blue-100 bg-white/80 p-6 shadow-lg shadow-blue-500/10 backdrop-blur"
                 >
-                  <PDFATSUploader onParseComplete={handleDataChange} />
+                  <PDFATSUploader onParseComplete={handleUploadComplete} />
                 </motion.div>
               </TabsContent>
             </Tabs>

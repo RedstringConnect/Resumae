@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, FileText, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { ResumeData } from '@/types';
+import { extractResumeFromPDF } from '@/services/geminiService';
+import toast from 'react-hot-toast';
 
 interface ResumeParserProps {
   onParseComplete: (data: ResumeData) => void;
@@ -19,15 +21,19 @@ export default function ResumeParser({ onParseComplete }: ResumeParserProps) {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Validate file type
     if (file.type !== 'application/pdf') {
       setErrorMessage('Please upload a PDF file');
       setUploadStatus('error');
+      toast.error('Please upload a PDF file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      setErrorMessage('File size must be less than 5MB');
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setErrorMessage('File size must be less than 10MB');
       setUploadStatus('error');
+      toast.error('File size must be less than 10MB');
       return;
     }
 
@@ -36,156 +42,39 @@ export default function ResumeParser({ onParseComplete }: ResumeParserProps) {
     setUploadStatus('idle');
     setErrorMessage('');
 
+    toast.loading('Extracting resume data with AI... This may take a moment.', { id: 'upload' });
+
     try {
-      console.log('Starting resume parsing...');
+      const extractedData = await extractResumeFromPDF(file);
       
-      // For now, we'll use a simple text extraction approach
-      // In a real implementation, you'd send this to a backend service
-      const text = await extractTextFromPDF(file);
-      console.log('Extracted text:', text);
-      
-      const parsedData = parseResumeText(text);
-      console.log('Calling onParseComplete with:', parsedData);
-      
-      onParseComplete(parsedData);
-      setUploadStatus('success');
-    } catch (error) {
+      if (extractedData) {
+        toast.success('Resume extracted successfully!', { id: 'upload' });
+        onParseComplete(extractedData);
+        setUploadStatus('success');
+      } else {
+        setErrorMessage('Failed to extract resume data. Please check your Gemini API key.');
+        setUploadStatus('error');
+        toast.error('Failed to extract resume data. Please check your Gemini API key.', { id: 'upload' });
+      }
+    } catch (error: any) {
       console.error('Error parsing resume:', error);
-      setErrorMessage('Failed to parse resume. Please try again.');
+      
+      if (error?.message === 'RATE_LIMIT_EXCEEDED') {
+        setErrorMessage('API rate limit exceeded. Please wait a few minutes and try again.');
+        toast.error(
+          'API rate limit exceeded. Please wait a few minutes and try again. The free tier has limits on requests per minute.',
+          { id: 'upload', duration: 6000 }
+        );
+      } else {
+        setErrorMessage('Failed to parse resume. Please try again.');
+        toast.error('Failed to process resume. Please try again later.', { id: 'upload' });
+      }
       setUploadStatus('error');
     } finally {
       setIsUploading(false);
       setIsParsing(false);
-    }
-  };
-
-  const extractTextFromPDF = async (_file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      try {
-        // For now, simulate PDF text extraction
-        // In production, you'd use a proper PDF parsing library
-        setTimeout(() => {
-          const mockText = `John Doe
-Software Engineer
-john.doe@email.com
-(555) 123-4567
-
-EXPERIENCE
-Software Engineer at Tech Corp (2020-2023)
-- Developed web applications
-- Led team of 5 developers
-
-EDUCATION
-Bachelor of Computer Science
-University of Technology (2016-2020)`;
-          resolve(mockText);
-        }, 1500);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
-
-  const parseResumeText = (text: string): ResumeData => {
-    try {
-      // Simple parsing logic - in production, use AI/ML for better extraction
-      const lines = text.split('\n').filter(line => line.trim());
-      
-      const data: ResumeData = {
-        personalInfo: {
-          fullName: '',
-          email: '',
-          phone: '',
-          location: '',
-          linkedin: '',
-          website: '',
-          summary: ''
-        },
-        workExperience: [],
-        education: [],
-        skills: [],
-        languages: [],
-        certifications: [],
-        projects: []
-      };
-
-      // Extract basic info safely
-      if (lines.length > 0) {
-        data.personalInfo.fullName = lines[0] || '';
-      }
-      
-      // Find email
-      const emailMatch = text.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/);
-      if (emailMatch) {
-        data.personalInfo.email = emailMatch[0];
-      }
-
-      // Find phone
-      const phoneMatch = text.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
-      if (phoneMatch) {
-        data.personalInfo.phone = phoneMatch[0];
-      }
-
-      // Simple experience extraction
-      const experienceIndex = lines.findIndex(line => 
-        line.toLowerCase().includes('experience') || 
-        line.toLowerCase().includes('work history')
-      );
-      
-      if (experienceIndex !== -1) {
-        data.workExperience.push({
-          id: '1',
-          company: 'Extracted Company',
-          position: 'Extracted Position',
-          location: '',
-          startDate: '2020',
-          endDate: '2023',
-          description: ['Experience details extracted from your resume. Please review and edit as needed.'],
-          current: false
-        });
-      }
-
-      // Simple education extraction
-      const educationIndex = lines.findIndex(line => 
-        line.toLowerCase().includes('education') || 
-        line.toLowerCase().includes('degree')
-      );
-      
-      if (educationIndex !== -1) {
-        data.education.push({
-          id: '1',
-          school: 'Extracted University',
-          degree: 'Bachelor',
-          field: 'Computer Science',
-          location: '',
-          startDate: '2016',
-          endDate: '2020',
-          gpa: ''
-        });
-      }
-
-      console.log('Parsed data:', data);
-      return data;
-    } catch (error) {
-      console.error('Error in parseResumeText:', error);
-      // Return empty data structure if parsing fails
-      return {
-        personalInfo: {
-          fullName: '',
-          email: '',
-          phone: '',
-          location: '',
-          linkedin: '',
-          website: '',
-          summary: ''
-        },
-        workExperience: [],
-        education: [],
-        skills: [],
-        languages: [],
-        certifications: [],
-        projects: []
-      };
+      // Reset file input
+      event.target.value = '';
     }
   };
 
@@ -201,7 +90,7 @@ University of Technology (2016-2020)`;
           Upload Existing Resume
         </CardTitle>
         <CardDescription>
-          Upload your PDF resume and we'll extract the information to get you started
+          Upload your PDF resume and our AI will extract the information to get you started
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -234,7 +123,7 @@ University of Technology (2016-2020)`;
                 <p className="text-sm text-gray-600">
                   <span className="font-medium text-blue-600">Click to upload</span> or drag and drop
                 </p>
-                <p className="text-xs text-gray-500">PDF files only, max 5MB</p>
+                <p className="text-xs text-gray-500">PDF files only, max 10MB</p>
               </div>
             )}
           </div>
@@ -274,7 +163,7 @@ University of Technology (2016-2020)`;
         </div>
 
         <div className="text-xs text-gray-500 text-center">
-          <p>Note: Resume parsing is in beta. Please review and edit the extracted information.</p>
+          <p>Note: AI-powered extraction. Please review and edit the extracted information as needed.</p>
         </div>
       </CardContent>
     </Card>
