@@ -105,7 +105,7 @@ server/
 | `npm run build`    | Type-check and build production bundle     |
 | `npm run preview`  | Preview built frontend                     |
 
-## Troubleshooting
+## Troubleshooting..
 
 - **Mongo connection errors:** Ensure MongoDB is running locally, or verify Atlas URI, IP whitelist, and credentials.
 - **Firebase auth issues:** Confirm Google sign-in is enabled and env vars match Firebase config.
