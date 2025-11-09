@@ -346,10 +346,10 @@ export default function DashboardPage() {
             <Link to="/" className="flex items-center gap-2 text-sm font-semibold text-gray-700">
               <img
                 src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
-                alt="Resumatic"
+                alt="Resumae"
                 className="h-8 w-auto"
               />
-              <span>Resumatic</span>
+              <span>Resumae</span>
             </Link>
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -429,7 +429,7 @@ export default function DashboardPage() {
                   Dashboard
                 </div>
                 <h1 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
-                  Welcome back, {user.displayName || user.email?.split('@')[0] || 'Resumatic creator'}
+                  Welcome back, {user.displayName || user.email?.split('@')[0] || 'Resumae creator'}
                 </h1>
                 <p className="mt-3 text-sm text-gray-600">
                   Access every resume version you&apos;ve crafted, update on the fly, and export when opportunity strikes.

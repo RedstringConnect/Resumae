@@ -1,9 +1,11 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView, useScroll, useTransform, type Variants } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LoginButton from '@/components/LoginButton';
+import { useAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 import {
   Sparkles,
   LayoutTemplate,
@@ -14,6 +16,7 @@ import {
   Users,
   Clock3,
   CheckCircle2,
+  Loader2,
 } from 'lucide-react';
 
 const heroStats = [
@@ -76,7 +79,7 @@ const templateCards = [
 const testimonials = [
   {
     quote:
-      '“Resumatic helped me land two interviews in the first week. The ATS tips and instant preview made it ridiculously easy.”',
+      '"Resumae helped me land two interviews in the first week. The ATS tips and instant preview made it ridiculously easy."',
     name: 'Priya Deshmukh',
     role: 'Product Manager @ Segmently',
   },
@@ -132,6 +135,9 @@ const GradientOrbs = () => (
 
 export default function HomePage() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const { user, signInWithGoogle } = useAuth();
+  const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const parallax = useTransform(scrollY, [0, 400], [0, -80]);
@@ -144,6 +150,26 @@ export default function HomePage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleStartBuilding = async () => {
+    if (user) {
+      // User is already logged in, navigate to builder
+      navigate('/builder');
+    } else {
+      // User needs to sign in first
+      try {
+        setIsSigningIn(true);
+        await signInWithGoogle();
+        toast.success('Signed in successfully!');
+        navigate('/builder');
+      } catch (error) {
+        console.error('Login error:', error);
+        toast.error('Please sign in to start building your resume');
+      } finally {
+        setIsSigningIn(false);
+      }
+    }
+  };
 
   const featuresRef = useRef<HTMLDivElement>(null);
   const featuresInView = useInView(featuresRef, { once: true, amount: 0.2 });
@@ -172,12 +198,12 @@ export default function HomePage() {
           <motion.div className="flex items-center gap-2" variants={staggerContainer} initial="hidden" animate="show">
             <motion.img
               src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
-              alt="Resumatic"
+              alt="Resumae"
               className="h-9 w-auto"
               variants={fadeInUp}
             />
             <motion.span className="text-lg font-semibold tracking-tight" variants={fadeInUp}>
-              Resumatic
+              Resumae
             </motion.span>
           </motion.div>
           <div className="flex items-center gap-3">
@@ -203,7 +229,7 @@ export default function HomePage() {
             >
               <img 
                 src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png" 
-                alt="Resumatic Logo" 
+                alt="Resumae Logo" 
                 className="h-32 sm:h-40 md:h-48 lg:h-56 w-auto animate-float-logo"
               />
               <img 
@@ -215,7 +241,10 @@ export default function HomePage() {
 
             <motion.div variants={fadeInUp} className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
               <Sparkles className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-medium text-blue-700">Crafted for high-impact career growth</span>
+              <span className="flex items-center gap-2 text-sm font-medium text-blue-700">
+                Powered by
+                <img src="/redstring.png" alt="redstring" className="h-5 w-auto" />
+              </span>
             </motion.div>
 
             <motion.h1
@@ -245,11 +274,23 @@ export default function HomePage() {
             </motion.p>
 
             <motion.div variants={fadeInUp} className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-              <Link to="/builder">
-                <Button size="lg" className="h-14 rounded-full bg-blue-600 px-10 text-lg shadow-xl shadow-blue-500/30 transition-all hover:-translate-y-1 hover:bg-blue-700">
-                  Start Building for Free <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
+              <Button 
+                onClick={handleStartBuilding}
+                disabled={isSigningIn}
+                size="lg" 
+                className="h-14 rounded-full bg-blue-600 px-10 text-lg shadow-xl shadow-blue-500/30 transition-all hover:-translate-y-1 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isSigningIn ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    Start Building for Free <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
+                )}
+              </Button>
               <div className="flex items-center text-sm text-gray-500">
                 <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
                 No credit card required
@@ -324,7 +365,7 @@ export default function HomePage() {
             </div>
             <h2 className="mt-6 text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl">Everything you need to succeed</h2>
             <p className="mt-4 text-base text-gray-600 sm:text-lg">
-              Resumatic combines beautiful design, guided strategy, and ATS intelligence so you can ship a resume that stands out in every stack.
+              Resumae combines beautiful design, guided strategy, and ATS intelligence so you can ship a resume that stands out in every stack.
             </p>
           </motion.div>
 
@@ -489,7 +530,7 @@ export default function HomePage() {
                   Trusted by job seekers across product, design, data, and operations teams globally.
                 </h2>
                 <p className="mt-4 max-w-xl text-sm text-blue-100">
-                  Join thousands of ambitious professionals who rely on Resumatic to build resumes that convert interviews into offers.
+                  Join thousands of ambitious professionals who rely on Resumae to build resumes that convert interviews into offers.
                 </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
@@ -522,7 +563,7 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">
               Community Voices
             </div>
-            <h2 className="mt-5 text-3xl font-bold text-gray-900 sm:text-4xl">Stories from builders who trusted Resumatic</h2>
+            <h2 className="mt-5 text-3xl font-bold text-gray-900 sm:text-4xl">Stories from builders who trusted Resumae</h2>
           </motion.div>
 
           <motion.div

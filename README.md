@@ -1,4 +1,4 @@
-# Resumatic
+# Resumae
 
 Modern resume builder with Google sign-in, AI-assisted ATS analysis (Gemini), PDF export, and MongoDB persistence.
 
