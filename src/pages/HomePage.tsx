@@ -202,9 +202,14 @@ export default function HomePage() {
               className="h-9 w-auto"
               variants={fadeInUp}
             />
-            <motion.span className="text-lg font-semibold tracking-tight" variants={fadeInUp}>
-              Resumae
-            </motion.span>
+            <div className="flex flex-col">
+              <motion.span className="text-lg font-semibold tracking-tight" variants={fadeInUp}>
+                Resumae
+              </motion.span>
+              <motion.span className="text-[8px] text-black/60 -mt-1" variants={fadeInUp}>
+                Powered by <span className="text-red-500">redstring</span>
+              </motion.span>
+            </div>
           </motion.div>
           <div className="flex items-center gap-3">
             <LoginButton />
