@@ -93,7 +93,7 @@ export default function ModernTemplate({ data }: TemplateProps) {
             Experience
           </h2>
           {workExperience.map((exp, index) => (
-            <div key={exp.id} style={{ marginBottom: index < workExperience.length - 1 ? '16px' : '0' }}>
+            <div key={exp.id} style={{ marginBottom: index < workExperience.length - 1 ? '16px' : '0', pageBreakInside: 'avoid', breakInside: 'avoid' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#1f2937' }}>
                   {exp.position}
@@ -133,7 +133,7 @@ export default function ModernTemplate({ data }: TemplateProps) {
             Projects
           </h2>
           {projects.map((project, index) => (
-            <div key={project.id} style={{ marginBottom: index < projects.length - 1 ? '14px' : '0' }}>
+            <div key={project.id} style={{ marginBottom: index < projects.length - 1 ? '14px' : '0', pageBreakInside: 'avoid', breakInside: 'avoid' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#1f2937' }}>
                   {project.name}
@@ -173,7 +173,7 @@ export default function ModernTemplate({ data }: TemplateProps) {
             Education
           </h2>
           {education.map((edu, index) => (
-            <div key={edu.id} style={{ marginBottom: index < education.length - 1 ? '14px' : '0' }}>
+            <div key={edu.id} style={{ marginBottom: index < education.length - 1 ? '14px' : '0', pageBreakInside: 'avoid', breakInside: 'avoid' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#1f2937' }}>
                   {edu.degree}{edu.field && ` in ${edu.field}`}
@@ -194,7 +194,7 @@ export default function ModernTemplate({ data }: TemplateProps) {
 
       {/* Skills */}
       {skills.length > 0 && (
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '24px', pageBreakInside: 'avoid', breakInside: 'avoid' }}>
           <h2 style={{ 
             fontSize: '15px', 
             fontWeight: '700', 
@@ -218,7 +218,7 @@ export default function ModernTemplate({ data }: TemplateProps) {
 
       {/* Certifications */}
       {certifications.length > 0 && (
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '24px', pageBreakInside: 'avoid', breakInside: 'avoid' }}>
           <h2 style={{ 
             fontSize: '15px', 
             fontWeight: '700', 
@@ -248,7 +248,7 @@ export default function ModernTemplate({ data }: TemplateProps) {
 
       {/* Languages */}
       {languages.length > 0 && (
-        <div>
+        <div style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
           <h2 style={{ 
             fontSize: '15px', 
             fontWeight: '700', 

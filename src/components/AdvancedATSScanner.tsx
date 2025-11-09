@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle, CheckCircle2, TrendingUp, Target, FileText } from 'lucide-react';
+import { AlertCircle, CheckCircle2, TrendingUp, Target, FileText, Sparkles, Loader2 } from 'lucide-react';
 import { ResumeData, ATSScore } from '../types';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { analyzeResumeWithGemini, GeminiATSAnalysis } from '@/services/geminiService';
+import toast from 'react-hot-toast';
 
 interface AdvancedATSScannerProps {
   data: ResumeData;
@@ -87,10 +90,47 @@ export default function AdvancedATSScanner({ data, jobTitle, industry }: Advance
     suggestions: [],
   });
   const [detailedAnalysis, setDetailedAnalysis] = useState<any>(null);
+  const [geminiAnalysis, setGeminiAnalysis] = useState<GeminiATSAnalysis | null>(null);
+  const [isAnalyzingWithAI, setIsAnalyzingWithAI] = useState(false);
 
   useEffect(() => {
-    calculateAdvancedATSScore();
-  }, [data, jobTitle, industry]);
+    // Auto-trigger AI analysis on mount
+    handleAIAnalysis();
+  }, []);
+
+  useEffect(() => {
+    if (geminiAnalysis) {
+      // Use Gemini analysis
+      setScore({
+        overall: geminiAnalysis.overallScore,
+        contactInfo: geminiAnalysis.detailedScores.contactInfo,
+        workExperience: geminiAnalysis.detailedScores.workExperience,
+        education: geminiAnalysis.detailedScores.education,
+        skills: geminiAnalysis.detailedScores.skills,
+        formatting: geminiAnalysis.detailedScores.formatting,
+        keywords: geminiAnalysis.detailedScores.keywords,
+        suggestions: geminiAnalysis.suggestions,
+      });
+    }
+  }, [geminiAnalysis]);
+
+  const handleAIAnalysis = async () => {
+    setIsAnalyzingWithAI(true);
+    try {
+      const analysis = await analyzeResumeWithGemini(data, jobTitle, industry);
+      if (analysis) {
+        setGeminiAnalysis(analysis);
+        toast.success('AI analysis complete!');
+      } else {
+        toast.error('AI analysis failed. Please add your Gemini API key in .env file.');
+      }
+    } catch (error) {
+      console.error('AI analysis error:', error);
+      toast.error('Failed to analyze with AI. Please check your API key.');
+    } finally {
+      setIsAnalyzingWithAI(false);
+    }
+  };
 
   const detectIndustry = (): string => {
     if (industry) return industry.toLowerCase();
@@ -395,16 +435,42 @@ export default function AdvancedATSScanner({ data, jobTitle, industry }: Advance
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-4">
-        <TrendingUp className="h-6 w-6 text-blue-600" />
-        <h2 className="text-2xl font-bold">Advanced ATS Analysis</h2>
-        {detailedAnalysis && (
-          <Badge variant="outline" className="ml-auto">
-            {detailedAnalysis.industry.charAt(0).toUpperCase() + detailedAnalysis.industry.slice(1)} Industry
+      {isAnalyzingWithAI ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-4" />
+          <p className="text-lg font-semibold text-gray-700">Analyzing your resume with AI...</p>
+          <p className="text-sm text-gray-500 mt-2">This may take a few seconds</p>
+        </div>
+      ) : !geminiAnalysis ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
+          <p className="text-lg font-semibold text-gray-700">Unable to analyze resume</p>
+          <p className="text-sm text-gray-500 mt-2">Please check your Gemini API key in .env file</p>
+          <Button
+            onClick={handleAIAnalysis}
+            className="mt-4 gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          >
+            <Sparkles className="h-4 w-4" />
+            Retry Analysis
+          </Button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          <Badge variant="outline" className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0">
+            <Sparkles className="h-3 w-3 mr-1" />
+            AI-Powered Analysis
           </Badge>
-        )}
-      </div>
+          {geminiAnalysis && (
+            <Badge variant="outline" className="ml-auto">
+              {geminiAnalysis.industryAlignment.detectedIndustry.charAt(0).toUpperCase() + 
+               geminiAnalysis.industryAlignment.detectedIndustry.slice(1)} Industry
+            </Badge>
+          )}
+        </div>
+      )}
       
+      {geminiAnalysis && (
+        <>
       {/* Overall Score Circle */}
       <div className="flex flex-col items-center">
         <div 
@@ -502,11 +568,119 @@ export default function AdvancedATSScanner({ data, jobTitle, industry }: Advance
         </Card>
       )}
 
+      {/* AI-Powered Insights */}
+      {geminiAnalysis && (
+        <>
+          <Card className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-purple-600" />
+              AI-Powered Insights
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h4 className="font-medium mb-2 text-green-700">Strengths</h4>
+                <ul className="space-y-1 text-sm">
+                  {geminiAnalysis.strengths.map((strength, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span>{strength}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2 text-red-700">Areas for Improvement</h4>
+                <ul className="space-y-1 text-sm">
+                  {geminiAnalysis.weaknesses.map((weakness, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+                      <span>{weakness}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <Target className="h-5 w-5" />
+              Industry Alignment
+            </h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">Detected Industry:</span>
+                <Badge variant="outline" className="capitalize">
+                  {geminiAnalysis.industryAlignment.detectedIndustry}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-medium">Confidence:</span>
+                <span className="text-sm font-semibold">{geminiAnalysis.industryAlignment.confidence}%</span>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2 text-sm">Relevant Keywords Found:</h4>
+                <div className="flex flex-wrap gap-1">
+                  {geminiAnalysis.industryAlignment.relevantKeywords.slice(0, 10).map((keyword, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">
+                      {keyword}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              {geminiAnalysis.industryAlignment.missingKeywords.length > 0 && (
+                <div>
+                  <h4 className="font-medium mb-2 text-sm text-orange-700">Missing Important Keywords:</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {geminiAnalysis.industryAlignment.missingKeywords.slice(0, 10).map((keyword, idx) => (
+                      <Badge key={idx} variant="outline" className="text-xs border-orange-300 text-orange-700">
+                        {keyword}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <h3 className="text-lg font-semibold mb-3">ATS System Compatibility</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {Object.entries(geminiAnalysis.atsCompatibility).map(([atsName, score]) => (
+                <div key={atsName} className="text-center p-3 border rounded-lg">
+                  <div className="text-2xl font-bold mb-1" style={{ color: getScoreColor(score as number) }}>
+                    {score}
+                  </div>
+                  <div className="text-xs text-muted-foreground capitalize">{atsName}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-blue-50 border-blue-200">
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <Target className="h-5 w-5 text-blue-600" />
+              High-Priority Actions
+            </h3>
+            <div className="space-y-2">
+              {geminiAnalysis.actionableInsights.map((insight, idx) => (
+                <div key={idx} className="flex items-start gap-2 p-2 bg-white rounded border border-blue-100">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
+                    {idx + 1}
+                  </div>
+                  <p className="text-sm">{insight}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </>
+      )}
+
       {/* Enhanced Suggestions */}
       <div className="space-y-3">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <AlertCircle size={18} />
-          Optimization Suggestions
+          AI-Generated Suggestions
         </h3>
         <div className="space-y-2">
           {score.suggestions.map((suggestion, index) => (
@@ -516,6 +690,8 @@ export default function AdvancedATSScanner({ data, jobTitle, industry }: Advance
           ))}
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
