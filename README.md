@@ -40,7 +40,7 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
 VITE_FIREBASE_APP_ID=your-app-id
 
 # Gemini
-VITE_GEMINI_API_KEY=your-gemini-api-key
+VITE_GEMINI_API_KEY=your-gemini-api-ke
 ```
 
 > Replace the sample values with your actual credentials. For MongoDB Atlas, use the full connection string including database name and options (e.g. `mongodb+srv://.../resumatic?retryWrites=true&w=majority`).
