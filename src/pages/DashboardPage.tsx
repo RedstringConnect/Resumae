@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, useInView, type Variants } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUserResumes, deleteResume, SavedResume } from '@/services/api';
 import { Button } from '@/components/ui/button';
@@ -26,10 +26,7 @@ import {
   Eye,
   Loader2,
   Sparkles,
-  Star,
   ShieldCheck,
-  LayoutTemplate,
-  Users,
   Upload,
   Download,
 } from 'lucide-react';
@@ -93,24 +90,6 @@ const metrics = [
   },
 ];
 
-const highlightCards = [
-  {
-    icon: Sparkles,
-    title: 'Keep updating from anywhere',
-    description: 'Your resumes stay in sync across devices. Pick up edits on desktop and polish on the go.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Secure revision history',
-    description: 'Every save is tracked so you can revisit previous versions whenever you need.',
-  },
-  {
-    icon: Star,
-    title: 'Pin your best versions',
-    description: 'Mark high-performing resumes as favorites for quick access before interviews.',
-  },
-];
-
 const renderTemplate = (resume: SavedResume) => {
   const { resumeData, templateType } = resume;
 
@@ -145,9 +124,6 @@ export default function DashboardPage() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [downloadingResume, setDownloadingResume] = useState<string | null>(null);
-
-  const highlightsRef = useRef<HTMLDivElement>(null);
-  const highlightsInView = useInView(highlightsRef, { once: true, amount: 0.25 });
 
   useEffect(() => {
     if (!user) {
