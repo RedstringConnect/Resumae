@@ -42,7 +42,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
       <div className="flex flex-col items-center justify-center py-16">
         <Loader2 className="h-16 w-16 animate-spin text-blue-600" />
         <p className="mt-4 text-lg font-medium text-gray-700">Analyzing your resume with AI...</p>
-        <p className="mt-2 text-sm text-gray-500">Powered by Groq Llama 3.3 70B</p>
+        <p className="mt-2 text-sm text-gray-500">Powered by Groq Llama 3.1 8B</p>
       </div>
     );
   }
@@ -87,7 +87,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
             <Sparkles className="h-5 w-5 text-purple-600" />
             AI-Powered ATS Analysis
           </h3>
-          <p className="text-sm text-gray-500">Powered by Groq Llama 3.3 70B</p>
+          <p className="text-sm text-gray-500">Powered by Groq Llama 3.1 8B</p>
         </div>
         <Button
           onClick={handleAIAnalysis}
