@@ -516,12 +516,7 @@ export default function BuilderPage() {
       {/* ATS Score Analysis Modal */}
       <Dialog open={showATSModal} onOpenChange={setShowATSModal}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border border-blue-100 bg-white/95 shadow-xl shadow-blue-500/10 backdrop-blur">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl font-bold text-gray-900">
-              <Sparkles className="h-6 w-6 text-purple-600" />
-              AI-Powered ATS Score Analysis
-            </DialogTitle>
-          </DialogHeader>
+         
           <div className="py-4">
             <AdvancedATSScanner data={resumeData} />
           </div>

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import AdvancedATSScanner from '@/components/AdvancedATSScanner';
-import { extractResumeFromPDF } from '@/services/geminiService';
+import { extractResumeFromPDF } from '@/services/groqService';
 import { exportToPDF } from '@/utils/pdfExport';
 import toast from 'react-hot-toast';
 import ModernTemplate from '@/components/templates/ModernTemplate';
@@ -197,6 +197,14 @@ export default function DashboardPage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Feature temporarily disabled with Groq
+    toast.error('PDF upload is temporarily unavailable. Groq/Llama models don\'t support PDF extraction yet. Please use "Create New Resume" instead.', { 
+      duration: 6000,
+      icon: '⚠️'
+    });
+    event.target.value = '';
+    return;
+
     // Validate file type
     if (file.type !== 'application/pdf') {
       toast.error('Please upload a PDF file');
@@ -226,7 +234,7 @@ export default function DashboardPage() {
           navigate('/builder?uploaded=true');
         }, 1000);
       } else {
-        toast.error('Failed to extract resume data. Please check your Gemini API key.', { id: 'upload' });
+        toast.error('Failed to extract resume data. Please check your Groq API key or try again.', { id: 'upload' });
       }
     } catch (error: any) {
       console.error('Error uploading resume:', error);
@@ -460,28 +468,15 @@ export default function DashboardPage() {
             <motion.div variants={fadeInUp} className="mt-6 sm:mt-10 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
 
               <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full sm:w-auto">
-                <div className="w-full sm:w-auto">
-                  <input
-                    id="upload-resume"
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleUploadResume}
-                    disabled={isUploading}
-                    className="hidden"
-                  />
-                  <label htmlFor="upload-resume" className="block w-full sm:w-auto">
-                    <span className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border-2 border-blue-200 bg-white px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-blue-600 shadow-lg shadow-blue-500/10 hover:bg-blue-50 cursor-pointer transition-colors whitespace-nowrap">
-                      {isUploading ? (
-                        <>
-                          <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" /> Processing...
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Upload Resume
-                        </>
-                      )}
-                    </span>
-                  </label>
+                {/* Upload button temporarily disabled */}
+                <div className="w-full sm:w-auto relative group">
+                  <span className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border-2 border-gray-300 bg-gray-100 px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-gray-400 cursor-not-allowed whitespace-nowrap opacity-60">
+                    <Upload className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Upload Resume (Disabled)
+                  </span>
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg z-10">
+                    PDF upload temporarily unavailable. Groq/Llama doesn't support PDF extraction yet. Use "Create New Resume" instead.
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                  </div>
                 </div>
                 <Link to="/builder?new=true" className="w-full sm:w-auto">
                   <Button className="w-full sm:w-auto gap-2 h-auto rounded-full bg-blue-600 px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700 whitespace-nowrap">
