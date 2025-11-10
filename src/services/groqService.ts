@@ -282,12 +282,12 @@ export async function extractResumeFromPDF(pdfFile: File, retryCount = 0): Promi
     console.log('Extracted text preview:', extractedText.substring(0, 200));
 
     // Send extracted text to Llama for structured extraction
-    const prompt = `You are an expert resume parser. Extract and structure the following resume text into a JSON format.
+    const prompt = `You are a resume parser. Your task is to extract information from the resume text and return ONLY a valid JSON object. Do not include any explanatory text, greetings, or markdown formatting.
 
 Resume Text:
 ${extractedText}
 
-Extract and return ONLY valid JSON in this exact structure (no markdown, no extra text):
+Return ONLY the JSON object in this exact structure:
 {
   "personalInfo": {
     "fullName": "<full name>",
@@ -356,12 +356,17 @@ Important:
       model: 'llama-3.1-8b-instant',
       messages: [
         {
+          role: 'system',
+          content: 'You are a JSON-only resume parser. You must respond with valid JSON only, no explanations or markdown.',
+        },
+        {
           role: 'user',
           content: prompt,
         },
       ],
-      temperature: 0.3, // Lower temperature for more accurate extraction
+      temperature: 0.1, // Very low temperature for consistent JSON output
       max_tokens: 3000,
+      response_format: { type: 'json_object' }, // Force JSON response
     });
 
     let responseText = completion.choices[0]?.message?.content?.trim() || '';
@@ -372,6 +377,20 @@ Important:
     } else if (responseText.startsWith('```')) {
       responseText = responseText.replace(/```\n?/g, '');
     }
+
+    // Remove any leading text before the JSON object
+    const jsonStart = responseText.indexOf('{');
+    if (jsonStart > 0) {
+      responseText = responseText.substring(jsonStart);
+    }
+
+    // Remove any trailing text after the JSON object
+    const jsonEnd = responseText.lastIndexOf('}');
+    if (jsonEnd > 0 && jsonEnd < responseText.length - 1) {
+      responseText = responseText.substring(0, jsonEnd + 1);
+    }
+
+    console.log('Cleaned response:', responseText.substring(0, 200));
 
     const parsedData = JSON.parse(responseText);
 
