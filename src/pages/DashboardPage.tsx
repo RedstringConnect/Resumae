@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import AdvancedATSScanner from '@/components/AdvancedATSScanner';
+import { extractResumeFromPDF } from '@/services/groqService';
 import { exportToPDF } from '@/utils/pdfExport';
 import toast from 'react-hot-toast';
 import ModernTemplate from '@/components/templates/ModernTemplate';
@@ -122,6 +123,7 @@ export default function DashboardPage() {
   const [analyzingResume, setAnalyzingResume] = useState<SavedResume | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [downloadingResume, setDownloadingResume] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -188,6 +190,59 @@ export default function DashboardPage() {
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
+    }
+  };
+
+  const handleUploadResume = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+      toast.error('Please upload a PDF file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File size must be less than 10MB');
+      return;
+    }
+
+    setIsUploading(true);
+    toast.loading('Extracting resume data with AI... This may take a moment.', { id: 'upload' });
+
+    try {
+      const extractedData = await extractResumeFromPDF(file);
+      
+      if (extractedData) {
+        toast.success('Resume extracted successfully! Redirecting to builder...', { id: 'upload' });
+        
+        // Store extracted data in localStorage temporarily
+        localStorage.setItem('resumatic_uploaded_data', JSON.stringify(extractedData));
+        
+        // Navigate to builder with a flag
+        setTimeout(() => {
+          navigate('/builder?uploaded=true');
+        }, 1000);
+      } else {
+        toast.error('Failed to extract resume data. Please try again or use the manual builder.', { id: 'upload' });
+      }
+    } catch (error: any) {
+      console.error('Error uploading resume:', error);
+      
+      if (error?.message === 'RATE_LIMIT_EXCEEDED') {
+        toast.error(
+          'API rate limit exceeded. Please wait a few minutes and try again.',
+          { id: 'upload', duration: 6000 }
+        );
+      } else {
+        toast.error('Failed to process resume. Please try again later.', { id: 'upload' });
+      }
+    } finally {
+      setIsUploading(false);
+      // Reset file input
+      event.target.value = '';
     }
   };
 
@@ -415,16 +470,27 @@ export default function DashboardPage() {
             <motion.div variants={fadeInUp} className="mt-6 sm:mt-10 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
 
               <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full sm:w-auto">
-                {/* Upload button temporarily disabled */}
-                <div className="w-full sm:w-auto relative group">
-                  <span className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border-2 border-gray-300 bg-gray-100 px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-gray-400 cursor-not-allowed whitespace-nowrap opacity-60">
-                    <Upload className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Upload Resume (Disabled)
+                <label htmlFor="resume-upload" className="w-full sm:w-auto cursor-pointer">
+                  <input
+                    id="resume-upload"
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleUploadResume}
+                    disabled={isUploading}
+                    className="hidden"
+                  />
+                  <span className={`inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border-2 px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
+                    isUploading 
+                      ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed' 
+                      : 'border-blue-200 bg-white text-blue-600 hover:bg-blue-50'
+                  }`}>
+                    {isUploading ? (
+                      <><Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" /> Uploading...</>
+                    ) : (
+                      <><Upload className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Upload Resume</>
+                    )}
                   </span>
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg z-10">
-                    PDF upload temporarily unavailable. Groq/Llama doesn't support PDF extraction yet. Use "Create New Resume" instead.
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
-                  </div>
-                </div>
+                </label>
                 <Link to="/builder?new=true" className="w-full sm:w-auto">
                   <Button className="w-full sm:w-auto gap-2 h-auto rounded-full bg-blue-600 px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700 whitespace-nowrap">
                     <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Create New Resume

@@ -3,26 +3,75 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, FileText, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { ResumeData } from '@/types';
+import { extractResumeFromPDF } from '@/services/groqService';
 import toast from 'react-hot-toast';
 
 interface ResumeParserProps {
   onParseComplete: (data: ResumeData) => void;
 }
 
-export default function ResumeParser({ }: ResumeParserProps) {
-  const [isUploading] = useState(false);
-  const [isParsing] = useState(false);
-  const [uploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage] = useState('');
+export default function ResumeParser({ onParseComplete }: ResumeParserProps) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Feature temporarily disabled
-    toast.error('PDF upload is temporarily unavailable. Groq/Llama models don\'t support PDF extraction yet. Please use the manual Resume Builder.', { 
-      duration: 6000,
-      icon: '⚠️'
-    });
-    event.target.value = '';
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+      toast.error('Please upload a PDF file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File size must be less than 10MB');
+      return;
+    }
+
+    setIsUploading(true);
+    setIsParsing(true);
+    setUploadStatus('idle');
+    setErrorMessage('');
+
+    toast.loading('Extracting resume data with AI... This may take a moment.', { id: 'upload' });
+
+    try {
+      const extractedData = await extractResumeFromPDF(file);
+      
+      if (extractedData) {
+        toast.success('Resume extracted successfully!', { id: 'upload' });
+        onParseComplete(extractedData);
+        setUploadStatus('success');
+      } else {
+        setErrorMessage('Failed to extract resume data. Please try again or use the manual builder.');
+        setUploadStatus('error');
+        toast.error('Failed to extract resume data. Please try again or use the manual builder.', { id: 'upload', duration: 5000 });
+      }
+    } catch (error: any) {
+      console.error('Error parsing resume:', error);
+      
+      if (error?.message === 'RATE_LIMIT_EXCEEDED') {
+        setErrorMessage('API rate limit exceeded. Please wait a few minutes and try again.');
+        toast.error(
+          'API rate limit exceeded. Please wait a few minutes and try again.',
+          { id: 'upload', duration: 6000 }
+        );
+      } else {
+        setErrorMessage('Failed to parse resume. Please try again.');
+        toast.error('Failed to process resume. Please try again later.', { id: 'upload' });
+      }
+      setUploadStatus('error');
+    } finally {
+      setIsUploading(false);
+      setIsParsing(false);
+      // Reset file input
+      event.target.value = '';
+    }
   };
 
   const handleClick = () => {
@@ -34,23 +83,14 @@ export default function ResumeParser({ }: ResumeParserProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Upload className="h-5 w-5" />
-          Upload Existing Resume (Temporarily Unavailable)
+          Upload Existing Resume
         </CardTitle>
         <CardDescription>
-          PDF upload feature is temporarily disabled while we transition to Groq/Llama models. Llama doesn't support vision/PDF processing yet. Please use the manual Resume Builder tab instead.
+          Upload your existing resume (PDF) and let AI extract the information automatically to save time.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-yellow-800">
-              <p className="font-semibold mb-1">Feature Temporarily Unavailable</p>
-              <p>PDF extraction requires vision-capable AI models. Our new Groq/Llama integration doesn't support this yet. Please switch to the "Resume Builder" tab to create your resume manually.</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-center gap-4 opacity-50 pointer-events-none">
+        <div className="flex flex-col items-center gap-4">
           <div
             onClick={handleClick}
             className={`

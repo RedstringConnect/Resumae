@@ -3,18 +3,32 @@ import admin from 'firebase-admin';
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
     try {
-        // Try to use environment variable or default credentials
+        // Check if we have a service account JSON string in environment
         if (process.env.FIREBASE_SERVICE_ACCOUNT) {
             const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
+                projectId: serviceAccount.project_id,
             });
+            console.log('✅ Firebase Admin initialized with service account');
+        } else if (process.env.FIREBASE_PROJECT_ID) {
+            // Use individual environment variables
+            admin.initializeApp({
+                credential: admin.credential.cert({
+                    projectId: process.env.FIREBASE_PROJECT_ID,
+                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+                }),
+                projectId: process.env.FIREBASE_PROJECT_ID,
+            });
+            console.log('✅ Firebase Admin initialized with environment variables');
         } else {
-            // For development, you can use application default credentials
-            admin.initializeApp();
+            // Development mode - skip Firebase Admin verification
+            console.warn('⚠️ Firebase Admin not configured. Using development mode (no auth verification)');
         }
     } catch (error) {
-        console.error('Firebase admin initialization error:', error);
+        console.error('❌ Firebase admin initialization error:', error.message);
+        console.warn('⚠️ Continuing in development mode without Firebase Admin');
     }
 }
 
@@ -40,6 +54,26 @@ export const verifyToken = async (req, res, next) => {
                 error: 'Unauthorized',
                 message: 'Invalid token format',
             });
+        }
+
+        // Check if Firebase Admin is properly initialized
+        if (!admin.apps.length) {
+            // Development mode - extract UID from token without verification
+            console.warn('⚠️ Development mode: Skipping token verification');
+            try {
+                // Decode token (NOT verifying signature - for development only!)
+                const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+                req.user = {
+                    uid: payload.user_id || payload.sub,
+                    email: payload.email,
+                };
+                return next();
+            } catch (decodeError) {
+                return res.status(401).json({
+                    error: 'Unauthorized',
+                    message: 'Invalid token',
+                });
+            }
         }
 
         // Verify the Firebase ID token

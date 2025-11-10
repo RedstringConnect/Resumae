@@ -231,14 +231,173 @@ Respond with JSON only (no markdown):
   }
 }
 
-export async function extractResumeFromPDF(_pdfFile: File, _retryCount = 0): Promise<ResumeData | null> {
+export async function extractResumeFromPDF(pdfFile: File, retryCount = 0): Promise<ResumeData | null> {
   if (!groq) {
     console.warn('Groq AI not initialized');
     return null;
   }
 
-  // Note: Groq's Llama models don't support vision/PDF processing yet
-  // This feature requires vision-capable models
-  console.warn('PDF extraction not yet supported with Groq/Llama models. Vision capabilities coming soon.');
-  return null;
+  try {
+    console.log('Starting PDF extraction for:', pdfFile.name);
+    
+    // Convert File to ArrayBuffer
+    const arrayBuffer = await pdfFile.arrayBuffer();
+    
+    console.log('File size:', arrayBuffer.byteLength, 'bytes');
+    
+    // Dynamically import pdfjs-dist (browser-compatible)
+    const pdfjsLib = await import('pdfjs-dist');
+    
+    // Set worker source to use unpkg CDN with correct version
+    const pdfjsVersion = pdfjsLib.version || '4.0.379';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.mjs`;
+    
+    console.log('PDF.js loaded, parsing document...');
+    
+    // Load the PDF document
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+    
+    console.log('PDF loaded, pages:', pdf.numPages);
+    
+    // Extract text from all pages
+    let extractedText = '';
+    
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map((item: any) => item.str)
+        .join(' ');
+      extractedText += pageText + '\n\n';
+    }
+
+    console.log('Text extracted, length:', extractedText?.length || 0);
+
+    if (!extractedText || extractedText.trim().length < 50) {
+      console.error('Insufficient text extracted from PDF');
+      throw new Error('Could not extract enough text from PDF. The file might be image-based or corrupted.');
+    }
+
+    console.log('Extracted text preview:', extractedText.substring(0, 200));
+
+    // Send extracted text to Llama for structured extraction
+    const prompt = `You are an expert resume parser. Extract and structure the following resume text into a JSON format.
+
+Resume Text:
+${extractedText}
+
+Extract and return ONLY valid JSON in this exact structure (no markdown, no extra text):
+{
+  "personalInfo": {
+    "fullName": "<full name>",
+    "email": "<email>",
+    "phone": "<phone>",
+    "location": "<location>",
+    "linkedin": "<linkedin URL if present>",
+    "website": "<website/portfolio URL if present>",
+    "summary": "<professional summary or objective>"
+  },
+  "workExperience": [
+    {
+      "company": "<company name>",
+      "position": "<job title>",
+      "location": "<location>",
+      "startDate": "<start date>",
+      "endDate": "<end date or 'Present'>",
+      "description": ["<achievement or responsibility 1>", "<achievement or responsibility 2>", "..."]
+    }
+  ],
+  "education": [
+    {
+      "institution": "<school/university name>",
+      "degree": "<degree type and major>",
+      "location": "<location>",
+      "graduationDate": "<graduation date>",
+      "gpa": "<GPA if mentioned>"
+    }
+  ],
+  "skills": ["<skill1>", "<skill2>", ...],
+  "certifications": [
+    {
+      "name": "<certification name>",
+      "issuer": "<issuing organization>",
+      "date": "<date obtained>"
+    }
+  ],
+  "projects": [
+    {
+      "name": "<project name>",
+      "description": "<brief project description>",
+      "technologies": ["<tech1>", "<tech2>", "<tech3>"],
+      "link": "<project link if available>"
+    }
+  ],
+  "languages": [
+    {
+      "language": "<language name>",
+      "proficiency": "<proficiency level>"
+    }
+  ]
+}
+
+Important:
+- Extract all information accurately from the resume text
+- Use empty arrays [] if sections are not found
+- Use empty strings "" for missing fields
+- For workExperience.description: ALWAYS return an array of strings (bullet points)
+- For projects.description: Return a single string summary
+- For projects.technologies: ALWAYS return an array of technology names
+- Split lengthy descriptions into multiple bullet points
+- Ensure valid JSON format
+- Include default spacing values`;
+
+    const completion = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.3, // Lower temperature for more accurate extraction
+      max_tokens: 3000,
+    });
+
+    let responseText = completion.choices[0]?.message?.content?.trim() || '';
+
+    // Clean markdown code blocks if present
+    if (responseText.startsWith('```json')) {
+      responseText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+    } else if (responseText.startsWith('```')) {
+      responseText = responseText.replace(/```\n?/g, '');
+    }
+
+    const parsedData = JSON.parse(responseText);
+
+    // Add default spacing if not present
+    const resumeData: ResumeData = {
+      ...parsedData,
+      spacing: {
+        pageMargin: 20,
+        sectionSpacing: 8,
+        lineSpacing: 1.2,
+        bulletSpacing: 4,
+        headerSpacing: 6,
+      },
+    };
+
+    return resumeData;
+  } catch (error: any) {
+    console.error('Error extracting resume from PDF:', error);
+    
+    // Retry logic
+    if (retryCount < 2) {
+      console.log(`Retrying PDF extraction (attempt ${retryCount + 2}/3)...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return extractResumeFromPDF(pdfFile, retryCount + 1);
+    }
+    
+    return null;
+  }
 }
