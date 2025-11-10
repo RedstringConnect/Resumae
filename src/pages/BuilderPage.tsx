@@ -531,12 +531,32 @@ export default function BuilderPage() {
       >
         <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
           <div className="flex items-center justify-between gap-2">
-            <Link
-              to={user ? '/dashboard' : '/'}
-              className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-transparent bg-white/70 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 shadow-sm shadow-blue-500/10 transition hover:border-blue-200 hover:text-blue-600 whitespace-nowrap"
-            >
-              <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Back
-            </Link>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Link to={user ? '/dashboard' : '/'} className="flex items-center gap-2">
+                <img
+                  src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
+                  alt="Resumae"
+                  className="h-6 sm:h-9 w-auto"
+                />
+                <div className="hidden md:flex flex-col">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-base sm:text-lg font-semibold tracking-tight">Resumae</span>
+                    <span className="text-[8px] font-medium uppercase tracking-wider text-blue-600/60">
+                      Beta
+                    </span>
+                  </div>
+                  <span className="text-[8px] text-black/60 -mt-1">
+                    Powered by <span className="text-red-500">redstring</span>
+                  </span>
+                </div>
+              </Link>
+              <Link
+                to={user ? '/dashboard' : '/'}
+                className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-transparent bg-white/70 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 shadow-sm shadow-blue-500/10 transition hover:border-blue-200 hover:text-blue-600 whitespace-nowrap"
+              >
+                <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Back
+              </Link>
+            </div>
             <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
               <Button
                 variant="outline"

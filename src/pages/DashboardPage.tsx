@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import AdvancedATSScanner from '@/components/AdvancedATSScanner';
-import { extractResumeFromPDF } from '@/services/groqService';
 import { exportToPDF } from '@/utils/pdfExport';
 import toast from 'react-hot-toast';
 import ModernTemplate from '@/components/templates/ModernTemplate';
@@ -122,7 +121,6 @@ export default function DashboardPage() {
   const [viewingResume, setViewingResume] = useState<SavedResume | null>(null);
   const [analyzingResume, setAnalyzingResume] = useState<SavedResume | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [downloadingResume, setDownloadingResume] = useState<string | null>(null);
 
   useEffect(() => {
@@ -190,67 +188,6 @@ export default function DashboardPage() {
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
-    }
-  };
-
-  const handleUploadResume = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Feature temporarily disabled with Groq
-    toast.error('PDF upload is temporarily unavailable. Groq/Llama models don\'t support PDF extraction yet. Please use "Create New Resume" instead.', { 
-      duration: 6000,
-      icon: '⚠️'
-    });
-    event.target.value = '';
-    return;
-
-    // Validate file type
-    if (file.type !== 'application/pdf') {
-      toast.error('Please upload a PDF file');
-      return;
-    }
-
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('File size must be less than 10MB');
-      return;
-    }
-
-    setIsUploading(true);
-    toast.loading('Extracting resume data with AI... This may take a moment.', { id: 'upload' });
-
-    try {
-      const extractedData = await extractResumeFromPDF(file);
-      
-      if (extractedData) {
-        toast.success('Resume extracted successfully! Redirecting to builder...', { id: 'upload' });
-        
-        // Store extracted data in localStorage temporarily
-        localStorage.setItem('resumatic_uploaded_data', JSON.stringify(extractedData));
-        
-        // Navigate to builder with a flag
-        setTimeout(() => {
-          navigate('/builder?uploaded=true');
-        }, 1000);
-      } else {
-        toast.error('Failed to extract resume data. Please check your Groq API key or try again.', { id: 'upload' });
-      }
-    } catch (error: any) {
-      console.error('Error uploading resume:', error);
-      
-      if (error?.message === 'RATE_LIMIT_EXCEEDED') {
-        toast.error(
-          'API rate limit exceeded. Please wait a few minutes and try again. The free tier has limits on requests per minute.',
-          { id: 'upload', duration: 6000 }
-        );
-      } else {
-        toast.error('Failed to process resume. Please try again later.', { id: 'upload' });
-      }
-    } finally {
-      setIsUploading(false);
-      // Reset file input
-      event.target.value = '';
     }
   };
 
@@ -351,13 +288,23 @@ export default function DashboardPage() {
       >
         <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700">
+            <Link to="/" className="flex items-center gap-2">
               <img
                 src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
                 alt="Resumae"
-                className="h-6 sm:h-8 w-auto"
+                className="h-6 sm:h-9 w-auto"
               />
-              <span className="hidden xs:inline sm:inline">Resumae</span>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base sm:text-lg font-semibold tracking-tight">Resumae</span>
+                  <span className="text-[8px] font-medium uppercase tracking-wider text-blue-600/60">
+                    Beta
+                  </span>
+                </div>
+                <span className="text-[8px] text-black/60 -mt-1">
+                  Powered by <span className="text-red-500">redstring</span>
+                </span>
+              </div>
             </Link>
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="relative">
