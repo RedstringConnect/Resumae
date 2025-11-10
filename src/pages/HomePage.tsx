@@ -203,9 +203,12 @@ export default function HomePage() {
               variants={fadeInUp}
             />
             <div className="flex flex-col">
-              <motion.span className="text-lg font-semibold tracking-tight" variants={fadeInUp}>
-                Resumae
-              </motion.span>
+              <motion.div className="flex items-center gap-1.5" variants={fadeInUp}>
+                <span className="text-lg font-semibold tracking-tight">Resumae</span>
+                <span className="text-[8px] font-medium uppercase tracking-wider text-blue-600/60">
+                  Beta
+                </span>
+              </motion.div>
               <motion.span className="text-[8px] text-black/60 -mt-1" variants={fadeInUp}>
                 Powered by <span className="text-red-500">redstring</span>
               </motion.span>
@@ -243,6 +246,8 @@ export default function HomePage() {
                 className="w-32 sm:w-40 md:w-48 lg:w-56 h-auto -mt-2 sm:-mt-3 opacity-60 animate-float-shadow"
               />
             </motion.div>
+
+          
 
             <motion.div variants={fadeInUp} className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
               <Sparkles className="h-4 w-4 text-blue-600" />
