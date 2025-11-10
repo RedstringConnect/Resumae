@@ -341,22 +341,22 @@ export default function DashboardPage() {
         transition={{ duration: 0.5, ease: easing }}
         className="fixed top-0 left-0 right-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-xl"
       >
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+            <Link to="/" className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700">
               <img
                 src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
                 alt="Resumae"
-                className="h-8 w-auto"
+                className="h-6 sm:h-8 w-auto"
               />
-              <span>Resumae</span>
+              <span className="hidden xs:inline sm:inline">Resumae</span>
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <div className="relative">
                 {user?.photoURL && (
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="h-10 w-10 rounded-full border-2 border-blue-100 shadow-sm hover:border-blue-300 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-blue-100 shadow-sm hover:border-blue-300 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     <img
                       src={user.photoURL}
@@ -415,41 +415,41 @@ export default function DashboardPage() {
         </div>
       </motion.header>
 
-      <main className="relative z-10 pt-28 pb-20 sm:pt-32">
-        <div className="container mx-auto px-4">
+      <main className="relative z-10 pt-20 pb-12 sm:pt-28 md:pt-32 sm:pb-20">
+        <div className="container mx-auto px-3 sm:px-4">
           <motion.section
             variants={staggerContainer}
             initial="hidden"
             animate="show"
-            className="rounded-3xl border border-blue-100 bg-white/85 p-8 shadow-2xl shadow-blue-500/10 backdrop-blur"
+            className="rounded-2xl sm:rounded-3xl border border-blue-100 bg-white/85 p-4 sm:p-6 md:p-8 shadow-2xl shadow-blue-500/10 backdrop-blur"
           >
-            <motion.div variants={fadeInUp} className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <motion.div variants={fadeInUp} className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
-                <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
+                <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/70 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
                   Dashboard
                 </div>
-                <h1 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+                <h1 className="mt-3 sm:mt-4 text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
                   Welcome back, {user.displayName || user.email?.split('@')[0] || 'Resumae creator'}
                 </h1>
-                <p className="mt-3 text-sm text-gray-600">
+                <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-600">
                   Access every resume version you&apos;ve crafted, update on the fly, and export when opportunity strikes.
                 </p>
-                <div className="mt-6 flex flex-col gap-3 text-sm text-gray-500 sm:flex-row sm:items-center">
+                <div className="mt-4 sm:mt-6 flex flex-col gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 sm:flex-row sm:items-center">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-blue-600" />
+                    <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-600" />
                     {resumes.length ? 'Pick up where you left off.' : 'Start building your first resume.'}
                   </div>
                   <div className="flex items-center gap-2">
-                    <ShieldCheck className="h-4 w-4 text-green-500" /> Autosave & cloud sync enabled
+                    <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500" /> Autosave & cloud sync enabled
                   </div>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-4 rounded-2xl border border-blue-100/70 bg-white/70 p-5 text-sm text-gray-600 shadow-sm shadow-blue-500/5">
+              <div className="flex flex-wrap gap-3 sm:gap-4 rounded-xl sm:rounded-2xl border border-blue-100/70 bg-white/70 p-3.5 sm:p-5 text-xs sm:text-sm text-gray-600 shadow-sm shadow-blue-500/5">
                 {metrics.map(({ label, value, description }) => (
-                  <div key={label} className="min-w-[160px]">
-                    <p className="text-xs uppercase tracking-wide text-gray-400">{label}</p>
-                    <p className="mt-1 text-xl font-semibold text-blue-600">{value(resumes.length)}</p>
-                    <p className="mt-1 text-xs text-gray-500">{description}</p>
+                  <div key={label} className="min-w-[140px] sm:min-w-[160px]">
+                    <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-400">{label}</p>
+                    <p className="mt-0.5 sm:mt-1 text-lg sm:text-xl font-semibold text-blue-600">{value(resumes.length)}</p>
+                    <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-gray-500">{description}</p>
                   </div>
                 ))}
               </div>
@@ -457,10 +457,10 @@ export default function DashboardPage() {
 
           
 
-            <motion.div variants={fadeInUp} className="mt-10 flex flex-wrap items-center justify-between gap-4">
-             
-              <div className="flex gap-3">
-                <div>
+            <motion.div variants={fadeInUp} className="mt-6 sm:mt-10 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+
+              <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full sm:w-auto">
+                <div className="w-full sm:w-auto">
                   <input
                     id="upload-resume"
                     type="file"
@@ -469,23 +469,23 @@ export default function DashboardPage() {
                     disabled={isUploading}
                     className="hidden"
                   />
-                  <label htmlFor="upload-resume">
-                    <span className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-blue-200 bg-white px-5 py-2 text-sm font-semibold text-blue-600 shadow-lg shadow-blue-500/10 hover:bg-blue-50 cursor-pointer transition-colors">
+                  <label htmlFor="upload-resume" className="block w-full sm:w-auto">
+                    <span className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border-2 border-blue-200 bg-white px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-blue-600 shadow-lg shadow-blue-500/10 hover:bg-blue-50 cursor-pointer transition-colors whitespace-nowrap">
                       {isUploading ? (
                         <>
-                          <Loader2 className="h-4 w-4 animate-spin" /> Processing...
+                          <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" /> Processing...
                         </>
                       ) : (
                         <>
-                          <Upload className="h-4 w-4" /> Upload Resume
+                          <Upload className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Upload Resume
                         </>
                       )}
                     </span>
                   </label>
                 </div>
-                <Link to="/builder?new=true">
-                  <Button className="gap-2 rounded-full bg-blue-600 px-5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700">
-                    <Plus className="h-4 w-4" /> Create New Resume
+                <Link to="/builder?new=true" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto gap-2 h-auto rounded-full bg-blue-600 px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700 whitespace-nowrap">
+                    <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Create New Resume
                   </Button>
                 </Link>
               </div>
@@ -493,9 +493,9 @@ export default function DashboardPage() {
           </motion.section>
 
 
-          <div className='mt-7 ml-4'>
-                <h2 className="text-2xl font-semibold text-gray-900">My Resumes</h2>
-                <p className="text-sm text-gray-500">Manage, preview, and refine every version you&apos;ve saved.</p>
+          <div className='mt-5 sm:mt-7 ml-2 sm:ml-4'>
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">My Resumes</h2>
+                <p className="text-xs sm:text-sm text-gray-500">Manage, preview, and refine every version you&apos;ve saved.</p>
               </div>
 
           <section className="relative mt-1">

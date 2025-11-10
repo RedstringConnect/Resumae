@@ -32,15 +32,17 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
         position: 'absolute',
         left: 0,
         top: 0,
-        bottom: 0,
         width: '35%', 
         backgroundColor: '#1e3a5f',
         color: '#ffffff',
         padding: '40px 28px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '28px',
-        minHeight: '100%'
+        gap: '24px',
+        minHeight: '100vh',
+        maxHeight: '100vh',
+        boxSizing: 'border-box',
+        overflowY: 'auto'
       }}>
         {/* Contact Info */}
         <div>
@@ -65,7 +67,7 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
 
         {/* Skills */}
         {skills.length > 0 && (
-          <div>
+          <div style={{ pageBreakInside: 'avoid' }}>
             <h3 style={{ 
               fontSize: '13px', 
               fontWeight: '700', 
@@ -76,7 +78,7 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
             }}>
               Expertise
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {Object.entries(groupedSkills).map(([category, skillList]) => (
                 <div key={category}>
                   <div style={{ fontSize: '11px', fontWeight: '600', color: '#93c5fd', marginBottom: '4px' }}>
@@ -93,7 +95,7 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
 
         {/* Languages */}
         {languages.length > 0 && (
-          <div>
+          <div style={{ pageBreakInside: 'avoid' }}>
             <h3 style={{ 
               fontSize: '13px', 
               fontWeight: '700', 
@@ -114,31 +116,6 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
             </div>
           </div>
         )}
-
-        {/* Certifications */}
-        {certifications.length > 0 && (
-          <div>
-            <h3 style={{ 
-              fontSize: '13px', 
-              fontWeight: '700', 
-              marginBottom: '12px', 
-              color: '#93c5fd',
-              textTransform: 'uppercase',
-              letterSpacing: '1.2px'
-            }}>
-              Certifications
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {certifications.map((cert) => (
-                <div key={cert.id} style={{ fontSize: '11px', color: '#e5e7eb', lineHeight: '1.5' }}>
-                  <div style={{ fontWeight: '600', marginBottom: '2px' }}>{cert.name}</div>
-                  <div style={{ opacity: 0.8 }}>{cert.issuer}</div>
-                  <div style={{ opacity: 0.7, fontSize: '10px', marginTop: '2px' }}>{cert.date}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Right Content Area */}
@@ -148,7 +125,8 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
         padding: '40px 36px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '28px'
+        gap: '24px',
+        boxSizing: 'border-box'
       }}>
         {/* Header */}
         <div>
@@ -198,7 +176,7 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
 
         {/* Work Experience */}
         {workExperience.length > 0 && (
-          <div>
+          <div style={{ pageBreakInside: 'avoid' }}>
             <h2 style={{ 
               fontSize: '14px', 
               fontWeight: '700', 
@@ -209,9 +187,9 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
             }}>
               Professional Experience
             </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
               {workExperience.map((exp) => (
-                <div key={exp.id}>
+                <div key={exp.id} style={{ pageBreakInside: 'avoid' }}>
                   <div style={{ marginBottom: '6px' }}>
                     <h3 style={{ 
                       fontSize: '15px', 
@@ -309,7 +287,7 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
 
         {/* Education */}
         {education.length > 0 && (
-          <div>
+          <div style={{ pageBreakInside: 'avoid' }}>
             <h2 style={{ 
               fontSize: '14px', 
               fontWeight: '700', 
@@ -320,9 +298,9 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
             }}>
               Education
             </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {education.map((edu) => (
-                <div key={edu.id}>
+                <div key={edu.id} style={{ pageBreakInside: 'avoid' }}>
                   <h3 style={{ 
                     fontSize: '14px', 
                     fontWeight: '700', 
@@ -344,6 +322,52 @@ export default function ExecutiveTemplate({ data }: TemplateProps) {
                     marginTop: '2px'
                   }}>
                     {edu.startDate} - {edu.current ? 'Present' : edu.endDate}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Certifications */}
+        {certifications.length > 0 && (
+          <div style={{ pageBreakInside: 'avoid' }}>
+            <h2 style={{ 
+              fontSize: '14px', 
+              fontWeight: '700', 
+              marginBottom: '16px', 
+              color: '#1e3a5f',
+              textTransform: 'uppercase',
+              letterSpacing: '1px'
+            }}>
+              Certifications
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {certifications.map((cert) => (
+                <div key={cert.id} style={{ pageBreakInside: 'avoid' }}>
+                  <h3 style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '700', 
+                    color: '#1e3a5f',
+                    marginBottom: '6px',
+                    lineHeight: '1.4'
+                  }}>
+                    {cert.name}
+                  </h3>
+                  <div style={{ 
+                    fontSize: '13px', 
+                    color: '#64748b',
+                    lineHeight: '1.5',
+                    marginBottom: '2px'
+                  }}>
+                    {cert.issuer}
+                  </div>
+                  <div style={{ 
+                    fontSize: '11.5px', 
+                    color: '#94a3b8',
+                    fontStyle: 'italic'
+                  }}>
+                    {cert.date}
                   </div>
                 </div>
               ))}

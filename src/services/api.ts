@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ResumeData, TemplateType } from '@/types';
+import { auth } from '@/config/firebase';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -9,6 +10,43 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Add request interceptor to include auth token
+api.interceptors.request.use(
+  async (config) => {
+    const user = auth.currentUser;
+    if (user) {
+      const token = await user.getIdToken();
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid, try to refresh
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const token = await user.getIdToken(true); // Force refresh
+          error.config.headers.Authorization = `Bearer ${token}`;
+          return api.request(error.config);
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          // Optionally redirect to login
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export interface SavedResume {
   _id: string;

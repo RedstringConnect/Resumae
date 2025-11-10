@@ -534,34 +534,32 @@ export default function BuilderPage() {
         transition={{ duration: 0.5, ease: easing }}
         className="fixed left-0 right-0 top-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-xl"
       >
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
             <Link
               to={user ? '/dashboard' : '/'}
-              className="flex items-center gap-2 rounded-full border border-transparent bg-white/70 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm shadow-blue-500/10 transition hover:border-blue-200 hover:text-blue-600"
+              className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-transparent bg-white/70 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 shadow-sm shadow-blue-500/10 transition hover:border-blue-200 hover:text-blue-600 whitespace-nowrap"
             >
-              <ArrowLeft className="h-4 w-4" /> Back
+              <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Back
             </Link>
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
               <Button
                 variant="outline"
                 onClick={() => setShowTemplateSelector(true)}
-                className="gap-2 border-blue-200 bg-white/80 text-gray-700 hover:bg-blue-50"
+                className="gap-1.5 border-blue-200 bg-white/80 text-gray-700 hover:bg-blue-50 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                 size="sm"
               >
-                <LayoutTemplate className="h-4 w-4" />
+                <LayoutTemplate className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">{getTemplateName(selectedTemplate)}</span>
-                <span className="sm:hidden">Template</span>
               </Button>
 
               <Button
                 onClick={() => setShowATSModal(true)}
-                className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+                className="gap-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                 size="sm"
               >
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">ATS Score</span>
-                <span className="sm:hidden">ATS</span>
               </Button>
 
               {user && (
@@ -569,10 +567,10 @@ export default function BuilderPage() {
                   onClick={handleSaveClick}
                   disabled={isSaving}
                   variant="outline"
-                  className="gap-2 border-blue-200 bg-blue-600/10 text-blue-700 hover:bg-blue-600 hover:text-white"
+                  className="gap-2.5 border-blue-200 bg-blue-600/10 text-blue-700 hover:bg-blue-600 hover:text-white text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                   size="sm"
                 >
-                  {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  {isSaving ? <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" /> : <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
                   <span className="hidden sm:inline">{isSaving ? 'Saving...' : 'Save'}</span>
                 </Button>
               )}
@@ -580,66 +578,65 @@ export default function BuilderPage() {
               <Button
                 onClick={handleExportPDF}
                 disabled={isExporting}
-                className="gap-2 bg-blue-600 text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700"
+                className="gap-1.5 bg-blue-600 text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                 size="sm"
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Download PDF'}</span>
-                <span className="sm:hidden">PDF</span>
               </Button>
             </div>
           </div>
         </div>
       </motion.header>
 
-      <main className="relative z-10 pt-28 pb-16 sm:pt-32">
-        <div className="container mx-auto px-4">
+      <main className="relative z-10 pt-20 pb-12 sm:pt-28 md:pt-32 sm:pb-16">
+        <div className="container mx-auto px-3 sm:px-4">
           <motion.section
             variants={fadeInUp}
             initial="hidden"
             animate="show"
-            className="rounded-[32px] border border-blue-100 bg-white/85 p-6 shadow-2xl shadow-blue-500/10 backdrop-blur"
+            className="rounded-2xl sm:rounded-2xl border border-blue-100 bg-white/85 p-3 sm:p-4 md:p-6 shadow-2xl shadow-blue-500/10 backdrop-blur"
           >
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 rounded-2xl border border-blue-100 bg-blue-50/60 text-sm font-semibold text-blue-700">
-                <TabsTrigger value="builder">Resume Builder</TabsTrigger>
-                <TabsTrigger value="upload">Upload & Analyze PDF</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 rounded-xl sm:rounded-2xl border border-blue-100 bg-blue-50/60 text-xs sm:text-sm font-semibold text-blue-700 h-auto">
+                <TabsTrigger value="builder" className="py-2 sm:py-2.5 text-xs sm:text-sm">Resume Builder</TabsTrigger>
+                <TabsTrigger value="upload" className="py-2 sm:py-2.5 text-xs sm:text-sm">Upload & Analyze</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="builder" className="mt-8 space-y-6">
-                <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
-                  <div className="overflow-hidden rounded-3xl border border-blue-100 bg-white/80 shadow-lg shadow-blue-500/10">
-                    <div className="flex items-center justify-between border-b border-blue-100 px-6 py-4">
-                      <h2 className="text-base font-semibold text-gray-900">Resume Builder</h2>
+              <TabsContent value="builder" className="mt-4 sm:mt-6 md:mt-8 space-y-4 sm:space-y-6">
+                <div className="grid gap-4 sm:gap-6 lg:grid-cols-[420px_1fr]">
+                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-blue-100 bg-white/80 shadow-lg shadow-blue-500/10">
+                    <div className="flex items-center justify-between border-b border-blue-100 px-4 sm:px-6 py-3 sm:py-4">
+                      <h2 className="text-sm sm:text-base font-semibold text-gray-900">Resume Builder</h2>
                       <Button
                         variant="outline"
                         onClick={handleReset}
-                        className="gap-2 border-blue-100 text-gray-700 hover:bg-blue-50"
+                        className="gap-1.5 sm:gap-2 border-blue-100 text-gray-700 hover:bg-blue-50 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
                         size="sm"
                       >
-                        <RotateCcw className="h-3.5 w-3.5" /> Reset
+                        <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Reset
                       </Button>
                     </div>
-                    <div className="h-[650px] overflow-y-auto px-6 py-6">
+                    <div className="h-[500px] sm:h-[600px] md:h-[650px] overflow-y-auto px-4 sm:px-6 py-4 sm:py-6">
                       <ResumeForm data={resumeData} onChange={handleDataChange} />
                     </div>
                   </div>
 
-                  <div className="hidden overflow-hidden rounded-3xl border border-blue-100 bg-white/75 shadow-lg shadow-blue-500/10 lg:block">
-                    <div className="flex items-center justify-between border-b border-blue-100 px-6 py-4">
-                      <h2 className="text-base font-semibold text-gray-900">Preview</h2>
+                  <div className="hidden overflow-hidden rounded-2xl sm:rounded-3xl border border-blue-100 bg-white/75 shadow-lg shadow-blue-500/10 lg:block">
+                    <div className="flex items-center justify-between border-b border-blue-100 px-4 sm:px-6 py-3 sm:py-4">
+                      <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowTemplateSelector(true)}
-                        className="gap-2 text-xs text-blue-600 hover:bg-blue-50"
+                        className="gap-1.5 sm:gap-2 text-xs text-blue-600 hover:bg-blue-50 px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
                       >
-                        <LayoutTemplate className="h-3.5 w-3.5" />
+                        <LayoutTemplate className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         {getTemplateName(selectedTemplate)}
                       </Button>
                     </div>
 
-                    <div className="flex h-[650px] items-start justify-center overflow-y-auto bg-gradient-to-b from-blue-50/40 via-white to-white px-4 py-6">
+                    <div className="flex h-[600px] md:h-[650px] items-start justify-center overflow-y-auto bg-gradient-to-b from-blue-50/40 via-white to-white px-4 py-6">
                       <div
                         className="rounded-xl bg-white shadow-xl shadow-blue-500/20"
                         style={{ width: '210mm', transform: 'scale(0.85)', transformOrigin: 'top center' }}
@@ -651,33 +648,35 @@ export default function BuilderPage() {
                 </div>
 
                 <div className="lg:hidden">
-                  <div className="overflow-hidden rounded-3xl border border-blue-100 bg-white/80 shadow-lg shadow-blue-500/10">
-                    <div className="flex items-center justify-between border-b border-blue-100 px-6 py-4">
-                      <h2 className="text-base font-semibold text-gray-900">Preview</h2>
+                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-blue-100 bg-white/80 shadow-lg shadow-blue-500/10">
+                    <div className="flex items-center justify-between border-b border-blue-100 px-4 sm:px-6 py-3 sm:py-4">
+                      <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowTemplateSelector(true)}
-                        className="gap-2 text-xs text-blue-600 hover:bg-blue-50"
+                        className="gap-1.5 sm:gap-2 text-xs text-blue-600 hover:bg-blue-50 px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
                       >
-                        <LayoutTemplate className="h-3.5 w-3.5" />
-                        {getTemplateName(selectedTemplate)}
+                        <LayoutTemplate className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                        <span className="hidden xs:inline">{getTemplateName(selectedTemplate)}</span>
                       </Button>
                     </div>
-                    <div className="flex items-start justify-center overflow-hidden bg-gradient-to-b from-blue-50/30 via-white to-white p-4" style={{ minHeight: '420px' }}>
-                      <div
-                        className="rounded-xl bg-white shadow-xl shadow-blue-500/20"
-                        style={{
-                          width: '210mm',
-                          minWidth: '210mm',
-                          minHeight: '297mm',
-                          transform: 'scale(0.45)',
-                          transformOrigin: 'top center',
-                          marginBottom: '-400px',
-                        }}
-                      >
-                        <div className="resume-preview">{renderTemplate()}</div>
+                    <div className="relative overflow-auto bg-gradient-to-b from-blue-50/30 via-white to-white touch-pan-x touch-pan-y" style={{ height: '600px', WebkitOverflowScrolling: 'touch' }}>
+                      <div className="inline-block min-w-full p-2">
+                        <div
+                          className="rounded-lg sm:rounded-xl bg-white shadow-xl shadow-blue-500/20 mx-auto"
+                          style={{
+                            width: '210mm',
+                            transform: 'scale(0.65)',
+                            transformOrigin: 'top center',
+                          }}
+                        >
+                          <div className="resume-preview">{renderTemplate()}</div>
+                        </div>
                       </div>
+                    </div>
+                    <div className="bg-blue-50/50 px-3 sm:px-4 py-2 text-center border-t border-blue-100">
+                      <p className="text-[10px] sm:text-xs text-gray-600">↔ Scroll to view full resume ↕</p>
                     </div>
                   </div>
                 </div>
@@ -687,10 +686,10 @@ export default function BuilderPage() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="upload" className="mt-8">
+              <TabsContent value="upload" className="mt-4 sm:mt-6 md:mt-8">
                 <motion.div
                   variants={fadeInUp}
-                  className="rounded-3xl border border-blue-100 bg-white/80 p-6 shadow-lg shadow-blue-500/10 backdrop-blur"
+                  className="rounded-2xl sm:rounded-3xl border border-blue-100 bg-white/80 p-4 sm:p-6 shadow-lg shadow-blue-500/10 backdrop-blur"
                 >
                   <PDFATSUploader onParseComplete={handleUploadComplete} />
                 </motion.div>

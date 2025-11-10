@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     lineHeight: 1.6,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 18,
   },
   sectionTitle: {
     fontSize: 14,
@@ -73,10 +73,10 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#4b5563',
     lineHeight: 1.7,
-    marginBottom: 20,
+    marginBottom: 18,
   },
   experienceItem: {
-    marginBottom: 14,
+    marginBottom: 12,
   },
   experienceHeader: {
     flexDirection: 'row',
@@ -239,7 +239,7 @@ export default function ExecutivePDFTemplate({ data }: { data: ResumeData }) {
 
           {/* Education */}
           {education.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionTitle}>EDUCATION</Text>
               {education.map((edu) => (
                 <View key={edu.id} style={styles.experienceItem}>
@@ -262,7 +262,7 @@ export default function ExecutivePDFTemplate({ data }: { data: ResumeData }) {
 
           {/* Certifications */}
           {certifications.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionTitle}>CERTIFICATIONS</Text>
               {certifications.map((cert) => (
                 <View key={cert.id} style={styles.experienceItem}>

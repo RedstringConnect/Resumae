@@ -211,7 +211,7 @@ export default function HomePage() {
               </motion.span>
             </div>
           </motion.div>
-          <div className="flex items-center gap-3">
+          <div className="flex  items-center gap-3">
             <LoginButton />
            
           </div>

@@ -20,6 +20,14 @@ export async function getResumeById(req, res) {
       return res.status(404).json({ success: false, message: 'Resume not found' });
     }
 
+    // Verify ownership
+    if (resume.userId !== req.user.uid) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have permission to access this resume'
+      });
+    }
+
     res.json({ success: true, resume });
   } catch (error) {
     console.error('Error fetching resume:', error);
@@ -30,6 +38,14 @@ export async function getResumeById(req, res) {
 export async function createResume(req, res) {
   try {
     const { userId, userEmail, title, resumeData, templateType } = req.body;
+
+    // Verify the userId in body matches authenticated user
+    if (userId !== req.user.uid) {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot create resume for another user',
+      });
+    }
 
     if (!userId || !userEmail || !resumeData) {
       return res.status(400).json({
@@ -59,6 +75,21 @@ export async function updateResume(req, res) {
     const { id } = req.params;
     const { title, resumeData, templateType } = req.body;
 
+    // First, find the resume to check ownership
+    const existingResume = await Resume.findById(id);
+
+    if (!existingResume) {
+      return res.status(404).json({ success: false, message: 'Resume not found' });
+    }
+
+    // Verify ownership
+    if (existingResume.userId !== req.user.uid) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have permission to update this resume'
+      });
+    }
+
     const updateData = {
       updatedAt: Date.now(),
     };
@@ -68,10 +99,6 @@ export async function updateResume(req, res) {
     if (templateType !== undefined) updateData.templateType = templateType;
 
     const resume = await Resume.findByIdAndUpdate(id, updateData, { new: true });
-
-    if (!resume) {
-      return res.status(404).json({ success: false, message: 'Resume not found' });
-    }
 
     res.json({ success: true, resume });
   } catch (error) {
@@ -83,11 +110,21 @@ export async function updateResume(req, res) {
 export async function deleteResume(req, res) {
   try {
     const { id } = req.params;
-    const resume = await Resume.findByIdAndDelete(id);
+    const resume = await Resume.findById(id);
 
     if (!resume) {
       return res.status(404).json({ success: false, message: 'Resume not found' });
     }
+
+    // Verify ownership
+    if (resume.userId !== req.user.uid) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have permission to delete this resume'
+      });
+    }
+
+    await Resume.findByIdAndDelete(id);
 
     res.json({ success: true, message: 'Resume deleted successfully' });
   } catch (error) {
