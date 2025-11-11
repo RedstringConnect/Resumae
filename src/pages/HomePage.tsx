@@ -209,7 +209,7 @@ export default function HomePage() {
                   Beta
                 </span>
               </motion.div>
-              <motion.span className="text-[8px] text-black/60 -mt-1" variants={fadeInUp}>
+              <motion.span className="text-[11px] text-black/60 -mt-1" variants={fadeInUp}>
                 Powered by <span className="text-red-500">redstring</span>
               </motion.span>
             </div>

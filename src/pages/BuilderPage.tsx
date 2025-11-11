@@ -545,14 +545,14 @@ export default function BuilderPage() {
                       Beta
                     </span>
                   </div>
-                  <span className="text-[8px] text-black/60 -mt-1">
+                  <span className="text-[11px] text-black/60 -mt-1">
                     Powered by <span className="text-red-500">redstring</span>
                   </span>
                 </div>
               </Link>
               <Link
                 to={user ? '/dashboard' : '/'}
-                className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-transparent bg-white/70 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 shadow-sm shadow-blue-500/10 transition hover:border-blue-200 hover:text-blue-600 whitespace-nowrap"
+                className="flex items-center gap-1.5 sm:gap-2 rounded-full  bg-blue-50 border border-blue-300 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-blue-600 shadow-sm shadow-blue-500/10 transition hover:border-blue-200 hover:text-blue-600 whitespace-nowrap"
               >
                 <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Back
               </Link>
@@ -651,10 +651,14 @@ export default function BuilderPage() {
                       </Button>
                     </div>
 
-                    <div className="flex h-[600px] md:h-[650px] items-start justify-center overflow-y-auto bg-gradient-to-b from-blue-50/40 via-white to-white px-4 py-6">
+                    <div className="h-[600px] md:h-[650px] overflow-y-auto bg-gradient-to-b from-blue-50/40 via-white to-white px-1 py-2">
                       <div
-                        className="rounded-xl bg-white shadow-xl shadow-blue-500/20"
-                        style={{ width: '210mm', transform: 'scale(0.85)', transformOrigin: 'top center' }}
+                        className="rounded-xl bg-white shadow-xl shadow-blue-500/20 mx-auto"
+                        style={{ 
+                          width: '210mm', 
+                          transform: 'scale(0.85)', 
+                          transformOrigin: 'top center',
+                        }}
                       >
                         <div className="resume-preview">{renderTemplate()}</div>
                       </div>
@@ -677,13 +681,15 @@ export default function BuilderPage() {
                       </Button>
                     </div>
                     <div className="relative overflow-auto bg-gradient-to-b from-blue-50/30 via-white to-white touch-pan-x touch-pan-y" style={{ height: '600px', WebkitOverflowScrolling: 'touch' }}>
-                      <div className="inline-block min-w-full p-2">
+                      <div className="inline-block min-w-full" >
                         <div
                           className="rounded-lg sm:rounded-xl bg-white shadow-xl shadow-blue-500/20 mx-auto"
                           style={{
                             width: '210mm',
-                            transform: 'scale(0.65)',
-                            transformOrigin: 'top center',
+                            transform: 'scale(1)',
+                            transformOrigin: 'top left',
+                           
+                           
                           }}
                         >
                           <div className="resume-preview">{renderTemplate()}</div>

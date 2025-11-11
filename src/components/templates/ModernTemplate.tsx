@@ -31,9 +31,9 @@ export default function ModernTemplate({ data }: TemplateProps) {
   return (
     <div style={{ 
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif',
-      padding: `${spacingSettings.pageMargin}px`,
+      padding: `${spacingSettings.pageMargin}px ${spacingSettings.pageMargin}px 8px ${spacingSettings.pageMargin}px`,
       width: '100%',
-      height: '100%',
+      minHeight: 'auto',
       backgroundColor: '#ffffff',
       color: '#1f2937',
       lineHeight: spacingSettings.lineSpacing,

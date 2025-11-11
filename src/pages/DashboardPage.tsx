@@ -356,7 +356,7 @@ export default function DashboardPage() {
                     Beta
                   </span>
                 </div>
-                <span className="text-[8px] text-black/60 -mt-1">
+                <span className="text-[11px] text-black/60 -mt-1">
                   Powered by <span className="text-red-500">redstring</span>
                 </span>
               </div>

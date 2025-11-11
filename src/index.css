@@ -128,7 +128,7 @@
   .resume-preview {
     background: white;
     width: 210mm;
-    min-height: 297mm;
+    min-height: auto;
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
     margin: 0 auto;
   }
