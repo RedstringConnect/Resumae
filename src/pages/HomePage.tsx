@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 const heroStats = [
-  { value: '120K+', label: 'Resumes created' },
+  { value: '200+', label: 'Resumes created' },
   { value: '7', label: 'Premium templates' },
   { value: '98%', label: 'Interview success' },
 ];
