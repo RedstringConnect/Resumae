@@ -8,6 +8,7 @@ import {
   Save,
   Loader2,
   Sparkles,
+  Briefcase,
 } from 'lucide-react';
 import { motion, type Variants } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -612,6 +613,33 @@ export default function BuilderPage() {
             animate="show"
             className="rounded-2xl sm:rounded-2xl border border-blue-100 bg-white/85 p-3 sm:p-4 md:p-6 shadow-2xl shadow-blue-500/10 backdrop-blur"
           >
+            <motion.a
+              variants={fadeInUp}
+              href="https://app.redstring.co.in/talent/login"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-4 flex flex-col gap-3 rounded-2xl border border-blue-200/70 bg-gradient-to-r from-white via-blue-50 to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-blue-500/10 transition duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-blue-500/20"
+            >
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-600/10 text-blue-600">
+                  <Briefcase className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm sm:text-base font-semibold text-gray-900">Land your next role faster</p>
+                  <div className="mt-1 flex items-center gap-2 text-xs sm:text-sm text-gray-600">
+                    <img src="/redstring.png" alt="Redstring" className="h-5 w-auto" />
+                    <span>Powered by the Redstring Talent Network</span>
+                  </div>
+                  <p className="mt-1 text-xs sm:text-sm text-gray-600">
+                    Jump into the Resumae Talent Portal to discover openings that match the resume you just polished.
+                  </p>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 shadow-sm">
+                Visit Job Portal
+              </span>
+            </motion.a>
+
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 rounded-xl sm:rounded-2xl border border-blue-100 bg-blue-50/60 text-xs sm:text-sm font-semibold text-blue-700 h-auto">
                 <TabsTrigger value="builder" className="py-2 sm:py-2.5 text-xs sm:text-sm">Resume Builder</TabsTrigger>
