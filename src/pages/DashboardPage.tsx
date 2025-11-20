@@ -79,24 +79,6 @@ const GradientOrbs = () => (
   </>
 );
 
-const metrics = [
-  {
-    label: 'Resumes saved',
-    value: (count: number) => `${count}`,
-    description: 'Drafts synced securely in the cloud',
-  },
-  {
-    label: 'ATS score boost',
-    value: () => '92%',
-    description: 'Average improvement after refinement',
-  },
-  {
-    label: 'Template swaps',
-    value: () => 'Unlimited',
-    description: 'Preview every layout instantly',
-  },
-];
-
 const renderTemplate = (resume: SavedResume) => {
   const { resumeData, templateType } = resume;
 

@@ -6,32 +6,12 @@ import LoginButton from '@/components/LoginButton';
 import { useAuth } from '@/contexts/AuthContext';
 import toast from 'react-hot-toast';
 import {
-  LayoutTemplate,
   ArrowRight,
   Loader2,
-  Palette,
-  MonitorSmartphone,
-  Wand2,
-  Camera,
-  Timer,
-  Briefcase,
   Brain,
   BarChart,
   Blocks,
 } from 'lucide-react';
-
-const heroStats = [
-  { value: '200+', label: 'Resumes created' },
-  { value: '7', label: 'Premium templates' },
-  { value: '98%', label: 'Interview success' },
-];
-
-const heroBenefits = [
-  { icon: LayoutTemplate, label: 'Easy all-in-one editor' },
-  { icon: MonitorSmartphone, label: 'One-click edits anywhere' },
-  { icon: Wand2, label: 'Fast creation with AI' },
-  { icon: Palette, label: 'Thousands of premium templates' },
-];
 
 const featureHighlights = [
   {
@@ -54,24 +34,6 @@ const featureHighlights = [
     description: 'Start fresh with our intuitive builder. Professional templates, smart suggestions, and instant previews make creation effortless.',
     accentBg: '#ffeccc',
     accentColor: '#b46a00',
-  },
-];
-
-const experienceSteps = [
-  {
-    step: '01',
-    title: 'Choose a template',
-    description: 'Start with one of seven proven designs tailored for modern recruiters and hiring managers.',
-  },
-  {
-    step: '02',
-    title: 'Refine every section',
-    description: 'Intuitive controls, live preview, and ATS feedback help you iterate quickly and confidently.',
-  },
-  {
-    step: '03',
-    title: 'Download instantly',
-    description: 'Export a polished PDF in a single click, ready to share with companies and talent platforms.',
   },
 ];
 
@@ -110,21 +72,6 @@ const resumeTemplates = [
     id: 'ugly',
     name: 'I Don\'t Want a Job',
     imageUrl: 'https://static.wixstatic.com/media/5c0589_d3e4e85075154a098fe9ed52cbbcefb6~mv2.png',
-  },
-];
-
-const templateCards = [
-  {
-    title: 'Modern Layouts',
-    description: 'Bold typography and clean structure designed for product, design, and tech roles.',
-  },
-  {
-    title: 'Professional Suites',
-    description: 'Elegant compositions crafted for leadership, finance, and consulting positions.',
-  },
-  {
-    title: 'Creative Canvases',
-    description: 'Expressive visuals that capture attention without overwhelming recruiters.',
   },
 ];
 
