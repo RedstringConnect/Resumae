@@ -43,25 +43,26 @@ const fadeInUp: Variants = {
   },
 };
 
-const GradientBackdrop = () => (
-  <div className="pointer-events-none absolute inset-0 -z-10">
+const GradientOrbs = () => (
+  <>
     <motion.div
-      className="absolute top-[-10rem] left-[15%] h-[26rem] w-[26rem] rounded-full bg-blue-500/10 blur-3xl"
+      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-[#fb651e]/5 blur-3xl"
       animate={{
         y: [0, 40, 0],
-        scale: [1, 1.06, 1],
+        scale: [1, 1.05, 1],
       }}
-      transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
     />
     <motion.div
-      className="absolute bottom-[-12rem] right-[12%] h-[30rem] w-[30rem] rounded-full bg-purple-500/10 blur-3xl"
+      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-[#ff9155]/5 blur-3xl"
       animate={{
         y: [0, -50, 0],
         scale: [1, 1.08, 1],
       }}
-      transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+      transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
     />
-  </div>
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(251,101,30,0.04),rgba(255,255,255,0))]" />
+  </>
 );
 
 // LocalStorage keys
@@ -463,8 +464,8 @@ export default function BuilderPage() {
 
   if (isLoadingResume) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-white via-white to-blue-50 text-gray-700">
-        <div className="rounded-2xl border border-blue-100 bg-white/80 px-10 py-8 shadow-lg shadow-blue-500/10">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-white via-white to-[#fff5ee] text-gray-700">
+        <div className="rounded-2xl border border-[#f9d6c2] bg-white/80 px-10 py-8 shadow-lg shadow-[rgba(251,101,30,0.1)]">
           <p className="text-base font-medium">Loading your resume...</p>
         </div>
       </div>
@@ -472,12 +473,19 @@ export default function BuilderPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-white to-blue-50/60">
-      <GradientBackdrop />
+    <div
+      className="relative min-h-screen overflow-hidden text-gray-900"
+      style={{
+        backgroundColor: '#f6f3ef',
+        backgroundImage: 'radial-gradient(#d4c9be 1.15px, transparent 1.15px)',
+        backgroundSize: '22px 22px',
+      }}
+    >
+      <GradientOrbs />
 
       {/* Save Dialog */}
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent className="max-w-md border border-blue-100 bg-white/90 shadow-xl shadow-blue-500/10 backdrop-blur">
+        <DialogContent className="max-w-md border border-[#f9d6c2] bg-white/90 shadow-xl shadow-[rgba(251,101,30,0.1)] backdrop-blur">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold text-gray-900">Save Resume</DialogTitle>
           </DialogHeader>
@@ -491,14 +499,14 @@ export default function BuilderPage() {
               value={resumeTitle}
               onChange={(e) => setResumeTitle(e.target.value)}
               disabled={isSaving}
-              className="border-blue-100 focus-visible:ring-blue-500"
+              className="border-[#f9d6c2] focus-visible:ring-[#fb651e]"
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-3">
-            <Button variant="outline" onClick={() => setShowSaveDialog(false)} disabled={isSaving}>
+            <Button variant="outline" onClick={() => setShowSaveDialog(false)} disabled={isSaving} className="rounded-full">
               Cancel
             </Button>
-            <Button onClick={handleSaveResume} disabled={isSaving} className="gap-2 bg-blue-600 text-white hover:bg-blue-700">
+            <Button onClick={handleSaveResume} disabled={isSaving} className="rounded-full gap-2 bg-[#fb651e] text-white hover:bg-[#e35712]">
               {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               {isSaving ? 'Saving...' : 'Save'}
             </Button>
@@ -516,7 +524,7 @@ export default function BuilderPage() {
 
       {/* ATS Score Analysis Modal */}
       <Dialog open={showATSModal} onOpenChange={setShowATSModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border border-blue-100 bg-white/95 shadow-xl shadow-blue-500/10 backdrop-blur">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border border-[#f9d6c2] bg-white/95 shadow-xl shadow-[rgba(251,101,30,0.1)] backdrop-blur">
          
           <div className="py-4">
             <AdvancedATSScanner data={resumeData} />
@@ -528,7 +536,7 @@ export default function BuilderPage() {
         initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: easing }}
-        className="fixed left-0 right-0 top-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-xl"
+        className="fixed left-0 right-0 top-0 z-40 backdrop-blur-lg"
       >
         <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
           <div className="flex items-center justify-between gap-2">
@@ -542,18 +550,18 @@ export default function BuilderPage() {
                 <div className="hidden md:flex flex-col">
                   <div className="flex items-center gap-1.5">
                     <span className="text-base sm:text-lg font-semibold tracking-tight">Resumae</span>
-                    <span className="text-[8px] font-medium uppercase tracking-wider text-blue-600/60">
+                    <span className="text-[8px] font-medium uppercase tracking-wider text-[#fb651e]/60">
                       Beta
                     </span>
                   </div>
-                  <span className="text-[11px] text-black/60 -mt-1">
-                    Powered by <span className="text-red-500">redstring</span>
+                  <span className="text-[11px] text-black/60 -mt-1 flex items-center gap-1">
+                    Powered by <img src="/redstring.png" alt="Redstring" className="h-3 w-auto" />
                   </span>
                 </div>
               </Link>
               <Link
                 to={user ? '/dashboard' : '/'}
-                className="flex items-center gap-1.5 sm:gap-2 rounded-full  bg-blue-50 border border-blue-300 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-blue-600 shadow-sm shadow-blue-500/10 transition hover:border-blue-200 hover:text-blue-600 whitespace-nowrap"
+                className="flex items-center gap-1.5 sm:gap-2 rounded-full  bg-[#fff8f2] border border-[#f6b890] px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-[#fb651e] shadow-sm shadow-[rgba(251,101,30,0.1)] transition hover:border-[#f8cfb5] hover:text-[#fb651e] whitespace-nowrap"
               >
                 <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Back
               </Link>
@@ -562,7 +570,7 @@ export default function BuilderPage() {
               <Button
                 variant="outline"
                 onClick={() => setShowTemplateSelector(true)}
-                className="gap-1.5 border-blue-200 bg-white/80 text-gray-700 hover:bg-blue-50 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
+                className="rounded-full gap-1.5 border-[#f8cfb5] bg-white/80 text-gray-700 hover:bg-[#fff8f2] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                 size="sm"
               >
                 <LayoutTemplate className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -571,7 +579,7 @@ export default function BuilderPage() {
 
               <Button
                 onClick={() => setShowATSModal(true)}
-                className="gap-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
+                className="gap-1.5 rounded-full bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 text-white hover:from-purple-700 hover:via-purple-600 hover:to-indigo-700  transition-all hover:scale-[1.02] text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 h-auto whitespace-nowrap font-semibold"
                 size="sm"
               >
                 <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -583,7 +591,7 @@ export default function BuilderPage() {
                   onClick={handleSaveClick}
                   disabled={isSaving}
                   variant="outline"
-                  className="gap-2.5 border-blue-200 bg-blue-600/10 text-blue-700 hover:bg-blue-600 hover:text-white text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
+                  className="rounded-full gap-2.5 border-[#f8cfb5] bg-[#fb651e]/10 text-[#e35712] hover:bg-[#fb651e] hover:text-white text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                   size="sm"
                 >
                   {isSaving ? <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" /> : <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
@@ -594,7 +602,7 @@ export default function BuilderPage() {
               <Button
                 onClick={handleExportPDF}
                 disabled={isExporting}
-                className="gap-1.5 bg-blue-600 text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
+                className="rounded-full gap-1.5 bg-[#fb651e] text-white shadow-lg shadow-[rgba(251,101,30,0.3)] hover:bg-[#e35712] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                 size="sm"
               >
                 <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -611,50 +619,49 @@ export default function BuilderPage() {
             variants={fadeInUp}
             initial="hidden"
             animate="show"
-            className="rounded-2xl sm:rounded-2xl border border-blue-100 bg-white/85 p-3 sm:p-4 md:p-6 shadow-2xl shadow-blue-500/10 backdrop-blur"
+            className="rounded-2xl sm:rounded-2xl border border-dashed border-[#f9d6c2] bg-white/85 p-3 sm:p-4 md:p-6 shadow-2xl shadow-[rgba(251,101,30,0.1)] backdrop-blur"
           >
             <motion.a
               variants={fadeInUp}
               href="https://app.redstring.co.in/talent/login"
               target="_blank"
               rel="noopener noreferrer"
-              className="mb-4 flex flex-col gap-3 rounded-2xl border border-blue-200/70 bg-gradient-to-r from-white via-blue-50 to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-blue-500/10 transition duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-blue-500/20"
+              className="mb-4 flex flex-col gap-3 rounded-2xl border border-[#f8cfb5]/70 bg-gradient-to-r from-[#fff3e6] via-white to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-[rgba(251,101,30,0.1)] transition duration-300 hover:-translate-y-1 hover:border-[#f6b890] hover:shadow-[rgba(251,101,30,0.2)]"
             >
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-600/10 text-blue-600">
-                  <Briefcase className="h-5 w-5" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fb651e]/10 text-[#fb651e]">
+                  <Briefcase className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-sm sm:text-base font-semibold text-gray-900">Land your next role faster</p>
                   <div className="mt-1 flex items-center gap-2 text-xs sm:text-sm text-gray-600">
+                    <span>Redstring Talent Network Powered by</span>
                     <img src="/redstring.png" alt="Redstring" className="h-5 w-auto" />
-                    <span>Powered by the Redstring Talent Network</span>
                   </div>
-                  <p className="mt-1 text-xs sm:text-sm text-gray-600">
-                    Jump into the Resumae Talent Portal to discover openings that match the resume you just polished.
-                  </p>
                 </div>
               </div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 shadow-sm">
-                Visit Job Portal
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#f8cfb5] bg-white px-4 py-2 text-xs font-semibold text-[#fb651e] shadow-sm">
+                  Visit Job Portal
+                </span>
+              </div>
             </motion.a>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 rounded-xl sm:rounded-2xl border border-blue-100 bg-blue-50/60 text-xs sm:text-sm font-semibold text-blue-700 h-auto">
+              <TabsList className="grid w-full grid-cols-2 rounded-xl sm:rounded-2xl border border-[#f9d6c2]  bg-[#fff8f2]/60 text-xs sm:text-sm font-semibold text-[#e35712] h-auto">
                 <TabsTrigger value="builder" className="py-2 sm:py-2.5 text-xs sm:text-sm">Resume Builder</TabsTrigger>
                 <TabsTrigger value="upload" className="py-2 sm:py-2.5 text-xs sm:text-sm">Upload & Analyze</TabsTrigger>
               </TabsList>
 
               <TabsContent value="builder" className="mt-4 sm:mt-6 md:mt-8 space-y-4 sm:space-y-6">
                 <div className="grid gap-4 sm:gap-6 lg:grid-cols-[420px_1fr]">
-                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-blue-100 bg-white/80 shadow-lg shadow-blue-500/10">
-                    <div className="flex items-center justify-between border-b border-blue-100 px-4 sm:px-6 py-3 sm:py-4">
+                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-[#f9d6c2] bg-white/80 border-dashed shadow-lg shadow-[rgba(251,101,30,0.1)]">
+                    <div className="flex items-center justify-between  px-4 sm:px-6 py-3 sm:py-4">
                       <h2 className="text-sm sm:text-base font-semibold text-gray-900">Resume Builder</h2>
                       <Button
                         variant="outline"
                         onClick={handleReset}
-                        className="gap-1.5 sm:gap-2 border-blue-100 text-gray-700 hover:bg-blue-50 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
+                        className="rounded-full gap-1.5 sm:gap-2 border-[#f9d6c2] text-gray-700 hover:bg-[#fff8f2] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
                         size="sm"
                       >
                         <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Reset
@@ -665,23 +672,23 @@ export default function BuilderPage() {
                     </div>
                   </div>
 
-                  <div className="hidden overflow-hidden rounded-2xl sm:rounded-3xl border border-blue-100 bg-white/75 shadow-lg shadow-blue-500/10 lg:block">
-                    <div className="flex items-center justify-between border-b border-blue-100 px-4 sm:px-6 py-3 sm:py-4">
+                  <div className="hidden overflow-hidden rounded-2xl sm:rounded-3xl border border-dashed border-[#f9d6c2] bg-[#fefaf3] shadow-lg  lg:block">
+                    <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
                       <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowTemplateSelector(true)}
-                        className="gap-1.5 sm:gap-2 text-xs text-blue-600 hover:bg-blue-50 px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
+                        className="rounded-full gap-1.5 sm:gap-2 text-xs text-[#fb651e] hover:bg-[#fff8f2] px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
                       >
                         <LayoutTemplate className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         {getTemplateName(selectedTemplate)}
                       </Button>
                     </div>
 
-                    <div className="h-[600px] md:h-[650px] overflow-y-auto bg-gradient-to-b from-blue-50/40 via-white to-white px-1 py-2">
+                    <div className="h-[600px] md:h-[650px] overflow-y-auto bg-gradient-to-b from-[#fff3e6]/40 via-white to-white px-1 py-2">
                       <div
-                        className="rounded-xl bg-white shadow-xl shadow-blue-500/20 mx-auto"
+                        className="rounded-xl bg-white shadow-xl shadow-[rgba(251,101,30,0.2)] mx-auto"
                         style={{ 
                           width: '210mm', 
                           transform: 'scale(0.85)', 
@@ -695,23 +702,23 @@ export default function BuilderPage() {
                 </div>
 
                 <div className="lg:hidden">
-                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-blue-100 bg-white/80 shadow-lg shadow-blue-500/10">
-                    <div className="flex items-center justify-between border-b border-blue-100 px-4 sm:px-6 py-3 sm:py-4">
+                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-[#f9d6c2] bg-white/80 shadow-lg shadow-[rgba(251,101,30,0.1)]">
+                    <div className="flex items-center justify-between border-b border-[#f9d6c2] px-4 sm:px-6 py-3 sm:py-4">
                       <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowTemplateSelector(true)}
-                        className="gap-1.5 sm:gap-2 text-xs text-blue-600 hover:bg-blue-50 px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
+                        className="rounded-full gap-1.5 sm:gap-2 text-xs text-[#fb651e] hover:bg-[#fff8f2] px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
                       >
                         <LayoutTemplate className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         <span className="hidden xs:inline">{getTemplateName(selectedTemplate)}</span>
                       </Button>
                     </div>
-                    <div className="relative overflow-auto bg-gradient-to-b from-blue-50/30 via-white to-white touch-pan-x touch-pan-y" style={{ height: '600px', WebkitOverflowScrolling: 'touch' }}>
+                    <div className="relative overflow-auto bg-[#fefaf3] touch-pan-x touch-pan-y" style={{ height: '600px', WebkitOverflowScrolling: 'touch' }}>
                       <div className="inline-block min-w-full" >
                         <div
-                          className="rounded-lg sm:rounded-xl bg-white shadow-xl shadow-blue-500/20 mx-auto"
+                          className="rounded-lg sm:rounded-xl bg-white shadow-xl shadow-[rgba(251,101,30,0.2)] mx-auto"
                           style={{
                             width: '210mm',
                             transform: 'scale(1)',
@@ -724,7 +731,7 @@ export default function BuilderPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-blue-50/50 px-3 sm:px-4 py-2 text-center border-t border-blue-100">
+                    <div className="bg-[#fff8f2]/50 px-3 sm:px-4 py-2 text-center border-t border-[#f9d6c2]">
                       <p className="text-[10px] sm:text-xs text-gray-600">↔ Scroll to view full resume ↕</p>
                     </div>
                   </div>
@@ -738,7 +745,7 @@ export default function BuilderPage() {
               <TabsContent value="upload" className="mt-4 sm:mt-6 md:mt-8">
                 <motion.div
                   variants={fadeInUp}
-                  className="rounded-2xl sm:rounded-3xl border border-blue-100 bg-white/80 p-4 sm:p-6 shadow-lg shadow-blue-500/10 backdrop-blur"
+                  className="rounded-2xl sm:rounded-3xl border border-[#f9d6c2] bg-white/80 p-4 sm:p-6 shadow-lg shadow-[rgba(251,101,30,0.1)] backdrop-blur"
                 >
                   <PDFATSUploader onParseComplete={handleUploadComplete} />
                 </motion.div>

@@ -1,22 +1,23 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
-import { motion, useInView, useScroll, useTransform, type Variants } from 'framer-motion';
+import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent } from 'react';
+import { motion, useInView, useScroll, useTransform, AnimatePresence, type Variants } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LoginButton from '@/components/LoginButton';
 import { useAuth } from '@/contexts/AuthContext';
 import toast from 'react-hot-toast';
 import {
-  Sparkles,
   LayoutTemplate,
   ArrowRight,
-  BarChart3,
-  ShieldCheck,
-  Brain,
-  Users,
-  Clock3,
-  CheckCircle2,
   Loader2,
+  Palette,
+  MonitorSmartphone,
+  Wand2,
+  Camera,
+  Timer,
+  Briefcase,
+  Brain,
+  BarChart,
+  Blocks,
 } from 'lucide-react';
 
 const heroStats = [
@@ -25,21 +26,34 @@ const heroStats = [
   { value: '98%', label: 'Interview success' },
 ];
 
+const heroBenefits = [
+  { icon: LayoutTemplate, label: 'Easy all-in-one editor' },
+  { icon: MonitorSmartphone, label: 'One-click edits anywhere' },
+  { icon: Wand2, label: 'Fast creation with AI' },
+  { icon: Palette, label: 'Thousands of premium templates' },
+];
+
 const featureHighlights = [
   {
-    icon: BarChart3,
-    title: 'ATS Optimized Insights',
-    description: 'Real-time scoring ensures your resume passes leading applicant tracking systems without the guesswork.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Privacy-First Design',
-    description: 'Your data stays yours. Secure autosave and encrypted storage keep every detail protected.',
-  },
-  {
     icon: Brain,
-    title: 'Guided Recommendations',
-    description: 'Smart prompts help you articulate wins, metrics, and achievements with clarity and impact.',
+    title: 'AI-Powered Resume Parser',
+    description: 'Upload your existing resume and let our AI instantly extract and format all your information. Save hours of manual data entry.',
+    accentBg: '#e4e6ff',
+    accentColor: '#2a3dbd',
+  },
+  {
+    icon: BarChart,
+    title: 'Advanced ATS Analytics',
+    description: 'Get real-time feedback on how your resume performs against Applicant Tracking Systems. Optimize for better job matches.',
+    accentBg: '#d6f7d5',
+    accentColor: '#0a7b29',
+  },
+  {
+    icon: Blocks,
+    title: 'Build From Scratch',
+    description: 'Start fresh with our intuitive builder. Professional templates, smart suggestions, and instant previews make creation effortless.',
+    accentBg: '#ffeccc',
+    accentColor: '#b46a00',
   },
 ];
 
@@ -61,6 +75,44 @@ const experienceSteps = [
   },
 ];
 
+const resumeTemplates = [
+  {
+    id: 'modern',
+    name: 'Modern',
+    imageUrl: 'https://static.wixstatic.com/media/5c0589_3f3478d101914b86a94b87e2060148a7~mv2.png',
+  },
+  {
+    id: 'executive',
+    name: 'Executive',
+    imageUrl: 'https://static.wixstatic.com/media/5c0589_ede979d665e9417fa087494a38873355~mv2.png',
+  },
+  {
+    id: 'technical',
+    name: 'Technical',
+    imageUrl: 'https://static.wixstatic.com/media/5c0589_3dbd1d9927654d0392a47bd075897d8a~mv2.png',
+  },
+  {
+    id: 'classic',
+    name: 'Classic',
+    imageUrl: 'https://static.wixstatic.com/media/5c0589_438ecda1168249db860ce1056c283520~mv2.png',
+  },
+  {
+    id: 'professional',
+    name: 'Professional',
+    imageUrl: 'https://static.wixstatic.com/media/5c0589_cda9004a5dd14b33bc5397fb964ec849~mv2.png',
+  },
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    imageUrl: 'https://static.wixstatic.com/media/5c0589_3f9e69e6d61f4495a0502193c206bc8e~mv2.png',
+  },
+  {
+    id: 'ugly',
+    name: 'I Don\'t Want a Job',
+    imageUrl: 'https://static.wixstatic.com/media/5c0589_d3e4e85075154a098fe9ed52cbbcefb6~mv2.png',
+  },
+];
+
 const templateCards = [
   {
     title: 'Modern Layouts',
@@ -79,15 +131,39 @@ const templateCards = [
 const testimonials = [
   {
     quote:
-      '"Resumae helped me land two interviews in the first week. The ATS tips and instant preview made it ridiculously easy."',
-    name: 'Priya Deshmukh',
-    role: 'Product Manager @ Segmently',
+      'The AI parser saved me hours! I uploaded my old resume and it instantly formatted everything perfectly. The ATS scanner helped me get past the initial screening.',
+    name: 'Sarah Mitchell',
+    role: 'Software Engineer',
   },
   {
     quote:
-      '“I rebuilt my resume in under 30 minutes. Recruiters immediately noticed the difference in clarity and structure.”',
-    name: 'Jason Wu',
-    role: 'Senior Data Analyst @ Flowwave',
+      'Building my resume from scratch was surprisingly easy. The templates are professional and the live preview made it simple to see exactly how it would look.',
+    name: 'David Chen',
+    role: 'Product Manager',
+  },
+  {
+    quote:
+      'The ATS analytics feature is a game-changer. I could see exactly what keywords I was missing and how to optimize my resume. Got three interviews in one week!',
+    name: 'Emily Rodriguez',
+    role: 'Marketing Specialist',
+  },
+  {
+    quote:
+      'I tried multiple resume builders before finding Resumae. The interface is intuitive, templates are modern, and the export quality is excellent. Highly recommend!',
+    name: 'Michael Thompson',
+    role: 'Data Analyst',
+  },
+  {
+    quote:
+      'As a career changer, I needed my resume to stand out. The professional templates and smart suggestions helped me highlight my transferable skills perfectly.',
+    name: 'Jessica Williams',
+    role: 'UX Designer',
+  },
+  {
+    quote:
+      'The speed and ease of use are impressive. I updated my resume in under 20 minutes and the final PDF looked incredibly professional. Worth every minute!',
+    name: 'Robert Kumar',
+    role: 'Business Analyst',
   },
 ];
 
@@ -114,7 +190,7 @@ const staggerContainer: Variants = {
 const GradientOrbs = () => (
   <>
     <motion.div
-      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-blue-500/10 blur-3xl"
+      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-[#fb651e]/5 blur-3xl"
       animate={{
         y: [0, 40, 0],
         scale: [1, 1.05, 1],
@@ -122,25 +198,35 @@ const GradientOrbs = () => (
       transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
     />
     <motion.div
-      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-purple-500/10 blur-3xl"
+      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-[#ff9155]/5 blur-3xl"
       animate={{
         y: [0, -50, 0],
         scale: [1, 1.08, 1],
       }}
       transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
     />
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.08),rgba(255,255,255,0))]" />
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(251,101,30,0.04),rgba(255,255,255,0))]" />
   </>
 );
 
 export default function HomePage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [isCursorActive, setIsCursorActive] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
+  const [scrollX, setScrollX] = useState(0);
   const { user, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const parallax = useTransform(scrollY, [0, 400], [0, -80]);
+
+  const resumeImages = [
+    'https://static.wixstatic.com/media/5c0589_ede979d665e9417fa087494a38873355~mv2.png',
+    'https://static.wixstatic.com/media/5c0589_3f3478d101914b86a94b87e2060148a7~mv2.png'
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -149,6 +235,35 @@ export default function HomePage() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!isHovering) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % resumeImages.length);
+      }, 4000);
+      return () => clearInterval(interval);
+    }
+  }, [isHovering]);
+
+  // Infinite scroll animation for templates
+  useEffect(() => {
+    const cardWidth = 300 + 24; // card width + gap
+    const totalWidth = cardWidth * resumeTemplates.length;
+    let animationFrameId: number;
+    let startTime: number | null = null;
+    const duration = 40000; // 40 seconds for one complete cycle
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = (elapsed % duration) / duration;
+      setScrollX(-(progress * totalWidth));
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
   const handleStartBuilding = async () => {
@@ -180,9 +295,49 @@ export default function HomePage() {
   const testimonialsRef = useRef<HTMLDivElement>(null);
   const testimonialsInView = useInView(testimonialsRef, { once: true, amount: 0.2 });
 
+  const handleCanvasMove = (event: ReactMouseEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setCursorPos({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    });
+    if (!isCursorActive) {
+      setIsCursorActive(true);
+    }
+  };
+
+  const handleCanvasLeave = () => setIsCursorActive(false);
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-white to-blue-50/40 text-gray-900">
+    <div
+      className="relative min-h-screen overflow-hidden text-gray-900"
+      style={{
+        backgroundColor: '#f6f3ef',
+        backgroundImage: 'radial-gradient(#d4c9be 1.15px, transparent 1.15px)',
+        backgroundSize: '22px 22px',
+      }}
+      onMouseMove={handleCanvasMove}
+      onMouseLeave={handleCanvasLeave}
+    >
       <GradientOrbs />
+      <motion.div
+        className="pointer-events-none absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={
+          isCursorActive
+            ? { opacity: 1 }
+            : { opacity: 0 }
+        }
+        transition={{
+          opacity: { duration: 0.3, ease: 'easeOut' },
+        }}
+        style={{
+          backgroundImage: 'radial-gradient(#fb651e 1.5px, transparent 1.5px)',
+          backgroundSize: '20px 20px',
+          clipPath: `circle(80px at ${cursorPos.x}px ${cursorPos.y}px)`,
+          WebkitClipPath: `circle(80px at ${cursorPos.x}px ${cursorPos.y}px)`,
+        }}
+      />
 
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
@@ -190,29 +345,29 @@ export default function HomePage() {
         transition={{ duration: 0.6 }}
         className={`${
           isScrolled
-            ? 'bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-500/5 ring-1 ring-blue-500/10'
-            : 'bg-white/50 backdrop-blur-md'
-        } fixed top-0 left-0 right-0 z-50 border-b border-white/20 transition-all duration-300`}
+            ? 'backdrop-blur-lg ring-1 ring-[#fb651e]/10'
+            : ' '
+        } fixed top-0 left-0 right-0 z-50  transition-all duration-300`}
       >
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <motion.div className="flex items-center gap-2" variants={staggerContainer} initial="hidden" animate="show">
+          <motion.div className="flex items-center gap-3" variants={staggerContainer} initial="hidden" animate="show">
             <motion.img
               src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
               alt="Resumae"
               className="h-9 w-auto"
               variants={fadeInUp}
             />
-            <div className="flex flex-col">
-              <motion.div className="flex items-center gap-1.5" variants={fadeInUp}>
-                <span className="text-lg font-semibold tracking-tight">Resumae</span>
-                <span className="text-[8px] font-medium uppercase tracking-wider text-blue-600/60">
+            <motion.div className="flex flex-col" variants={fadeInUp}>
+              <div className="flex items-center gap-1.5">
+                <span className="text-lg font-bold tracking-tight text-gray-900">Resumae</span>
+                <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-blue-600">
                   Beta
                 </span>
-              </motion.div>
-              <motion.span className="text-[11px] text-black/60 -mt-1" variants={fadeInUp}>
-                Powered by <span className="text-red-500">redstring</span>
-              </motion.span>
-            </div>
+              </div>
+              <span className="text-[11px] text-gray-500 -mt-0.5 flex items-center gap-1">
+                Powered by <img src="/redstring.png" alt="Redstring" className="h-3 w-auto" />
+              </span>
+            </motion.div>
           </motion.div>
           <div className="flex  items-center gap-3">
             <LoginButton />
@@ -229,337 +384,247 @@ export default function HomePage() {
             variants={staggerContainer}
             initial="hidden"
             animate="show"
-            className="mx-auto flex max-w-5xl flex-col items-center text-center"
+            className="mx-auto max-w-6xl"
           >
-            <motion.div 
-              variants={fadeInUp}
-              className="mb-6 sm:mb-8 flex flex-col items-center"
-            >
-              <img 
-                src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png" 
-                alt="Resumae Logo" 
-                className="h-32 sm:h-40 md:h-48 lg:h-56 w-auto animate-float-logo"
-              />
-              <img 
-                src="https://static.wixstatic.com/media/5c0589_473db15555bf4a269b856527b650e913~mv2.png" 
-                alt="Shadow" 
-                className="w-32 sm:w-40 md:w-48 lg:w-56 h-auto -mt-2 sm:-mt-3 opacity-60 animate-float-shadow"
-              />
-            </motion.div>
-
-          
-
-            <motion.div variants={fadeInUp} className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
-              <Sparkles className="h-4 w-4 text-blue-600" />
-              <span className="flex items-center gap-2 text-sm font-medium text-blue-700">
-                Powered by
-                <img src="/redstring.png" alt="redstring" className="h-5 w-auto" />
-              </span>
-            </motion.div>
-
-            <motion.h1
-              variants={fadeInUp}
-              className="relative text-5xl font-extrabold tracking-tight text-gray-900 sm:text-6xl md:text-7xl lg:text-8xl"
-            >
-              <span className="block">Build Your Perfect</span>
-              <span className="block">
-                <span className="text-gray-900">Resume in </span>
-                <span className="relative inline-flex flex-col items-center text-blue-600">
-                  Minutes
-                  <motion.span
-                    className="mt-2 h-1 w-full rounded-full bg-blue-500/60"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ delay: 0.4, duration: 0.6, ease: 'easeOut' }}
+            <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+              <div className="text-center lg:text-left">
+                <motion.div variants={fadeInUp} className="inline-flex items-center gap-3 rounded-full border border-[#f9d6c2] bg-[#fff7f0]/80 px-4 py-2 shadow-sm backdrop-blur">
+                  <img
+                    src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
+                    alt="Resumae"
+                    className="h-8 w-auto"
                   />
-                </span>
-              </span>
-            </motion.h1>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#fb651e]">Resumae</p>
+                    <span className="text-xs text-gray-400">|</span>
+                    <p className="text-xs text-gray-500 flex items-center gap-1">Powered by <img src="/redstring.png" alt="Redstring" className="h-3 w-auto" /></p>
+                  </div>
+                </motion.div>
 
-            <motion.p
-              variants={fadeInUp}
-              className="mt-6 max-w-2xl text-lg text-gray-600 sm:text-xl md:text-2xl"
-            >
-              Create professional, ATS-friendly resumes with our intuitive builder. Choose from premium templates and land your dream job faster.
-            </motion.p>
+                <motion.h1
+                  variants={fadeInUp}
+                  className="mt-6 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl"
+                >
+                  <span className="block">Build Your Perfect</span>
+                  <span className="block">
+                    <span className="text-gray-900">Resume in </span>
+                    <span className="relative inline-flex flex-col" style={{ color: '#fb651e' }}>
+                      Minutes
+                      <motion.span
+                        className="mt-2 h-1 w-full rounded-full"
+                        style={{ backgroundColor: '#fb651e', opacity: 0.6 }}
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ delay: 0.4, duration: 0.6, ease: 'easeOut' }}
+                      />
+                    </span>
+                  </span>
+                </motion.h1>
 
-            <motion.div variants={fadeInUp} className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-              <Button 
-                onClick={handleStartBuilding}
-                disabled={isSigningIn}
-                size="lg" 
-                className="h-14 rounded-full bg-blue-600 px-10 text-lg shadow-xl shadow-blue-500/30 transition-all hover:-translate-y-1 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed"
+                <motion.p
+                  variants={fadeInUp}
+                  className="mt-6 text-lg text-gray-600 sm:text-xl"
+                >
+                  Create professional, ATS-friendly resumes with our intuitive builder. Choose from premium templates and land your dream job faster.
+                </motion.p>
+
+                <motion.div variants={fadeInUp} className="mt-8 flex flex-col items-center gap-4 sm:flex-row lg:items-center lg:justify-start">
+                  <Button
+                    onClick={handleStartBuilding}
+                    disabled={isSigningIn}
+                    size="lg"
+                    className="h-14 rounded-full bg-[#fb651e] px-10 text-lg text-white shadow-xl  transition-all hover:-translate-y-1 hover:bg-[#e35712] disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isSigningIn ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      <>
+                        Start Building for Free <ArrowRight className="ml-2 h-5 w-5" />
+                      </>
+                    )}
+                  </Button>
+                
+                </motion.div>
+
+              
+
+               
+              </div>
+
+              <motion.div
+                variants={fadeInUp}
+                className="relative mx-auto w-full max-w-xl flex items-center justify-center"
+                style={{ perspective: '1000px' }}
               >
-                {isSigningIn ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    Start Building for Free <ArrowRight className="ml-2 h-5 w-5" />
-                  </>
-                )}
-              </Button>
-              <div className="flex items-center text-sm text-gray-500">
-                <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
-                No credit card required
+                <div 
+                  className="relative rounded-[32px] bg-transparent overflow-hidden cursor-pointer" 
+                  style={{ width: '100%', maxWidth: '400px' }}
+                  onMouseEnter={() => {
+                    setIsHovering(true);
+                    setTimeout(() => {
+                      setCurrentImageIndex((prev) => (prev === 0 ? 1 : 0));
+                    }, 50);
+                  }}
+                  onMouseLeave={() => {
+                    setIsHovering(false);
+                  }}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.img
+                      key={currentImageIndex}
+                      src={resumeImages[currentImageIndex]}
+                      alt="Resume Template Preview"
+                      className="w-full h-auto object-contain pointer-events-none"
+                      initial={{ rotateY: 90, opacity: 0 }}
+                      animate={{ rotateY: 0, opacity: 1 }}
+                      exit={{ rotateY: -90, opacity: 0 }}
+                      transition={{ duration: 0.6, ease: 'easeInOut' }}
+                      style={{ transformStyle: 'preserve-3d' }}
+                    />
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section ref={featuresRef} className="relative mt-32 max-w-6xl mx-auto">
+        <div className="container mx-auto px-4">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate={featuresInView ? 'show' : 'hidden'}
+            className="space-y-16"
+          >
+            <motion.div variants={fadeInUp} className="relative">
+              <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                <div className="space-y-4">
+                 
+                  <h2 className="text-4xl font-black leading-tight tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+                    Powerful features
+                    <br />
+                    <span className="relative inline-block">
+                      <span className="relative z-10">that work for you</span>
+                      <span className="pointer-events-none absolute inset-x-0 bottom-1 h-4 rounded-full bg-[#fb651e]/60" />
+                     
+                    </span>
+                  </h2>
+                </div>
+
+                <div className="hidden lg:flex items-center justify-center flex-1 px-8">
+                  <img src="/arrow.png" alt="arrow" className='w-32 xl:w-40 -rotate-45 object-contain' />
+                </div>
+
+                <div className="relative flex items-center justify-center">
+                  <Button
+                    onClick={handleStartBuilding}
+                    disabled={isSigningIn}
+                    className="rounded-full bg-[#fb651e] px-10 py-4 text-lg font-semibold text-white  transition-transform hover:-translate-y-1 hover:bg-[#fb651e]/80 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isSigningIn ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      <>
+                        Get Started Free
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </>
+                    )}
+                  </Button>
+
+
+
+                </div>
               </div>
             </motion.div>
 
-            <motion.div variants={fadeInUp} className="mt-12 grid w-full max-w-3xl grid-cols-1 gap-4 rounded-2xl border border-blue-100/50 bg-white/80 p-6 shadow-lg shadow-blue-500/5 backdrop-blur sm:grid-cols-3">
-              {heroStats.map((stat) => (
-                <div key={stat.label} className="flex flex-col items-center gap-1">
-                  <span className="text-3xl font-bold text-blue-600">{stat.value}</span>
-                  <span className="text-sm text-gray-500">{stat.label}</span>
+            <motion.div variants={fadeInUp} className="grid gap-10 md:grid-cols-3">
+              {featureHighlights.map(({ icon: Icon, title, description, accentBg, accentColor }) => (
+                <div key={title} className="space-y-4">
+                  <div
+                    className="inline-flex h-14 w-14 items-center justify-center rounded-full"
+                    style={{ backgroundColor: accentBg }}
+                  >
+                    <Icon className="h-6 w-6" style={{ color: accentColor }} />
+                  </div>
+                  <p className="text-xl font-semibold text-gray-900">{title}</p>
+                  <p className="text-base text-gray-600">{description}</p>
                 </div>
               ))}
             </motion.div>
           </motion.div>
         </div>
-
-        {/* Floating preview illustration */}
-        <motion.div
-          className="pointer-events-none mx-auto mt-20 w-full max-w-5xl"
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.8, ease: 'easeOut' }}
-        >
-          <div className="relative overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-2xl shadow-blue-500/10">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.08),transparent)]" />
-            <div className="relative grid gap-6 p-8 lg:grid-cols-[320px_1fr]">
-              <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-white p-6">
-                <div className="mb-4 flex items-center gap-2">
-                  <LayoutTemplate className="h-5 w-5 text-blue-600" />
-                  <span className="text-sm font-semibold text-blue-600">Real-time preview</span>
-                </div>
-                <div className="space-y-4 text-left text-sm text-gray-600">
-                  <p>Adjust spacing, choose templates, and watch your resume update instantly.</p>
-                  <p>Every tweak is reflected in milliseconds with printer-ready precision.</p>
-                </div>
-              </div>
-              <div className="rounded-2xl border border-blue-100 bg-white p-6">
-                <div className="grid gap-4 text-left text-gray-600">
-                  <div className="h-3 rounded bg-gray-200/80" />
-                  <div className="h-3 rounded bg-gray-200/70" />
-                  <div className="h-3 rounded bg-gray-200/60" />
-                  <div className="mt-6 grid gap-3">
-                    <div className="h-2 rounded bg-blue-200/80" />
-                    <div className="h-2 rounded bg-blue-200/70" />
-                    <div className="h-2 rounded bg-blue-200/60" />
-                  </div>
-                  <div className="mt-6 grid gap-3">
-                    <div className="h-2 rounded bg-gray-200/80" />
-                    <div className="h-2 rounded bg-gray-200/70" />
-                    <div className="h-2 rounded bg-gray-200/60" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </section>
 
-      {/* Features */}
-      <section ref={featuresRef} className="relative mt-32">
+      {/* Process - Template Showcase */}
+      <section ref={processRef} className="relative mt-32 overflow-hidden">
         <div className="container mx-auto px-4">
           <motion.div
             variants={fadeInUp}
             initial="hidden"
-            animate={featuresInView ? 'show' : 'hidden'}
-            className="mx-auto max-w-3xl text-center"
+            animate={processInView ? 'show' : 'hidden'}
+            className="mx-auto max-w-3xl text-center mb-12"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white/80 px-4 py-2 text-sm font-medium text-blue-700 shadow-sm">
-              <Sparkles className="h-4 w-4" />
-              Built to impress hiring teams
-            </div>
-            <h2 className="mt-6 text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl">Everything you need to succeed</h2>
-            <p className="mt-4 text-base text-gray-600 sm:text-lg">
-              Resumae combines beautiful design, guided strategy, and ATS intelligence so you can ship a resume that stands out in every stack.
+          
+            <h2 className="mt-6 text-3xl font-extrabold tracking-tighter text-gray-900 sm:text-5xl">
+              Choose from our professional templates
+            </h2>
+            <p className="mt-4 text-gray-600">
+              All templates are ATS-friendly and designed by professionals
             </p>
           </motion.div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            animate={featuresInView ? 'show' : 'hidden'}
-            className="mt-12 grid gap-6 md:grid-cols-3"
-          >
-            {featureHighlights.map(({ icon: Icon, title, description }) => (
-              <motion.div key={title} variants={fadeInUp}>
-                <Card className="group h-full border border-blue-100/60 bg-white/80 shadow-xl shadow-blue-500/5 backdrop-blur transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-2xl">
-                  <CardHeader>
-                    <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600">
-                      <Icon className="h-5 w-5" />
+          {/* Infinite Scroll Animation */}
+          <div className="relative overflow-hidden py-8">
+            <div 
+              className="flex gap-6"
+              style={{
+                transform: `translateX(${scrollX}px)`,
+                willChange: 'transform',
+              }}
+            >
+              {/* Render templates twice for seamless infinite loop */}
+              {[...resumeTemplates, ...resumeTemplates].map((template, index) => (
+                <div
+                  key={`${template.id}-${index}`}
+                  className="flex-shrink-0 w-[300px]"
+                >
+                  <div className="rounded-2xl border-2 border-[#f9d6c2] bg-white p-4 shadow-2xl shadow-[rgba(251,101,30,0.1)] hover:border-[#fb651e] hover:shadow-[rgba(251,101,30,0.2)] hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+                    <div className="relative aspect-[1/1.4] overflow-hidden rounded-lg bg-gray-50">
+                      <img
+                        src={template.imageUrl}
+                        alt={template.name}
+                        className="h-full w-full object-cover object-top"
+                        draggable="false"
+                      />
                     </div>
-                    <CardTitle className="text-lg text-gray-900">{title}</CardTitle>
-                    <CardDescription className="mt-2 text-sm text-gray-600">{description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Process */}
-      <section ref={processRef} className="relative mt-32">
-        <div className="container mx-auto px-4">
-          <motion.div
-            variants={fadeInUp}
-            initial="hidden"
-            animate={processInView ? 'show' : 'hidden'}
-            className="mx-auto max-w-3xl text-center"
-          >
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-blue-600">
-              Guided Experience
-            </div>
-            <h2 className="mt-6 text-3xl font-bold text-gray-900 sm:text-4xl">
-              A seamless journey from idea to polished resume
-            </h2>
-          </motion.div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            animate={processInView ? 'show' : 'hidden'}
-            className="mt-12 grid gap-6 md:grid-cols-3"
-          >
-            {experienceSteps.map((step) => (
-              <motion.div key={step.title} variants={fadeInUp}>
-                <div className="relative h-full rounded-2xl border border-blue-100/60 bg-white/80 p-6 shadow-xl shadow-blue-500/5 backdrop-blur transition-all duration-300 hover:-translate-y-2 hover:border-blue-200">
-                  <div className="absolute -top-5 left-6 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-500/30">
-                    {step.step}
+                    <div className="mt-4 text-center">
+                      <h3 className="text-lg font-semibold text-gray-900">{template.name}</h3>
+                    </div>
                   </div>
-                  <h3 className="mt-6 text-xl font-semibold text-gray-900">{step.title}</h3>
-                  <p className="mt-3 text-sm text-gray-600">{step.description}</p>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+              ))}
+            </div>
 
-      {/* Templates Showcase */}
-      <section className="relative mt-32">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
-            <motion.div
-              variants={fadeInUp}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.3 }}
-              className="rounded-3xl border border-blue-100 bg-white/80 p-8 shadow-2xl shadow-blue-500/10 backdrop-blur"
-            >
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
-                Templates
-              </div>
-              <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">Premium templates built for every industry</h2>
-              <p className="mt-4 text-base text-gray-600">
-                From modern tech to executive leadership, pick the style that mirrors the role you want. Customize headers, accents, and sections in seconds.
-              </p>
-
-              <div className="mt-8 grid gap-5 sm:grid-cols-3">
-                {templateCards.map((card) => (
-                  <div key={card.title} className="rounded-2xl border border-blue-100/70 bg-white/70 p-5 text-sm text-gray-600 shadow-sm shadow-blue-500/5">
-                    <h3 className="text-base font-semibold text-gray-900">{card.title}</h3>
-                    <p className="mt-3 text-xs text-gray-500">{card.description}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-10 flex items-center gap-4 text-sm text-gray-500">
-                <LayoutTemplate className="h-5 w-5 text-blue-600" />
-                Instant preview across all templates
-              </div>
-            </motion.div>
-
-            <motion.div
-              variants={fadeInUp}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.3 }}
-              className="flex items-center justify-center"
-            >
-              <div className="relative w-full max-w-md">
-                <motion.div
-                  className="absolute left-6 top-10 h-72 w-48 rounded-3xl border border-blue-100 bg-white shadow-2xl shadow-blue-500/20"
-                  initial={{ rotate: -8, opacity: 0, y: 40 }}
-                  animate={{ rotate: -6, opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
-                >
-                  <div className="h-full rounded-3xl bg-gradient-to-br from-blue-50 to-white p-5" />
-                </motion.div>
-                <motion.div
-                  className="relative z-10 h-80 rounded-3xl border border-blue-100 bg-white shadow-2xl shadow-blue-500/20"
-                  initial={{ rotate: 6, opacity: 0, y: 60 }}
-                  animate={{ rotate: 3, opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35, duration: 0.6 }}
-                >
-                  <div className="h-full rounded-3xl bg-gradient-to-br from-white via-blue-50 to-blue-100/60 p-6">
-                    <div className="mb-4 h-4 rounded bg-blue-200/80" />
-                    <div className="space-y-2">
-                      <div className="h-2 rounded bg-blue-200/70" />
-                      <div className="h-2 rounded bg-blue-200/60" />
-                      <div className="h-2 rounded bg-blue-200/50" />
-                    </div>
-                    <div className="mt-6 space-y-2">
-                      <div className="h-2 rounded bg-gray-200/70" />
-                      <div className="h-2 rounded bg-gray-200/70" />
-                      <div className="h-2 rounded bg-gray-200/60" />
-                    </div>
-                    <div className="mt-6 grid gap-2">
-                      <div className="h-2 rounded bg-blue-200/70" />
-                      <div className="h-2 rounded bg-blue-200/60" />
-                      <div className="h-2 rounded bg-blue-200/50" />
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
+            {/* Gradient overlays for fade effect */}
+            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#f6f3ef] to-transparent z-10" />
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#f6f3ef] to-transparent z-10" />
           </div>
+
+          
         </div>
       </section>
 
-      {/* Metrics */}
-      <section className="relative mt-32">
-        <div className="container mx-auto px-4">
-          <motion.div
-            className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 p-10 text-white shadow-2xl shadow-blue-500/30"
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.3em]">
-                  Proof
-                </div>
-                <h2 className="mt-5 text-3xl font-semibold leading-tight sm:text-4xl">
-                  Trusted by job seekers across product, design, data, and operations teams globally.
-                </h2>
-                <p className="mt-4 max-w-xl text-sm text-blue-100">
-                  Join thousands of ambitious professionals who rely on Resumae to build resumes that convert interviews into offers.
-                </p>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-3">
-                {[
-                  { icon: Users, label: 'Teams upskilled', value: '4.8/5 Avg. rating' },
-                  { icon: Clock3, label: 'Faster delivery', value: '30 min to polished' },
-                  { icon: LayoutTemplate, label: 'Template swaps', value: 'Unlimited variations' },
-                ].map(({ icon: Icon, label, value }) => (
-                  <div key={label} className="rounded-2xl border border-white/20 bg-white/10 p-4">
-                    <Icon className="h-5 w-5 text-white/80" />
-                    <p className="mt-3 text-xs uppercase tracking-wider text-white/70">{label}</p>
-                    <p className="mt-2 text-sm font-semibold">{value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+    
+
+    
 
       {/* Testimonials */}
       <section ref={testimonialsRef} className="relative mt-32 mb-32">
@@ -568,27 +633,34 @@ export default function HomePage() {
             variants={fadeInUp}
             initial="hidden"
             animate={testimonialsInView ? 'show' : 'hidden'}
-            className="mx-auto max-w-2xl text-center"
+            className="mx-auto max-w-2xl text-center mb-12"
           >
-            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">
-              Community Voices
-            </div>
-            <h2 className="mt-5 text-3xl font-bold text-gray-900 sm:text-4xl">Stories from builders who trusted Resumae</h2>
+            <h2 className="text-3xl font-extrabold tracking-tighter text-gray-900 sm:text-5xl">
+              Loved by job seekers everywhere
+            </h2>
+            
           </motion.div>
 
           <motion.div
             variants={staggerContainer}
             initial="hidden"
             animate={testimonialsInView ? 'show' : 'hidden'}
-            className="mt-10 grid gap-6 md:grid-cols-2"
+            className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           >
-            {testimonials.map((testimonial) => (
-              <motion.div key={testimonial.name} variants={fadeInUp}>
-                <div className="h-full rounded-3xl border border-blue-100/60 bg-white/80 p-6 text-left shadow-xl shadow-blue-500/5 backdrop-blur">
-                  <p className="text-sm italic text-gray-600">{testimonial.quote}</p>
-                  <div className="mt-6">
-                    <p className="text-sm font-semibold text-gray-900">{testimonial.name}</p>
-                    <p className="text-xs text-gray-500">{testimonial.role}</p>
+            {testimonials.map((testimonial, index) => (
+              <motion.div key={`${testimonial.name}-${index}`} variants={fadeInUp}>
+                <div className="h-full rounded-2xl  bg-white p-6 shadow-lg  hover:shadow-xl hover:shadow-[rgba(251,101,30,0.15)] hover:border-[#fb651e] transition-all duration-300">
+                  <div className="mb-4">
+                    <svg className="h-8 w-8 text-[#fb651e]/30" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed mb-6">
+                    {testimonial.quote}
+                  </p>
+                  <div className="border-t border-[#f9d6c2] pt-4">
+                    <p className="text-sm font-bold text-gray-900">{testimonial.name}</p>
+                    <p className="text-xs text-gray-500 mt-1">{testimonial.role}</p>
                   </div>
                 </div>
               </motion.div>
@@ -596,6 +668,33 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="relative border-t border-[#f9d6c2] py-6 mt-16">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:justify-between">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <span>© 2025 Resumae. All rights reserved.</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500">Powered by</span>
+              <a 
+                href="https://redstring.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 transition-opacity hover:opacity-70"
+              >
+                <img 
+                  src="/redstring.png" 
+                  alt="Redstring" 
+                  className="h-5 w-auto"
+                />
+                <span className="text-sm font-semibold text-red-500">Redstring</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
