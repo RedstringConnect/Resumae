@@ -636,7 +636,6 @@ export default function HomePage() {
                   alt="Redstring" 
                   className="h-5 w-auto"
                 />
-                <span className="text-sm font-semibold text-red-500">Redstring</span>
               </a>
             </div>
           </div>
