@@ -2,15 +2,21 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent } from 'react';
 import { motion, useInView, useScroll, useTransform, AnimatePresence, type Variants } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import LoginButton from '@/components/LoginButton';
 import { useAuth } from '@/contexts/AuthContext';
 import toast from 'react-hot-toast';
+import emailjs from '@emailjs/browser';
 import {
   ArrowRight,
   Loader2,
   Brain,
   BarChart,
   Blocks,
+  MessageSquare,
 } from 'lucide-react';
 
 const featureHighlights = [
@@ -32,8 +38,8 @@ const featureHighlights = [
     icon: Blocks,
     title: 'Build From Scratch',
     description: 'Start fresh with our intuitive builder. Professional templates, smart suggestions, and instant previews make creation effortless.',
-    accentBg: '#ffeccc',
-    accentColor: '#b46a00',
+    accentBg: '#e0e7ff',
+    accentColor: '#2563eb',
   },
 ];
 
@@ -137,7 +143,7 @@ const staggerContainer: Variants = {
 const GradientOrbs = () => (
   <>
     <motion.div
-      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-[#fb651e]/5 blur-3xl"
+      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-[#2563eb]/10 blur-3xl"
       animate={{
         y: [0, 40, 0],
         scale: [1, 1.05, 1],
@@ -145,14 +151,14 @@ const GradientOrbs = () => (
       transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
     />
     <motion.div
-      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-[#ff9155]/5 blur-3xl"
+      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-[#2563eb]/5 blur-3xl"
       animate={{
         y: [0, -50, 0],
         scale: [1, 1.08, 1],
       }}
       transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
     />
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(251,101,30,0.04),rgba(255,255,255,0))]" />
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.06),rgba(255,255,255,0))]" />
   </>
 );
 
@@ -164,6 +170,11 @@ export default function HomePage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [scrollX, setScrollX] = useState(0);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackName, setFeedbackName] = useState('');
+  const [feedbackEmail, setFeedbackEmail] = useState('');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isSendingFeedback, setIsSendingFeedback] = useState(false);
   const { user, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
@@ -255,18 +266,143 @@ export default function HomePage() {
 
   const handleCanvasLeave = () => setIsCursorActive(false);
 
+  const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+  const handleSubmitFeedback = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!feedbackName.trim() || !feedbackEmail.trim() || !feedbackMessage.trim()) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+      toast.error('Email service is not configured. Please try again later.');
+      return;
+    }
+
+    setIsSendingFeedback(true);
+
+    try {
+      const templateParams = {
+        from_name: feedbackName,
+        from_email: feedbackEmail,
+        message: feedbackMessage,
+        to_name: 'Resumae Team',
+      };
+
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY);
+
+      toast.success('Feedback sent successfully! Thank you for your input.');
+      setShowFeedbackModal(false);
+      setFeedbackName('');
+      setFeedbackEmail('');
+      setFeedbackMessage('');
+    } catch (error) {
+      console.error('Error sending feedback:', error);
+      toast.error('Failed to send feedback. Please try again.');
+    } finally {
+      setIsSendingFeedback(false);
+    }
+  };
+
   return (
     <div
       className="relative min-h-screen overflow-hidden text-gray-900"
       style={{
-        backgroundColor: '#f6f3ef',
-        backgroundImage: 'radial-gradient(#d4c9be 1.15px, transparent 1.15px)',
+        backgroundColor: '#f4f7ff',
+        backgroundImage: 'radial-gradient(#c7d2fe 1.15px, transparent 1.15px)',
         backgroundSize: '22px 22px',
       }}
       onMouseMove={handleCanvasMove}
       onMouseLeave={handleCanvasLeave}
     >
       <GradientOrbs />
+      <Dialog open={showFeedbackModal} onOpenChange={setShowFeedbackModal}>
+        <DialogContent className="max-w-md border border-[#dbeafe] bg-white/95 shadow-2xl shadow-[rgba(37,99,235,0.2)] backdrop-blur">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl font-semibold text-gray-900">
+              <MessageSquare className="h-5 w-5 text-[#2563eb]" />
+              Share Your Feedback
+            </DialogTitle>
+          </DialogHeader>
+          <form id="landing-feedback-form" onSubmit={handleSubmitFeedback} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="landing-feedback-name" className="text-sm font-medium text-gray-700">
+                Name
+              </Label>
+              <Input
+                id="landing-feedback-name"
+                placeholder="Your name"
+                value={feedbackName}
+                onChange={(e) => setFeedbackName(e.target.value)}
+                disabled={isSendingFeedback}
+                className="border-[#dbeafe] focus-visible:ring-[#2563eb]"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="landing-feedback-email" className="text-sm font-medium text-gray-700">
+                Email
+              </Label>
+              <Input
+                id="landing-feedback-email"
+                type="email"
+                placeholder="your.email@example.com"
+                value={feedbackEmail}
+                onChange={(e) => setFeedbackEmail(e.target.value)}
+                disabled={isSendingFeedback}
+                className="border-[#dbeafe] focus-visible:ring-[#2563eb]"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="landing-feedback-message" className="text-sm font-medium text-gray-700">
+                Feedback
+              </Label>
+              <Textarea
+                id="landing-feedback-message"
+                placeholder="Share your thoughts, suggestions, or report issues..."
+                value={feedbackMessage}
+                onChange={(e) => setFeedbackMessage(e.target.value)}
+                disabled={isSendingFeedback}
+                className="min-h-[120px] border-[#dbeafe] focus-visible:ring-[#2563eb]"
+                required
+              />
+            </div>
+            <DialogFooter className="gap-2 sm:gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowFeedbackModal(false)}
+                disabled={isSendingFeedback}
+                className="rounded-full border-[#dbeafe]"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSendingFeedback}
+                className="rounded-full gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8]"
+              >
+                {isSendingFeedback ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <MessageSquare className="h-4 w-4" />
+                    Submit Feedback
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
       <motion.div
         className="pointer-events-none absolute inset-0"
         initial={{ opacity: 0 }}
@@ -279,7 +415,7 @@ export default function HomePage() {
           opacity: { duration: 0.3, ease: 'easeOut' },
         }}
         style={{
-          backgroundImage: 'radial-gradient(#fb651e 1.5px, transparent 1.5px)',
+          backgroundImage: 'radial-gradient(#2563eb 1.5px, transparent 1.5px)',
           backgroundSize: '20px 20px',
           clipPath: `circle(80px at ${cursorPos.x}px ${cursorPos.y}px)`,
           WebkitClipPath: `circle(80px at ${cursorPos.x}px ${cursorPos.y}px)`,
@@ -292,7 +428,7 @@ export default function HomePage() {
         transition={{ duration: 0.6 }}
         className={`${
           isScrolled
-            ? 'backdrop-blur-lg ring-1 ring-[#fb651e]/10'
+            ? 'backdrop-blur-lg ring-1 ring-[#2563eb]/10'
             : ' '
         } fixed top-0 left-0 right-0 z-50  transition-all duration-300`}
       >
@@ -335,14 +471,14 @@ export default function HomePage() {
           >
             <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
               <div className="text-center lg:text-left">
-                <motion.div variants={fadeInUp} className="inline-flex items-center gap-3 rounded-full border border-[#f9d6c2] bg-[#fff7f0]/80 px-4 py-2 shadow-sm backdrop-blur">
+                <motion.div variants={fadeInUp} className="inline-flex items-center gap-3 rounded-full border border-[#dbeafe] bg-[#eff6ff]/80 px-4 py-2 shadow-sm backdrop-blur">
                   <img
                     src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
                     alt="Resumae"
                     className="h-8 w-auto"
                   />
                   <div className="flex items-center gap-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#fb651e]">Resumae</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#2563eb]">Resumae</p>
                     <span className="text-xs text-gray-400">|</span>
                     <p className="text-xs text-gray-500 flex items-center gap-1">Powered by <img src="/redstring.png" alt="Redstring" className="h-3 w-auto" /></p>
                   </div>
@@ -355,11 +491,11 @@ export default function HomePage() {
                   <span className="block">Build Your Perfect</span>
                   <span className="block">
                     <span className="text-gray-900">Resume in </span>
-                    <span className="relative inline-flex flex-col" style={{ color: '#fb651e' }}>
+                    <span className="relative inline-flex flex-col" style={{ color: '#2563eb' }}>
                       Minutes
                       <motion.span
                         className="mt-2 h-1 w-full rounded-full"
-                        style={{ backgroundColor: '#fb651e', opacity: 0.6 }}
+                        style={{ backgroundColor: '#2563eb', opacity: 0.6 }}
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
                         transition={{ delay: 0.4, duration: 0.6, ease: 'easeOut' }}
@@ -380,7 +516,7 @@ export default function HomePage() {
                     onClick={handleStartBuilding}
                     disabled={isSigningIn}
                     size="lg"
-                    className="h-14 rounded-full bg-[#fb651e] px-10 text-lg text-white shadow-xl  transition-all hover:-translate-y-1 hover:bg-[#e35712] disabled:cursor-not-allowed disabled:opacity-70"
+                    className="h-14 rounded-full bg-[#2563eb] px-10 text-lg text-white shadow-xl  transition-all hover:-translate-y-1 hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {isSigningIn ? (
                       <>
@@ -457,7 +593,7 @@ export default function HomePage() {
                     <br />
                     <span className="relative inline-block">
                       <span className="relative z-10">that work for you</span>
-                      <span className="pointer-events-none absolute inset-x-0 bottom-1 h-4 rounded-full bg-[#fb651e]/60" />
+                      <span className="pointer-events-none absolute inset-x-0 bottom-1 h-4 rounded-full bg-[#2563eb]/60" />
                      
                     </span>
                   </h2>
@@ -471,7 +607,7 @@ export default function HomePage() {
                   <Button
                     onClick={handleStartBuilding}
                     disabled={isSigningIn}
-                    className="rounded-full bg-[#fb651e] px-10 py-4 text-lg font-semibold text-white  transition-transform hover:-translate-y-1 hover:bg-[#fb651e]/80 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="rounded-full bg-[#2563eb] px-10 py-4 text-lg font-semibold text-white  transition-transform hover:-translate-y-1 hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {isSigningIn ? (
                       <>
@@ -543,7 +679,7 @@ export default function HomePage() {
                   key={`${template.id}-${index}`}
                   className="flex-shrink-0 w-[300px]"
                 >
-                  <div className="rounded-2xl border-2 border-[#f9d6c2] bg-white p-4 shadow-2xl shadow-[rgba(251,101,30,0.1)] hover:border-[#fb651e] hover:shadow-[rgba(251,101,30,0.2)] hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+                  <div className="rounded-2xl border-2 border-[#dbeafe] bg-white p-4 shadow-2xl shadow-[rgba(37,99,235,0.1)] hover:border-[#2563eb] hover:shadow-[rgba(37,99,235,0.2)] hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer">
                     <div className="relative aspect-[1/1.4] overflow-hidden rounded-lg bg-gray-50">
                       <img
                         src={template.imageUrl}
@@ -561,8 +697,8 @@ export default function HomePage() {
             </div>
 
             {/* Gradient overlays for fade effect */}
-            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#f6f3ef] to-transparent z-10" />
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#f6f3ef] to-transparent z-10" />
+            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#f4f7ff] to-transparent z-10" />
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#f4f7ff] to-transparent z-10" />
           </div>
 
           
@@ -596,16 +732,16 @@ export default function HomePage() {
           >
             {testimonials.map((testimonial, index) => (
               <motion.div key={`${testimonial.name}-${index}`} variants={fadeInUp}>
-                <div className="h-full rounded-2xl  bg-white p-6 shadow-lg  hover:shadow-xl hover:shadow-[rgba(251,101,30,0.15)] hover:border-[#fb651e] transition-all duration-300">
+                <div className="h-full rounded-2xl  bg-white p-6 shadow-lg  hover:shadow-xl hover:shadow-[rgba(37,99,235,0.15)] hover:border-[#2563eb] transition-all duration-300">
                   <div className="mb-4">
-                    <svg className="h-8 w-8 text-[#fb651e]/30" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-8 w-8 text-[#2563eb]/30" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                     </svg>
                   </div>
                   <p className="text-sm text-gray-700 leading-relaxed mb-6">
                     {testimonial.quote}
                   </p>
-                  <div className="border-t border-[#f9d6c2] pt-4">
+                  <div className="border-t border-[#dbeafe] pt-4">
                     <p className="text-sm font-bold text-gray-900">{testimonial.name}</p>
                     <p className="text-xs text-gray-500 mt-1">{testimonial.role}</p>
                   </div>
@@ -617,13 +753,23 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative border-t border-[#f9d6c2] py-6 mt-16">
+      <footer className="relative border-t border-[#dbeafe] py-6 mt-16">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:justify-between">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex flex-col items-center gap-2 text-sm text-gray-600 sm:flex-row sm:items-center sm:gap-3">
               <span>© 2025 Resumae. All rights reserved.</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFeedbackModal(true)}
+                className="rounded-full gap-1.5 border-[#c7d2fe] bg-white/80 text-[#2563eb] hover:bg-[#f5f9ff] text-xs sm:text-sm px-3 py-1.5 h-auto"
+              >
+                <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Share Feedback</span>
+                <span className="sm:hidden">Feedback</span>
+              </Button>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <span className="text-xs text-gray-500">Powered by</span>
               <a 
                 href="https://redstring.com" 

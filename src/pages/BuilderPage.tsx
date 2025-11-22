@@ -46,7 +46,7 @@ const fadeInUp: Variants = {
 const GradientOrbs = () => (
   <>
     <motion.div
-      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-[#fb651e]/5 blur-3xl"
+      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-[#2563eb]/10 blur-3xl"
       animate={{
         y: [0, 40, 0],
         scale: [1, 1.05, 1],
@@ -54,14 +54,14 @@ const GradientOrbs = () => (
       transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
     />
     <motion.div
-      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-[#ff9155]/5 blur-3xl"
+      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-[#2563eb]/5 blur-3xl"
       animate={{
         y: [0, -50, 0],
         scale: [1, 1.08, 1],
       }}
       transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
     />
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(251,101,30,0.04),rgba(255,255,255,0))]" />
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.06),rgba(255,255,255,0))]" />
   </>
 );
 
@@ -464,8 +464,8 @@ export default function BuilderPage() {
 
   if (isLoadingResume) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-white via-white to-[#fff5ee] text-gray-700">
-        <div className="rounded-2xl border border-[#f9d6c2] bg-white/80 px-10 py-8 shadow-lg shadow-[rgba(251,101,30,0.1)]">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-white via-white to-[#e9f1ff] text-gray-700">
+        <div className="rounded-2xl border border-[#dbeafe] bg-white/80 px-10 py-8 shadow-lg shadow-[rgba(37,99,235,0.12)]">
           <p className="text-base font-medium">Loading your resume...</p>
         </div>
       </div>
@@ -476,8 +476,8 @@ export default function BuilderPage() {
     <div
       className="relative min-h-screen overflow-hidden text-gray-900"
       style={{
-        backgroundColor: '#f6f3ef',
-        backgroundImage: 'radial-gradient(#d4c9be 1.15px, transparent 1.15px)',
+        backgroundColor: '#f4f7ff',
+        backgroundImage: 'radial-gradient(#c7d2fe 1.15px, transparent 1.15px)',
         backgroundSize: '22px 22px',
       }}
     >
@@ -485,7 +485,7 @@ export default function BuilderPage() {
 
       {/* Save Dialog */}
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent className="max-w-md border border-[#f9d6c2] bg-white/90 shadow-xl shadow-[rgba(251,101,30,0.1)] backdrop-blur">
+        <DialogContent className="max-w-md border border-[#dbeafe] bg-white/90 shadow-xl shadow-[rgba(37,99,235,0.12)] backdrop-blur">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold text-gray-900">Save Resume</DialogTitle>
           </DialogHeader>
@@ -499,14 +499,14 @@ export default function BuilderPage() {
               value={resumeTitle}
               onChange={(e) => setResumeTitle(e.target.value)}
               disabled={isSaving}
-              className="border-[#f9d6c2] focus-visible:ring-[#fb651e]"
+              className="border-[#dbeafe] focus-visible:ring-[#2563eb]"
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-3">
             <Button variant="outline" onClick={() => setShowSaveDialog(false)} disabled={isSaving} className="rounded-full">
               Cancel
             </Button>
-            <Button onClick={handleSaveResume} disabled={isSaving} className="rounded-full gap-2 bg-[#fb651e] text-white hover:bg-[#e35712]">
+            <Button onClick={handleSaveResume} disabled={isSaving} className="rounded-full gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8]">
               {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               {isSaving ? 'Saving...' : 'Save'}
             </Button>
@@ -524,7 +524,7 @@ export default function BuilderPage() {
 
       {/* ATS Score Analysis Modal */}
       <Dialog open={showATSModal} onOpenChange={setShowATSModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border border-[#f9d6c2] bg-white/95 shadow-xl shadow-[rgba(251,101,30,0.1)] backdrop-blur">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border border-[#dbeafe] bg-white/95 shadow-xl shadow-[rgba(37,99,235,0.12)] backdrop-blur">
          
           <div className="py-4">
             <AdvancedATSScanner data={resumeData} />
@@ -550,7 +550,7 @@ export default function BuilderPage() {
                 <div className="hidden md:flex flex-col">
                   <div className="flex items-center gap-1.5">
                     <span className="text-base sm:text-lg font-semibold tracking-tight">Resumae</span>
-                    <span className="text-[8px] font-medium uppercase tracking-wider text-[#fb651e]/60">
+                    <span className="text-[8px] font-medium uppercase tracking-wider text-[#2563eb]/60">
                       Beta
                     </span>
                   </div>
@@ -561,7 +561,7 @@ export default function BuilderPage() {
               </Link>
               <Link
                 to={user ? '/dashboard' : '/'}
-                className="flex items-center gap-1.5 sm:gap-2 rounded-full  bg-[#fff8f2] border border-[#f6b890] px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-[#fb651e] shadow-sm shadow-[rgba(251,101,30,0.1)] transition hover:border-[#f8cfb5] hover:text-[#fb651e] whitespace-nowrap"
+                className="flex items-center gap-1.5 sm:gap-2 rounded-full bg-[#f5f9ff] border border-[#9bbcff] px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-[#2563eb] shadow-sm shadow-[rgba(37,99,235,0.12)] transition hover:border-[#c7d2fe] hover:text-[#1d4ed8] whitespace-nowrap"
               >
                 <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Back
               </Link>
@@ -570,11 +570,11 @@ export default function BuilderPage() {
               <Button
                 variant="outline"
                 onClick={() => setShowTemplateSelector(true)}
-                className="rounded-full gap-1.5 border-[#f8cfb5] bg-white/80 text-gray-700 hover:bg-[#fff8f2] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
+                className="rounded-full gap-1.5 border-[#c7d2fe] bg-white/80 text-gray-700 hover:bg-[#f5f9ff] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                 size="sm"
               >
                 <LayoutTemplate className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">{getTemplateName(selectedTemplate)}</span>
+                <span className="hidden sm:inline">Template</span>
               </Button>
 
               <Button
@@ -591,7 +591,7 @@ export default function BuilderPage() {
                   onClick={handleSaveClick}
                   disabled={isSaving}
                   variant="outline"
-                  className="rounded-full gap-2.5 border-[#f8cfb5] bg-[#fb651e]/10 text-[#e35712] hover:bg-[#fb651e] hover:text-white text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
+                  className="rounded-full gap-2.5 border-[#c7d2fe] bg-[#2563eb]/10 text-[#1d4ed8] hover:bg-[#2563eb] hover:text-white text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                   size="sm"
                 >
                   {isSaving ? <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" /> : <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
@@ -602,7 +602,7 @@ export default function BuilderPage() {
               <Button
                 onClick={handleExportPDF}
                 disabled={isExporting}
-                className="rounded-full gap-1.5 bg-[#fb651e] text-white shadow-lg shadow-[rgba(251,101,30,0.3)] hover:bg-[#e35712] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
+                className="rounded-full gap-1.5 bg-[#2563eb] text-white shadow-lg shadow-[rgba(37,99,235,0.3)] hover:bg-[#1d4ed8] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
                 size="sm"
               >
                 <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -619,17 +619,17 @@ export default function BuilderPage() {
             variants={fadeInUp}
             initial="hidden"
             animate="show"
-            className="rounded-2xl sm:rounded-2xl border border-dashed border-[#f9d6c2] bg-white/85 p-3 sm:p-4 md:p-6 shadow-2xl shadow-[rgba(251,101,30,0.1)] backdrop-blur"
+            className="rounded-2xl sm:rounded-2xl border border-dashed border-[#dbeafe] bg-white/85 p-3 sm:p-4 md:p-6 shadow-2xl shadow-[rgba(37,99,235,0.12)] backdrop-blur"
           >
             <motion.a
               variants={fadeInUp}
-              href="https://app.redstring.co.in/talent/login"
+              href="https://www.redstring.co.in/"
               target="_blank"
               rel="noopener noreferrer"
-              className="mb-4 flex flex-col gap-3 rounded-2xl border border-[#f8cfb5]/70 bg-gradient-to-r from-[#fff3e6] via-white to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-[rgba(251,101,30,0.1)] transition duration-300 hover:-translate-y-1 hover:border-[#f6b890] hover:shadow-[rgba(251,101,30,0.2)]"
+              className="mb-4 flex flex-col gap-3 rounded-2xl border border-[#c7d2fe]/70 bg-gradient-to-r from-[#e3ecff] via-white to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-[rgba(37,99,235,0.12)] transition duration-300 hover:-translate-y-1 hover:border-[#9bbcff] hover:shadow-[rgba(37,99,235,0.2)]"
             >
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fb651e]/10 text-[#fb651e]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2563eb]/10 text-[#2563eb]">
                   <Briefcase className="h-6 w-6" />
                 </div>
                 <div>
@@ -641,27 +641,27 @@ export default function BuilderPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#f8cfb5] bg-white px-4 py-2 text-xs font-semibold text-[#fb651e] shadow-sm">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#c7d2fe] bg-white px-4 py-2 text-xs font-semibold text-[#2563eb] shadow-sm">
                   Visit Job Portal
                 </span>
               </div>
             </motion.a>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 rounded-xl sm:rounded-2xl border border-[#f9d6c2]  bg-[#fff8f2]/60 text-xs sm:text-sm font-semibold text-[#e35712] h-auto">
+              <TabsList className="grid w-full grid-cols-2 rounded-xl sm:rounded-2xl border border-[#dbeafe] bg-[#f5f9ff]/60 text-xs sm:text-sm font-semibold text-[#1d4ed8] h-auto">
                 <TabsTrigger value="builder" className="py-2 sm:py-2.5 text-xs sm:text-sm">Resume Builder</TabsTrigger>
                 <TabsTrigger value="upload" className="py-2 sm:py-2.5 text-xs sm:text-sm">Upload & Analyze</TabsTrigger>
               </TabsList>
 
               <TabsContent value="builder" className="mt-4 sm:mt-6 md:mt-8 space-y-4 sm:space-y-6">
                 <div className="grid gap-4 sm:gap-6 lg:grid-cols-[420px_1fr]">
-                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-[#f9d6c2] bg-white/80 border-dashed shadow-lg shadow-[rgba(251,101,30,0.1)]">
+                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/80 border-dashed shadow-lg shadow-[rgba(37,99,235,0.12)]">
                     <div className="flex items-center justify-between  px-4 sm:px-6 py-3 sm:py-4">
                       <h2 className="text-sm sm:text-base font-semibold text-gray-900">Resume Builder</h2>
                       <Button
                         variant="outline"
                         onClick={handleReset}
-                        className="rounded-full gap-1.5 sm:gap-2 border-[#f9d6c2] text-gray-700 hover:bg-[#fff8f2] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
+                        className="rounded-full gap-1.5 sm:gap-2 border-[#dbeafe] text-gray-700 hover:bg-[#f5f9ff] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
                         size="sm"
                       >
                         <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Reset
@@ -672,23 +672,23 @@ export default function BuilderPage() {
                     </div>
                   </div>
 
-                  <div className="hidden overflow-hidden rounded-2xl sm:rounded-3xl border border-dashed border-[#f9d6c2] bg-[#fefaf3] shadow-lg  lg:block">
+                  <div className="hidden overflow-hidden rounded-2xl sm:rounded-3xl border border-dashed border-[#dbeafe] bg-[#eef2ff] shadow-lg lg:block">
                     <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
                       <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowTemplateSelector(true)}
-                        className="rounded-full gap-1.5 sm:gap-2 text-xs text-[#fb651e] hover:bg-[#fff8f2] px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
+                        className="rounded-full gap-1.5 sm:gap-2 text-xs text-[#2563eb] hover:bg-[#f5f9ff] px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
                       >
                         <LayoutTemplate className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         {getTemplateName(selectedTemplate)}
                       </Button>
                     </div>
 
-                    <div className="h-[600px] md:h-[650px] overflow-y-auto bg-gradient-to-b from-[#fff3e6]/40 via-white to-white px-1 py-2">
+                    <div className="h-[600px] md:h-[650px] overflow-y-auto bg-gradient-to-b from-[#e3ecff]/40 via-white to-white px-1 py-2">
                       <div
-                        className="rounded-xl bg-white shadow-xl shadow-[rgba(251,101,30,0.2)] mx-auto"
+                        className="rounded-xl bg-white shadow-xl shadow-[rgba(37,99,235,0.18)] mx-auto"
                         style={{ 
                           width: '210mm', 
                           transform: 'scale(0.85)', 
@@ -702,23 +702,23 @@ export default function BuilderPage() {
                 </div>
 
                 <div className="lg:hidden">
-                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-[#f9d6c2] bg-white/80 shadow-lg shadow-[rgba(251,101,30,0.1)]">
-                    <div className="flex items-center justify-between border-b border-[#f9d6c2] px-4 sm:px-6 py-3 sm:py-4">
+                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/80 shadow-lg shadow-[rgba(37,99,235,0.12)]">
+                    <div className="flex items-center justify-between border-b border-[#dbeafe] px-4 sm:px-6 py-3 sm:py-4">
                       <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowTemplateSelector(true)}
-                        className="rounded-full gap-1.5 sm:gap-2 text-xs text-[#fb651e] hover:bg-[#fff8f2] px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
+                        className="rounded-full gap-1.5 sm:gap-2 text-xs text-[#2563eb] hover:bg-[#f5f9ff] px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
                       >
                         <LayoutTemplate className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         <span className="hidden xs:inline">{getTemplateName(selectedTemplate)}</span>
                       </Button>
                     </div>
-                    <div className="relative overflow-auto bg-[#fefaf3] touch-pan-x touch-pan-y" style={{ height: '600px', WebkitOverflowScrolling: 'touch' }}>
+                    <div className="relative overflow-auto bg-[#eef2ff] touch-pan-x touch-pan-y" style={{ height: '600px', WebkitOverflowScrolling: 'touch' }}>
                       <div className="inline-block min-w-full" >
                         <div
-                          className="rounded-lg sm:rounded-xl bg-white shadow-xl shadow-[rgba(251,101,30,0.2)] mx-auto"
+                          className="rounded-lg sm:rounded-xl bg-white shadow-xl shadow-[rgba(37,99,235,0.18)] mx-auto"
                           style={{
                             width: '210mm',
                             transform: 'scale(1)',
@@ -731,7 +731,7 @@ export default function BuilderPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-[#fff8f2]/50 px-3 sm:px-4 py-2 text-center border-t border-[#f9d6c2]">
+                    <div className="bg-[#f5f9ff]/50 px-3 sm:px-4 py-2 text-center border-t border-[#dbeafe]">
                       <p className="text-[10px] sm:text-xs text-gray-600">↔ Scroll to view full resume ↕</p>
                     </div>
                   </div>
@@ -745,7 +745,7 @@ export default function BuilderPage() {
               <TabsContent value="upload" className="mt-4 sm:mt-6 md:mt-8">
                 <motion.div
                   variants={fadeInUp}
-                  className="rounded-2xl sm:rounded-3xl border border-[#f9d6c2] bg-white/80 p-4 sm:p-6 shadow-lg shadow-[rgba(251,101,30,0.1)] backdrop-blur"
+                  className="rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/80 p-4 sm:p-6 shadow-lg shadow-[rgba(37,99,235,0.12)] backdrop-blur"
                 >
                   <PDFATSUploader onParseComplete={handleUploadComplete} />
                 </motion.div>

@@ -132,23 +132,7 @@ export default function ResumeParser({ onParseComplete }: ResumeParserProps) {
             className="hidden"
           />
 
-          <Button 
-            onClick={handleClick} 
-            disabled={isUploading || isParsing}
-            className="w-full max-w-md"
-          >
-            {isUploading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Upload className="h-4 w-4 mr-2" />
-                Choose PDF File
-              </>
-            )}
-          </Button>
+         
 
           {uploadStatus === 'error' && (
             <div className="flex items-center gap-2 text-red-600 text-sm">

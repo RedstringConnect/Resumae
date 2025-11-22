@@ -60,7 +60,7 @@ const staggerContainer: Variants = {
 const GradientOrbs = () => (
   <>
     <motion.div
-      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-[#fb651e]/5 blur-3xl"
+      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-[#2563eb]/10 blur-3xl"
       animate={{
         y: [0, 40, 0],
         scale: [1, 1.05, 1],
@@ -68,14 +68,14 @@ const GradientOrbs = () => (
       transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
     />
     <motion.div
-      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-[#ff9155]/5 blur-3xl"
+      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-[#2563eb]/5 blur-3xl"
       animate={{
         y: [0, -50, 0],
         scale: [1, 1.08, 1],
       }}
       transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
     />
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(251,101,30,0.04),rgba(255,255,255,0))]" />
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.06),rgba(255,255,255,0))]" />
   </>
 );
 
@@ -301,8 +301,8 @@ export default function DashboardPage() {
     <div
       className="relative min-h-screen overflow-hidden text-gray-900"
       style={{
-        backgroundColor: '#f6f3ef',
-        backgroundImage: 'radial-gradient(#d4c9be 1.15px, transparent 1.15px)',
+        backgroundColor: '#f4f7ff',
+        backgroundImage: 'radial-gradient(#c7d2fe 1.15px, transparent 1.15px)',
         backgroundSize: '22px 22px',
       }}
     >
@@ -313,7 +313,7 @@ export default function DashboardPage() {
         <DialogContent className="max-w-md border  shadow-2xl backdrop-blur">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl font-semibold text-gray-900">
-              <MessageSquare className="h-5 w-5 text-[#fb651e]" />
+              <MessageSquare className="h-5 w-5 text-[#2563eb]" />
               Share Your Feedback
             </DialogTitle>
           </DialogHeader>
@@ -328,7 +328,7 @@ export default function DashboardPage() {
                 value={feedbackName}
                 onChange={(e) => setFeedbackName(e.target.value)}
                 disabled={isSendingFeedback}
-                className="border-[#f9d6c2] focus-visible:ring-[#fb651e]"
+                className="border-[#dbeafe] focus-visible:ring-[#2563eb]"
                 required
               />
             </div>
@@ -343,7 +343,7 @@ export default function DashboardPage() {
                 value={feedbackEmail}
                 onChange={(e) => setFeedbackEmail(e.target.value)}
                 disabled={isSendingFeedback}
-                className="border-[#f9d6c2] focus-visible:ring-[#fb651e]"
+                className="border-[#dbeafe] focus-visible:ring-[#2563eb]"
                 required
               />
             </div>
@@ -357,7 +357,7 @@ export default function DashboardPage() {
                 value={feedbackMessage}
                 onChange={(e) => setFeedbackMessage(e.target.value)}
                 disabled={isSendingFeedback}
-                className="min-h-[120px] border-[#f9d6c2] focus-visible:ring-[#fb651e]"
+                className="min-h-[120px] border-[#dbeafe] focus-visible:ring-[#2563eb]"
                 required
               />
             </div>
@@ -368,7 +368,7 @@ export default function DashboardPage() {
               variant="outline"
               onClick={() => setShowFeedbackModal(false)}
               disabled={isSendingFeedback}
-              className="rounded-full border-[#f9d6c2]"
+              className="rounded-full border-[#dbeafe]"
             >
               Cancel
             </Button>
@@ -376,7 +376,7 @@ export default function DashboardPage() {
               type="submit"
               onClick={handleSubmitFeedback}
               disabled={isSendingFeedback}
-              className="rounded-full gap-2 bg-[#fb651e] text-white hover:bg-[#e35712]"
+              className="rounded-full gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8]"
             >
               {isSendingFeedback ? (
                 <>
@@ -396,7 +396,7 @@ export default function DashboardPage() {
 
       {/* View Resume Dialog */}
       <Dialog open={!!viewingResume} onOpenChange={(open) => !open && setViewingResume(null)}>
-        <DialogContent className="max-w-[95vw] w-[900px] max-h-[90vh] overflow-y-auto border border-[#f9d6c2] bg-white/90 shadow-2xl shadow-[rgba(251,101,30,0.2)] backdrop-blur">
+        <DialogContent className="max-w-[95vw] w-[900px] max-h-[90vh] overflow-y-auto border border-[#dbeafe] bg-white/90 shadow-2xl shadow-[rgba(37,99,235,0.2)] backdrop-blur">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between text-xl font-semibold text-gray-900">
               <span>{viewingResume?.title}</span>
@@ -427,7 +427,7 @@ export default function DashboardPage() {
                       handleEdit(viewingResume._id);
                     }
                   }}
-                  className="rounded-full gap-2 border-[#f8cfb5] bg-[#fff8f2]/70 text-[#fb651e] hover:bg-[#ffe7d3]"
+                  className="rounded-full gap-2 border-[#c7d2fe] bg-[#f5f9ff]/70 text-[#2563eb] hover:bg-[#dbe8ff]"
                 >
                   <Edit className="h-4 w-4" /> Edit
                 </Button>
@@ -436,10 +436,10 @@ export default function DashboardPage() {
           </DialogHeader>
           <div className="mt-4">
             {viewingResume && (
-              <div className="rounded-3xl border border-[#f9d6c2] bg-gradient-to-br from-[#fff3e6]/60 via-white to-white p-6 shadow-xl shadow-[rgba(251,101,30,0.1)]">
+              <div className="rounded-3xl border border-[#dbeafe] bg-gradient-to-br from-[#e3ecff]/60 via-white to-white p-6 shadow-xl shadow-[rgba(37,99,235,0.12)]">
                 <div className="flex justify-center">
                   <div
-                    className="rounded-xl bg-white shadow-2xl shadow-[rgba(251,101,30,0.2)]"
+                    className="rounded-xl bg-white shadow-2xl shadow-[rgba(37,99,235,0.2)]"
                     style={{ width: '210mm', transform: 'scale(0.72)', transformOrigin: 'top center' }}
                   >
                     {renderTemplate(viewingResume)}
@@ -453,7 +453,7 @@ export default function DashboardPage() {
 
       {/* ATS Score Analysis Dialog */}
       <Dialog open={!!analyzingResume} onOpenChange={(open) => !open && setAnalyzingResume(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border border-[#f9d6c2] bg-white/95 shadow-xl shadow-[rgba(251,101,30,0.1)] backdrop-blur">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border border-[#dbeafe] bg-white/95 shadow-xl shadow-[rgba(37,99,235,0.12)] backdrop-blur">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl font-bold text-gray-900">
               <Sparkles className="h-6 w-6 text-purple-600" />
@@ -483,7 +483,7 @@ export default function DashboardPage() {
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
                   <span className="text-base sm:text-lg font-semibold tracking-tight">Resumae</span>
-                  <span className="text-[8px] font-medium uppercase tracking-wider text-[#fb651e]/60">
+                  <span className="text-[8px] font-medium uppercase tracking-wider text-[#2563eb]/60">
                     Beta
                   </span>
                 </div>
@@ -497,7 +497,7 @@ export default function DashboardPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFeedbackModal(true)}
-                className="rounded-full gap-1.5 sm:gap-2 border-[#f8cfb5] bg-white/80 text-[#fb651e] hover:bg-[#fff8f2] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
+                className="rounded-full gap-1.5 sm:gap-2 border-[#c7d2fe] bg-white/80 text-[#2563eb] hover:bg-[#f5f9ff] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
               >
                 <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">Feedback</span>
@@ -506,7 +506,7 @@ export default function DashboardPage() {
                 {user?.photoURL && (
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-[#f9d6c2] shadow-sm hover:border-[#f6b890] transition-all focus:outline-none focus:ring-2 focus:ring-[#fb651e] focus:ring-offset-2"
+                    className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-[#dbeafe] shadow-sm hover:border-[#9bbcff] transition-all focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:ring-offset-2"
                   >
                     <img
                       src={user.photoURL}
@@ -522,14 +522,14 @@ export default function DashboardPage() {
                       className="fixed inset-0 z-40"
                       onClick={() => setShowUserMenu(false)}
                     />
-                    <div className="absolute right-0 top-12 z-50 w-64 rounded-xl border border-[#f9d6c2] bg-white/95 shadow-xl shadow-[rgba(251,101,30,0.2)] backdrop-blur">
-                      <div className="p-4 border-b border-[#f9d6c2]">
+                    <div className="absolute right-0 top-12 z-50 w-64 rounded-xl border border-[#dbeafe] bg-white/95 shadow-xl shadow-[rgba(37,99,235,0.18)] backdrop-blur">
+                      <div className="p-4 border-b border-[#dbeafe]">
                         <div className="flex items-center gap-3">
                           {user?.photoURL && (
                             <img
                               src={user.photoURL}
                               alt={user.displayName || 'User'}
-                              className="h-12 w-12 rounded-full border-2 border-[#f9d6c2]"
+                              className="h-12 w-12 rounded-full border-2 border-[#dbeafe]"
                             />
                           )}
                           <div className="flex-1 min-w-0">
@@ -571,11 +571,11 @@ export default function DashboardPage() {
             variants={staggerContainer}
             initial="hidden"
             animate="show"
-            className="rounded-2xl sm:rounded-3xl border border-[#f9d6c2] bg-white/85 p-4 sm:p-6 md:p-8 shadow-2xl shadow-[rgba(251,101,30,0.1)] backdrop-blur"
+            className="rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/85 p-4 sm:p-6 md:p-8 shadow-2xl shadow-[rgba(37,99,235,0.12)] backdrop-blur"
           >
             <motion.div variants={fadeInUp} className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#f9d6c2] bg-[#fff8f2]/70 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#fb651e]">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#c7d2fe] bg-[#f5f9ff]/70 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#2563eb]">
                   Dashboard
                 </div>
                 <h1 className="mt-3 sm:mt-4 text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
@@ -584,7 +584,7 @@ export default function DashboardPage() {
                
                 <div className="mt-4 sm:mt-6 flex flex-col gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 sm:flex-row sm:items-center">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#fb651e]" />
+                    <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#2563eb]" />
                     {resumes.length ? 'Pick up where you left off.' : 'Start building your first resume.'}
                   </div>
                   <div className="flex items-center gap-2">
@@ -597,13 +597,13 @@ export default function DashboardPage() {
 
             <motion.a
               variants={fadeInUp}
-              href="https://app.redstring.co.in/talent/login"
+              href="https://www.redstring.co.in/"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 sm:mt-8 flex flex-col gap-3 rounded-2xl border border-[#f8cfb5]/70 bg-gradient-to-r from-[#fff3e6] via-white to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-[rgba(251,101,30,0.1)] transition duration-300 hover:-translate-y-1 hover:border-[#f6b890] hover:shadow-[rgba(251,101,30,0.2)]"
+              className="mt-6 sm:mt-8 flex flex-col gap-3 rounded-2xl border border-[#c7d2fe]/70 bg-gradient-to-r from-[#e3ecff] via-white to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-[rgba(37,99,235,0.12)] transition duration-300 hover:-translate-y-1 hover:border-[#9bbcff] hover:shadow-[rgba(37,99,235,0.2)]"
             >
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fb651e]/10 text-[#fb651e]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2563eb]/10 text-[#2563eb]">
                   <Briefcase className="h-6 w-6" />
                 </div>
                 <div>
@@ -617,7 +617,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#f8cfb5] bg-white px-4 py-2 text-xs font-semibold text-[#fb651e] shadow-sm">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#c7d2fe] bg-white px-4 py-2 text-xs font-semibold text-[#2563eb] shadow-sm">
                   Visit Job Portal
                 </span>
               </div>
@@ -640,7 +640,7 @@ export default function DashboardPage() {
                   <span className={`inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border-2 px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                     isUploading 
                       ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed' 
-                      : 'border-[#f8cfb5] bg-white text-[#fb651e] hover:bg-[#fff8f2]'
+                      : 'border-[#c7d2fe] bg-white text-[#2563eb] hover:bg-[#f5f9ff]'
                   }`}>
                     {isUploading ? (
                       <><Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" /> Uploading...</>
@@ -650,7 +650,7 @@ export default function DashboardPage() {
                   </span>
                 </label>
                 <Link to="/builder?new=true" className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto gap-2 h-auto rounded-full bg-[#fb651e] px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-[rgba(251,101,30,0.3)] hover:bg-[#e35712] whitespace-nowrap">
+                  <Button className="w-full sm:w-auto gap-2 h-auto rounded-full bg-[#2563eb] px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-[rgba(37,99,235,0.3)] hover:bg-[#1d4ed8] whitespace-nowrap">
                     <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Create New Resume
                   </Button>
                 </Link>
@@ -667,7 +667,7 @@ export default function DashboardPage() {
           <section className="relative mt-1">
             {loading && (
               <div className="flex items-center justify-center py-16 text-sm text-gray-600">
-                <Loader2 className="mr-3 h-5 w-5 animate-spin text-[#fb651e]" /> Loading your saved resumes...
+                <Loader2 className="mr-3 h-5 w-5 animate-spin text-[#2563eb]" /> Loading your saved resumes...
               </div>
             )}
 
@@ -676,15 +676,15 @@ export default function DashboardPage() {
                 variants={fadeInUp}
                 initial="hidden"
                 animate="show"
-                className="mt-6 rounded-full border border-dashed border-[#f8cfb5] bg-white/80 p-10 text-center shadow-xl shadow-[rgba(251,101,30,0.1)] backdrop-blur"
+                className="mt-6 rounded-3xl border border-dashed border-[#c7d2fe] bg-white/80 p-10 text-center shadow-xl shadow-[rgba(37,99,235,0.12)] backdrop-blur"
               >
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#fb651e]/10 text-[#fb651e]">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#2563eb]/10 text-[#2563eb]">
                   <FileText className="h-5 w-5" />
                 </div>
                 <h3 className="mt-4 text-xl font-semibold text-gray-900">No resumes yet</h3>
                 <p className="mt-2 text-sm text-gray-500">Create your first resume to start building your library.</p>
                 <Link to="/builder?new=true">
-                  <Button className="mt-6 gap-2 rounded-full bg-[#fb651e] text-white hover:bg-[#e35712]">
+                  <Button className="mt-6 gap-2 rounded-full bg-[#2563eb] text-white hover:bg-[#1d4ed8]">
                     <Plus className="h-4 w-4" /> Create your first resume
                   </Button>
                 </Link>
@@ -700,14 +700,14 @@ export default function DashboardPage() {
               >
                 {resumes.map((resume) => (
                   <motion.div key={resume._id} variants={fadeInUp}>
-                    <Card className="group rounded-3xl overflow-hidden border border-[#f9d6c2] border-dashed bg-white/80 shadow-lg shadow-[rgba(251,101,30,0.1)] backdrop-blur transition-all duration-300 hover:-translate-y-2 hover:border-[#f8cfb5]">
+                    <Card className="group rounded-3xl overflow-hidden border border-[#dbeafe] border-dashed bg-white/80 shadow-lg shadow-[rgba(37,99,235,0.12)] backdrop-blur transition-all duration-300 hover:-translate-y-2 hover:border-[#c7d2fe]">
                       <div
-                        className="relative cursor-pointer bg-gradient-to-br from-[#fff3e6]/60 via-white to-white p-3"
+                        className="relative cursor-pointer bg-gradient-to-br from-[#e3ecff]/60 via-white to-white p-3"
                         onClick={() => handleView(resume)}
                         style={{ height: '280px' }}
                       >
                         <div className="absolute inset-0 flex items-center justify-center p-3">
-                          <div className="h-full w-full max-w-[160px] overflow-hidden rounded-lg border border-[#f9d6c2]/70 bg-white shadow-lg shadow-[rgba(251,101,30,0.1)]">
+                          <div className="h-full w-full max-w-[160px] overflow-hidden rounded-lg border border-[#dbeafe]/70 bg-white shadow-lg shadow-[rgba(37,99,235,0.12)]">
                             <div className="scale-[0.35] origin-top-left" style={{ width: '210mm', transformOrigin: 'top left' }}>
                               {renderTemplate(resume)}
                             </div>
@@ -715,15 +715,15 @@ export default function DashboardPage() {
                         </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 transition group-hover:opacity-100">
-                          <div className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#fb651e] shadow">
+                          <div className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#2563eb] shadow">
                             View resume
                           </div>
                         </div>
-                        <div className="absolute top-2 right-2 rounded-full border border-[#f9d6c2] bg-white/85 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#fb651e]">
+                        <div className="absolute top-2 right-2 rounded-full border border-[#dbeafe] bg-white/85 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#2563eb]">
                           {resume.templateType}
                         </div>
                       </div>
-                      <CardHeader className="space-y-3 border-t border-[#f9d6c2] bg-white/85 p-4">
+                      <CardHeader className="space-y-3 border-t border-[#dbeafe] bg-white/85 p-4">
                         <CardTitle className="text-sm font-semibold text-gray-900 line-clamp-1">
                           {resume.title}
                         </CardTitle>
@@ -734,7 +734,7 @@ export default function DashboardPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="rounded-full flex-1 gap-1.5 border-[#f9d6c2] text-[#fb651e] hover:bg-[#fff8f2] text-xs px-2 py-1 h-8"
+                            className="rounded-full flex-1 gap-1.5 border-[#dbeafe] text-[#2563eb] hover:bg-[#f5f9ff] text-xs px-2 py-1 h-8"
                             onClick={() => handleView(resume)}
                           >
                             <Eye className="h-3 w-3" /> View
@@ -742,7 +742,7 @@ export default function DashboardPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="rounded-full flex-1 gap-1.5 border-[#f9d6c2] text-gray-700 hover:bg-[#fff8f2] text-xs px-2 py-1 h-8"
+                            className="rounded-full flex-1 gap-1.5 border-[#dbeafe] text-gray-700 hover:bg-[#f5f9ff] text-xs px-2 py-1 h-8"
                             onClick={() => handleEdit(resume._id)}
                           >
                             <Edit className="h-3 w-3" /> Edit
@@ -750,7 +750,7 @@ export default function DashboardPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="rounded-full px-2 border-[#f9d6c2] text-red-500 hover:bg-red-50 h-8"
+                            className="rounded-full px-2 border-[#dbeafe] text-red-500 hover:bg-red-50 h-8"
                             onClick={() => handleDelete(resume._id)}
                             disabled={deleting === resume._id}
                             title="Delete Resume"

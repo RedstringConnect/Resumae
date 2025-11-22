@@ -163,7 +163,7 @@ const templates: TemplateInfo[] = [
     description: 'Comic Sans, rainbow gradients, and pure chaos',
     icon: <XCircle className="h-5 w-5" />,
     color: 'text-red-600',
-    bgGradient: 'from-red-500 to-orange-600',
+    bgGradient: 'from-red-500 to-blue-600',
     features: ['Comic Sans', 'Rainbow chaos', 'NOT ATS-friendly'],
     imageUrl: 'https://static.wixstatic.com/media/5c0589_d3e4e85075154a098fe9ed52cbbcefb6~mv2.png',
     new: true,
