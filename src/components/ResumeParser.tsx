@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, FileText, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { ResumeData } from '@/types';
@@ -11,7 +10,6 @@ interface ResumeParserProps {
 }
 
 export default function ResumeParser({ onParseComplete }: ResumeParserProps) {
-  const [isUploading, setIsUploading] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -33,7 +31,6 @@ export default function ResumeParser({ onParseComplete }: ResumeParserProps) {
       return;
     }
 
-    setIsUploading(true);
     setIsParsing(true);
     setUploadStatus('idle');
     setErrorMessage('');
@@ -67,7 +64,6 @@ export default function ResumeParser({ onParseComplete }: ResumeParserProps) {
       }
       setUploadStatus('error');
     } finally {
-      setIsUploading(false);
       setIsParsing(false);
       // Reset file input
       event.target.value = '';
