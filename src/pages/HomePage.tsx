@@ -214,11 +214,12 @@ export default function HomePage() {
   // Infinite scroll animation for testimonials - Column 1 (down)
   useEffect(() => {
     const cardHeight = 200 + 24; // approximate card height + gap
-    const itemsPerColumn = 2;
+    const isMobile = window.innerWidth < 768;
+    const itemsPerColumn = isMobile ? testimonials.length : 2;
     const singleSetHeight = cardHeight * itemsPerColumn;
     let animationFrameId: number;
     let startTime: number | null = null;
-    const duration = 30000; // 30 seconds for one complete cycle
+    const duration = isMobile ? 20000 : 30000; // Faster on mobile (20s vs 30s)
 
     const animate = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
@@ -636,7 +637,7 @@ export default function HomePage() {
                     size="lg"
                     className="h-14 rounded-full bg-[#2563eb] px-10 text-lg text-white shadow-xl  transition-all hover:-translate-y-1 hover:bg-[#1d4ed8]"
                   >
-                    Start Building for Free <ArrowRight className="ml-2 h-5 w-5" />
+                    Create your first resumae <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   <Button
                     onClick={handleUploadClick}
@@ -653,7 +654,7 @@ export default function HomePage() {
                     ) : (
                       <>
                         <Upload className="mr-2 h-5 w-5" />
-                        Upload Your Resume
+                        Enhance the existing
                       </>
                     )}
                   </Button>
@@ -852,7 +853,7 @@ export default function HomePage() {
           {/* Three Column Infinite Scroll with Alternating Directions */}
           <div className="relative py-8">
             <div className="flex justify-center items-start gap-3 sm:gap-4 max-w-5xl mx-auto">
-              {/* Column 1 - Scroll Down */}
+              {/* Column 1 - Scroll Down - Shows all testimonials on mobile, first 2 on desktop */}
               <div className="overflow-hidden h-[400px] w-full max-w-[280px] sm:max-w-[420px] relative">
                 <div
                   className="flex flex-col gap-4"
@@ -861,7 +862,15 @@ export default function HomePage() {
                     willChange: 'transform',
                   }}
                 >
-                  {[...testimonials.slice(0, 2), ...testimonials.slice(0, 2), ...testimonials.slice(0, 2), ...testimonials.slice(0, 2), ...testimonials.slice(0, 2), ...testimonials.slice(0, 2)].map((testimonial, index) => (
+                  {/* On mobile: show all testimonials, On desktop: show first 2 */}
+                  {[
+                    ...(window.innerWidth < 768 ? testimonials : testimonials.slice(0, 2)),
+                    ...(window.innerWidth < 768 ? testimonials : testimonials.slice(0, 2)),
+                    ...(window.innerWidth < 768 ? testimonials : testimonials.slice(0, 2)),
+                    ...(window.innerWidth < 768 ? testimonials : testimonials.slice(0, 2)),
+                    ...(window.innerWidth < 768 ? testimonials : testimonials.slice(0, 2)),
+                    ...(window.innerWidth < 768 ? testimonials : testimonials.slice(0, 2))
+                  ].map((testimonial, index) => (
                     <div
                       key={`col1-${testimonial.name}-${index}`}
                       className="flex-shrink-0"

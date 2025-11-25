@@ -394,9 +394,33 @@ Important:
 
     const parsedData = JSON.parse(responseText);
 
-    // Add default spacing if not present
+    // Add unique IDs to all array items if they don't have them
     const resumeData: ResumeData = {
       ...parsedData,
+      workExperience: (parsedData.workExperience || []).map((exp: any, index: number) => ({
+        ...exp,
+        id: exp.id || `${Date.now()}-work-${index}`,
+      })),
+      education: (parsedData.education || []).map((edu: any, index: number) => ({
+        ...edu,
+        id: edu.id || `${Date.now()}-edu-${index}`,
+      })),
+      skills: (parsedData.skills || []).map((skill: any, index: number) => ({
+        ...skill,
+        id: skill.id || `${Date.now()}-skill-${index}`,
+      })),
+      languages: (parsedData.languages || []).map((lang: any, index: number) => ({
+        ...lang,
+        id: lang.id || `${Date.now()}-lang-${index}`,
+      })),
+      certifications: (parsedData.certifications || []).map((cert: any, index: number) => ({
+        ...cert,
+        id: cert.id || `${Date.now()}-cert-${index}`,
+      })),
+      projects: (parsedData.projects || []).map((proj: any, index: number) => ({
+        ...proj,
+        id: proj.id || `${Date.now()}-proj-${index}`,
+      })),
       spacing: {
         pageMargin: 20,
         sectionSpacing: 8,

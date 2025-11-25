@@ -409,7 +409,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                 <div className="space-y-2">
                   <Label>Job Responsibilities</Label>
               {exp.description.map((desc, index) => (
-                    <div key={index} className="flex gap-2">
+                    <div key={`${exp.id}-${index}`} className="flex gap-2">
                       <Input
                     type="text"
                     value={desc}
@@ -417,6 +417,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                       updateWorkDescription(exp.id, index, e.target.value)
                     }
                     placeholder="Describe your achievement or responsibility..."
+                        autoComplete="off"
                   />
                   {exp.description.length > 1 && (
                         <Button
@@ -577,6 +578,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                   value={skill.name}
                   onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
                   placeholder="React, Python, Leadership..."
+                      autoComplete="off"
                 />
               </div>
                   <div>
@@ -587,6 +589,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                   value={skill.category}
                   onChange={(e) => updateSkill(skill.id, 'category', e.target.value)}
                   placeholder="Technical, Soft Skills..."
+                      autoComplete="off"
                 />
               </div>
             </div>

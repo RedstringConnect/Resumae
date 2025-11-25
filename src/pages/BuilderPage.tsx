@@ -259,7 +259,7 @@ export default function BuilderPage() {
   const [showATSModal, setShowATSModal] = useState(false);
   const [activeTab, setActiveTab] = useState('builder');
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginAction, setLoginAction] = useState<'save' | 'download' | null>(null);
+  const [loginAction, setLoginAction] = useState<'save' | 'download' | 'ats' | null>(null);
   const [pendingActionAfterLogin, setPendingActionAfterLogin] = useState(false);
   const [mobileView, setMobileView] = useState<'editor' | 'preview'>('editor');
 
@@ -284,7 +284,11 @@ export default function BuilderPage() {
           setResumeData(parsedData);
           setCurrentResumeId(null);
           setResumeTitle('');
+          // Remove both uploaded data and any existing draft
           localStorage.removeItem('resumatic_uploaded_data');
+          localStorage.removeItem(STORAGE_KEY_RESUME_DATA);
+          // Set the uploaded data as the new draft
+          localStorage.setItem(STORAGE_KEY_RESUME_DATA, uploadedData);
           toast.success('Resume data loaded! Review and edit as needed.');
         } catch (error) {
           console.error('Error loading uploaded data:', error);
@@ -317,13 +321,17 @@ export default function BuilderPage() {
     loadResume();
   }, [resumeId, isNewResume, isUploaded]);
 
-  // Save resume data to localStorage whenever it changes
+  // Save resume data to localStorage whenever it changes (debounced)
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_RESUME_DATA, JSON.stringify(resumeData));
-    } catch (error) {
-      console.error('Error saving resume data to localStorage:', error);
-    }
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY_RESUME_DATA, JSON.stringify(resumeData));
+      } catch (error) {
+        console.error('Error saving resume data to localStorage:', error);
+      }
+    }, 1000); // Debounce by 1000ms (1 second)
+
+    return () => clearTimeout(timeoutId);
   }, [resumeData]);
 
   // Save selected template to localStorage whenever it changes
@@ -359,6 +367,8 @@ export default function BuilderPage() {
           .finally(() => {
             setIsExporting(false);
           });
+      } else if (loginAction === 'ats') {
+        setShowATSModal(true);
       }
       setLoginAction(null);
     }
@@ -366,6 +376,7 @@ export default function BuilderPage() {
 
   const handleDataChange = (data: ResumeData) => {
     try {
+      // Use functional update to avoid stale closures
       setResumeData(data);
     } catch (error) {
       console.error('BuilderPage: Error updating resume data:', error);
@@ -373,9 +384,12 @@ export default function BuilderPage() {
   };
 
   const handleUploadComplete = (data: ResumeData) => {
-    handleDataChange(data);
+    // Clear localStorage before setting uploaded data
+    localStorage.removeItem('resumatic_uploaded_data');
+    setResumeData(data);
     // Switch to builder tab after successful upload
     setActiveTab('builder');
+    toast.success('Resume loaded! You can now edit and customize it.');
   };
 
   const handleExportPDF = async () => {
@@ -547,6 +561,8 @@ export default function BuilderPage() {
             <p className="text-gray-600 mb-4">
               {loginAction === 'save' 
                 ? 'Please sign in to save your resume and access it from anywhere.' 
+                : loginAction === 'ats'
+                ? 'Please sign in to analyze your resume with our advanced ATS scanner.'
                 : 'Please sign in to download your resume as a PDF.'}
             </p>
             <p className="text-sm text-gray-500">
@@ -670,7 +686,14 @@ export default function BuilderPage() {
               </Button>
 
               <Button
-                onClick={() => setShowATSModal(true)}
+                onClick={() => {
+                  if (!user) {
+                    setLoginAction('ats');
+                    setShowLoginModal(true);
+                  } else {
+                    setShowATSModal(true);
+                  }
+                }}
                 className="gap-1.5 rounded-full bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 text-white hover:from-purple-700 hover:via-purple-600 hover:to-indigo-700  transition-all hover:scale-[1.02] text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 h-auto whitespace-nowrap font-semibold"
                 size="sm"
               >
