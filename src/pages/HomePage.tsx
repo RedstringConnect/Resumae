@@ -103,19 +103,19 @@ const testimonials = [
   {
     quote:
       'I tried multiple resume builders before finding Resumae. The interface is intuitive, templates are modern, and the export quality is excellent. Highly recommend!',
-    name: 'Michael Thompson',
+    name: 'Vishwa',
     role: 'Data Analyst',
   },
   {
     quote:
       'As a career changer, I needed my resume to stand out. The professional templates and smart suggestions helped me highlight my transferable skills perfectly.',
-    name: 'Jessica Williams',
+    name: 'Siddhartha',
     role: 'UX Designer',
   },
   {
     quote:
       'The speed and ease of use are impressive. I updated my resume in under 20 minutes and the final PDF looked incredibly professional. Worth every minute!',
-    name: 'Robert Kumar',
+    name: 'Rohan ',
     role: 'Business Analyst',
   },
 ];
@@ -167,7 +167,9 @@ export default function HomePage() {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isCursorActive, setIsCursorActive] = useState(false);
   const [scrollX, setScrollX] = useState(0);
-  const [testimonialScrollX, setTestimonialScrollX] = useState(0);
+  const [testimonialScrollY1, setTestimonialScrollY1] = useState(0);
+  const [testimonialScrollY2, setTestimonialScrollY2] = useState(0);
+  const [testimonialScrollY3, setTestimonialScrollY3] = useState(0);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackName, setFeedbackName] = useState('');
   const [feedbackEmail, setFeedbackEmail] = useState('');
@@ -209,19 +211,65 @@ export default function HomePage() {
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
-  // Infinite scroll animation for testimonials
+  // Infinite scroll animation for testimonials - Column 1 (down)
   useEffect(() => {
-    const cardWidth = 350 + 24; // card width + gap
-    const totalWidth = cardWidth * testimonials.length;
+    const cardHeight = 200 + 24; // approximate card height + gap
+    const itemsPerColumn = 2;
+    const singleSetHeight = cardHeight * itemsPerColumn;
     let animationFrameId: number;
     let startTime: number | null = null;
-    const duration = 60000; // 60 seconds for one complete cycle (slower than templates)
+    const duration = 30000; // 30 seconds for one complete cycle
 
     const animate = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
       const progress = (elapsed % duration) / duration;
-      setTestimonialScrollX(-(progress * totalWidth));
+      // Loop back when reaching the height of one set
+      setTestimonialScrollY1(-(progress * singleSetHeight));
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
+  // Infinite scroll animation for testimonials - Column 2 (up)
+  useEffect(() => {
+    const cardHeight = 200 + 24; // approximate card height + gap
+    const itemsPerColumn = 2;
+    const singleSetHeight = cardHeight * itemsPerColumn;
+    let animationFrameId: number;
+    let startTime: number | null = null;
+    const duration = 30000; // 30 seconds for one complete cycle
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = (elapsed % duration) / duration;
+      // Scroll upward - start from bottom and move to top
+      setTestimonialScrollY2(-singleSetHeight + (progress * singleSetHeight));
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
+  // Infinite scroll animation for testimonials - Column 3 (down)
+  useEffect(() => {
+    const cardHeight = 200 + 24; // approximate card height + gap
+    const itemsPerColumn = 2;
+    const singleSetHeight = cardHeight * itemsPerColumn;
+    let animationFrameId: number;
+    let startTime: number | null = null;
+    const duration = 30000; // 30 seconds for one complete cycle
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = (elapsed % duration) / duration;
+      // Loop back when reaching the height of one set
+      setTestimonialScrollY3(-(progress * singleSetHeight));
       animationFrameId = requestAnimationFrame(animate);
     };
 
@@ -772,8 +820,8 @@ export default function HomePage() {
             </div>
 
             {/* Gradient overlays for fade effect */}
-            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#f4f7ff] to-transparent z-10" />
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#f4f7ff] to-transparent z-10" />
+            <div className="hidden md:block pointer-events-none absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#f4f7ff] to-transparent z-10" />
+            <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#f4f7ff] to-transparent z-10" />
           </div>
 
           
@@ -801,45 +849,126 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          {/* Infinite Scroll Animation for Testimonials */}
-          <div className="relative overflow-hidden py-8">
-            <div 
-              className="flex gap-6"
-              style={{
-                transform: `translateX(${testimonialScrollX}px)`,
-                willChange: 'transform',
-              }}
-            >
-              {/* Render testimonials three times for seamless infinite loop */}
-              {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => (
+          {/* Three Column Infinite Scroll with Alternating Directions */}
+          <div className="relative py-8">
+            <div className="flex justify-center items-start gap-3 sm:gap-4 max-w-5xl mx-auto">
+              {/* Column 1 - Scroll Down */}
+              <div className="overflow-hidden h-[400px] w-full max-w-[280px] sm:max-w-[420px] relative">
                 <div
-                  key={`${testimonial.name}-${index}`}
-                  className="flex-shrink-0 w-[350px]"
+                  className="flex flex-col gap-4"
+                  style={{
+                    transform: `translateY(${testimonialScrollY1}px)`,
+                    willChange: 'transform',
+                  }}
                 >
-                  <div className="h-full rounded-2xl border-2 border-[#dbeafe] bg-white p-6 shadow-lg hover:shadow-xl hover:shadow-[rgba(37,99,235,0.15)] hover:border-[#2563eb] hover:scale-105 transition-all duration-300">
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="flex-shrink-0 h-12 w-12 rounded-full bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] flex items-center justify-center text-white font-bold text-lg">
-                        {testimonial.name.charAt(0)}
+                  {[...testimonials.slice(0, 2), ...testimonials.slice(0, 2), ...testimonials.slice(0, 2), ...testimonials.slice(0, 2), ...testimonials.slice(0, 2), ...testimonials.slice(0, 2)].map((testimonial, index) => (
+                    <div
+                      key={`col1-${testimonial.name}-${index}`}
+                      className="flex-shrink-0"
+                    >
+                      <div className="rounded-xl border border-[#dbeafe] bg-white p-4 shadow-md hover:shadow-lg hover:shadow-[rgba(37,99,235,0.12)] hover:border-[#2563eb] transition-all duration-300">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] flex items-center justify-center text-white font-bold text-sm">
+                            {testimonial.name.charAt(0)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold text-gray-900 truncate">{testimonial.name}</p>
+                            <p className="text-[10px] text-gray-500 truncate">{testimonial.role}</p>
+                          </div>
+                          <svg className="h-5 w-5 text-[#2563eb]/30 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                          </svg>
+                        </div>
+                        <p className="text-xs text-gray-700 leading-relaxed line-clamp-4">
+                          "{testimonial.quote}"
+                        </p>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-gray-900 truncate">{testimonial.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{testimonial.role}</p>
-                      </div>
-                      <svg className="h-6 w-6 text-[#2563eb]/30 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                      </svg>
                     </div>
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      "{testimonial.quote}"
-                    </p>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+                {/* Gradient overlays */}
+                <div className="pointer-events-none absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#f4f7ff] to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#f4f7ff] to-transparent z-10" />
+              </div>
 
-            {/* Gradient overlays for fade effect */}
-            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#f4f7ff] to-transparent z-10" />
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#f4f7ff] to-transparent z-10" />
+              {/* Column 2 - Scroll Up */}
+              <div className="overflow-hidden h-[400px] w-full max-w-[280px] sm:max-w-[420px] relative hidden md:block">
+                <div
+                  className="flex flex-col gap-4"
+                  style={{
+                    transform: `translateY(${testimonialScrollY2}px)`,
+                    willChange: 'transform',
+                  }}
+                >
+                  {[...testimonials.slice(2, 4), ...testimonials.slice(2, 4), ...testimonials.slice(2, 4), ...testimonials.slice(2, 4), ...testimonials.slice(2, 4), ...testimonials.slice(2, 4)].map((testimonial, index) => (
+                    <div
+                      key={`col2-${testimonial.name}-${index}`}
+                      className="flex-shrink-0"
+                    >
+                      <div className="rounded-xl border border-[#dbeafe] bg-white p-4 shadow-md hover:shadow-lg hover:shadow-[rgba(37,99,235,0.12)] hover:border-[#2563eb] transition-all duration-300">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] flex items-center justify-center text-white font-bold text-sm">
+                            {testimonial.name.charAt(0)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold text-gray-900 truncate">{testimonial.name}</p>
+                            <p className="text-[10px] text-gray-500 truncate">{testimonial.role}</p>
+                          </div>
+                          <svg className="h-5 w-5 text-[#2563eb]/30 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                          </svg>
+                        </div>
+                        <p className="text-xs text-gray-700 leading-relaxed line-clamp-4">
+                          "{testimonial.quote}"
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Gradient overlays */}
+                <div className="pointer-events-none absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#f4f7ff] to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#f4f7ff] to-transparent z-10" />
+              </div>
+
+              {/* Column 3 - Scroll Down */}
+              <div className="overflow-hidden h-[400px] w-full max-w-[280px] sm:max-w-[420px] relative hidden md:block">
+                <div
+                  className="flex flex-col gap-4"
+                  style={{
+                    transform: `translateY(${testimonialScrollY3}px)`,
+                    willChange: 'transform',
+                  }}
+                >
+                  {[...testimonials.slice(4, 6), ...testimonials.slice(4, 6), ...testimonials.slice(4, 6), ...testimonials.slice(4, 6), ...testimonials.slice(4, 6), ...testimonials.slice(4, 6)].map((testimonial, index) => (
+                    <div
+                      key={`col3-${testimonial.name}-${index}`}
+                      className="flex-shrink-0"
+                    >
+                      <div className="rounded-xl border border-[#dbeafe] bg-white p-4 shadow-md hover:shadow-lg hover:shadow-[rgba(37,99,235,0.12)] hover:border-[#2563eb] transition-all duration-300">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] flex items-center justify-center text-white font-bold text-sm">
+                            {testimonial.name.charAt(0)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold text-gray-900 truncate">{testimonial.name}</p>
+                            <p className="text-[10px] text-gray-500 truncate">{testimonial.role}</p>
+                          </div>
+                          <svg className="h-5 w-5 text-[#2563eb]/30 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                          </svg>
+                        </div>
+                        <p className="text-xs text-gray-700 leading-relaxed line-clamp-4">
+                          "{testimonial.quote}"
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Gradient overlays */}
+                <div className="pointer-events-none absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#f4f7ff] to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#f4f7ff] to-transparent z-10" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
