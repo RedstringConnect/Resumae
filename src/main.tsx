@@ -49,14 +49,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route 
-            path="/builder" 
-            element={
-              <ProtectedRoute>
-                <BuilderPage />
-              </ProtectedRoute>
-            } 
-          />
+          <Route path="/builder" element={<BuilderPage />} />
           <Route 
             path="/dashboard" 
             element={

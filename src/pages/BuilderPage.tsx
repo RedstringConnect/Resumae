@@ -8,7 +8,8 @@ import {
   Save,
   Loader2,
   Sparkles,
-  Briefcase,
+  Eye,
+  Edit,
 } from 'lucide-react';
 import { motion, type Variants } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -237,7 +238,7 @@ const loadTemplate = (): TemplateType => {
 };
 
 export default function BuilderPage() {
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const resumeId = searchParams.get('resumeId');
@@ -257,6 +258,10 @@ export default function BuilderPage() {
   const [isLoadingResume, setIsLoadingResume] = useState(!!resumeId);
   const [showATSModal, setShowATSModal] = useState(false);
   const [activeTab, setActiveTab] = useState('builder');
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginAction, setLoginAction] = useState<'save' | 'download' | null>(null);
+  const [pendingActionAfterLogin, setPendingActionAfterLogin] = useState(false);
+  const [mobileView, setMobileView] = useState<'editor' | 'preview'>('editor');
 
   // Load sample data when creating a new resume
   useEffect(() => {
@@ -330,6 +335,35 @@ export default function BuilderPage() {
     }
   }, [selectedTemplate]);
 
+  // Execute pending action after user logs in
+  useEffect(() => {
+    if (user && pendingActionAfterLogin && loginAction) {
+      setPendingActionAfterLogin(false);
+      
+      if (loginAction === 'save') {
+        if (currentResumeId) {
+          handleSaveResume();
+        } else {
+          setShowSaveDialog(true);
+        }
+      } else if (loginAction === 'download') {
+        setIsExporting(true);
+        exportToPDF(resumeData, selectedTemplate)
+          .then(() => {
+            toast.success('PDF downloaded successfully!');
+          })
+          .catch((error) => {
+            console.error('Error exporting PDF:', error);
+            toast.error('Failed to export PDF. Please try again.');
+          })
+          .finally(() => {
+            setIsExporting(false);
+          });
+      }
+      setLoginAction(null);
+    }
+  }, [user, pendingActionAfterLogin, loginAction, currentResumeId, resumeData, selectedTemplate]);
+
   const handleDataChange = (data: ResumeData) => {
     try {
       setResumeData(data);
@@ -345,6 +379,12 @@ export default function BuilderPage() {
   };
 
   const handleExportPDF = async () => {
+    if (!user) {
+      setLoginAction('download');
+      setShowLoginModal(true);
+      return;
+    }
+    
     setIsExporting(true);
     try {
       await exportToPDF(resumeData, selectedTemplate);
@@ -375,7 +415,8 @@ export default function BuilderPage() {
 
   const handleSaveClick = () => {
     if (!user) {
-      toast.error('Please sign in to save your resume');
+      setLoginAction('save');
+      setShowLoginModal(true);
       return;
     }
 
@@ -388,7 +429,8 @@ export default function BuilderPage() {
 
   const handleSaveResume = async () => {
     if (!user) {
-      toast.error('Please sign in to save your resume');
+      setLoginAction('save');
+      setShowLoginModal(true);
       return;
     }
 
@@ -425,6 +467,18 @@ export default function BuilderPage() {
       toast.error('Failed to save resume. Please try again.');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleLoginAndContinue = async () => {
+    try {
+      await signInWithGoogle();
+      toast.success('Signed in successfully!');
+      setShowLoginModal(false);
+      setPendingActionAfterLogin(true);
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Failed to sign in. Please try again.');
     }
   };
 
@@ -482,6 +536,44 @@ export default function BuilderPage() {
       }}
     >
       <GradientOrbs />
+
+      {/* Login Modal */}
+      <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
+        <DialogContent className="max-w-md border border-[#dbeafe] bg-white/90 shadow-xl shadow-[rgba(37,99,235,0.12)] backdrop-blur">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-gray-900">Sign In Required</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-600 mb-4">
+              {loginAction === 'save' 
+                ? 'Please sign in to save your resume and access it from anywhere.' 
+                : 'Please sign in to download your resume as a PDF.'}
+            </p>
+            <p className="text-sm text-gray-500">
+              Your work is saved locally and won't be lost. Sign in to unlock all features!
+            </p>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-3">
+            
+            <Button 
+              onClick={handleLoginAndContinue}
+              className="rounded-full w-full gap-2 bg-[#2563eb]/10 border border-[#2563eb] text-[#2563eb] hover:bg-[#1d4ed8]/20"
+            >
+              <svg className="h-4 w-4" viewBox="-3 0 262 262" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" fill="#000000">
+                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027" fill="#4285F4"></path>
+                  <path d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1" fill="#34A853"></path>
+                  <path d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782" fill="#FBBC05"></path>
+                  <path d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251" fill="#EB4335"></path>
+                </g>
+              </svg>
+              Sign in with Google
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Save Dialog */}
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
@@ -555,7 +647,7 @@ export default function BuilderPage() {
                     </span>
                   </div>
                   <span className="text-[11px] text-black/60 -mt-1 flex items-center gap-1">
-                    Powered by <img src="/redstring.png" alt="Redstring" className="h-3 w-auto" />
+                    Powered by <img src="/redstring.png" alt="Redstring" className="h-3 w-auto mt-1" />
                   </span>
                 </div>
               </Link>
@@ -621,31 +713,7 @@ export default function BuilderPage() {
             animate="show"
             className="rounded-2xl sm:rounded-2xl border border-dashed border-[#dbeafe] bg-white/85 p-3 sm:p-4 md:p-6 shadow-2xl shadow-[rgba(37,99,235,0.12)] backdrop-blur"
           >
-            <motion.a
-              variants={fadeInUp}
-              href="https://www.redstring.co.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mb-4 flex flex-col gap-3 rounded-2xl border border-[#c7d2fe]/70 bg-gradient-to-r from-[#e3ecff] via-white to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-[rgba(37,99,235,0.12)] transition duration-300 hover:-translate-y-1 hover:border-[#9bbcff] hover:shadow-[rgba(37,99,235,0.2)]"
-            >
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2563eb]/10 text-[#2563eb]">
-                  <Briefcase className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-sm sm:text-base font-semibold text-gray-900">Land your next role faster</p>
-                  <div className="mt-1 flex items-center gap-2 text-xs sm:text-sm text-gray-600">
-                    <span>Redstring Talent Network Powered by</span>
-                    <img src="/redstring.png" alt="Redstring" className="h-5 w-auto" />
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#c7d2fe] bg-white px-4 py-2 text-xs font-semibold text-[#2563eb] shadow-sm">
-                  Visit Job Portal
-                </span>
-              </div>
-            </motion.a>
+           
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 rounded-xl sm:rounded-2xl border border-[#dbeafe] bg-[#f5f9ff]/60 text-xs sm:text-sm font-semibold text-[#1d4ed8] h-auto">
@@ -654,8 +722,39 @@ export default function BuilderPage() {
               </TabsList>
 
               <TabsContent value="builder" className="mt-4 sm:mt-6 md:mt-8 space-y-4 sm:space-y-6">
+                {/* Mobile View Toggle - Only visible on mobile */}
+                <div className="lg:hidden flex items-center justify-center gap-2 mb-4">
+                  <Button
+                    onClick={() => setMobileView('editor')}
+                    variant={mobileView === 'editor' ? 'default' : 'outline'}
+                    className={`rounded-full gap-2 text-xs sm:text-sm px-4 py-2 h-auto ${
+                      mobileView === 'editor'
+                        ? 'bg-[#2563eb] text-white'
+                        : 'border-[#c7d2fe] text-gray-700 hover:bg-[#f5f9ff]'
+                    }`}
+                    size="sm"
+                  >
+                    <Edit className="h-4 w-4" />
+                    Editor
+                  </Button>
+                  <Button
+                    onClick={() => setMobileView('preview')}
+                    variant={mobileView === 'preview' ? 'default' : 'outline'}
+                    className={`rounded-full gap-2 text-xs sm:text-sm px-4 py-2 h-auto ${
+                      mobileView === 'preview'
+                        ? 'bg-[#2563eb] text-white'
+                        : 'border-[#c7d2fe] text-gray-700 hover:bg-[#f5f9ff]'
+                    }`}
+                    size="sm"
+                  >
+                    <Eye className="h-4 w-4" />
+                    Preview
+                  </Button>
+                </div>
+
                 <div className="grid gap-4 sm:gap-6 lg:grid-cols-[420px_1fr]">
-                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/80 border-dashed shadow-lg shadow-[rgba(37,99,235,0.12)]">
+                  {/* Editor Panel - Hidden on mobile when preview is active */}
+                  <div className={`overflow-hidden rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/80 border-dashed shadow-lg shadow-[rgba(37,99,235,0.12)] ${mobileView === 'preview' ? 'hidden lg:block' : ''}`}>
                     <div className="flex items-center justify-between  px-4 sm:px-6 py-3 sm:py-4">
                       <h2 className="text-sm sm:text-base font-semibold text-gray-900">Resume Builder</h2>
                       <Button
@@ -672,6 +771,7 @@ export default function BuilderPage() {
                     </div>
                   </div>
 
+                  {/* Desktop Preview Panel - Always visible on desktop, hidden on mobile */}
                   <div className="hidden overflow-hidden rounded-2xl sm:rounded-3xl border border-dashed border-[#dbeafe] bg-[#eef2ff] shadow-lg lg:block">
                     <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
                       <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>
@@ -701,7 +801,8 @@ export default function BuilderPage() {
                   </div>
                 </div>
 
-                <div className="lg:hidden">
+                {/* Mobile Preview Panel - Only visible when preview is active */}
+                <div className={`lg:hidden ${mobileView === 'editor' ? 'hidden' : ''}`}>
                   <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/80 shadow-lg shadow-[rgba(37,99,235,0.12)]">
                     <div className="flex items-center justify-between border-b border-[#dbeafe] px-4 sm:px-6 py-3 sm:py-4">
                       <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>

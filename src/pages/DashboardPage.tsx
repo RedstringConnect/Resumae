@@ -488,7 +488,7 @@ export default function DashboardPage() {
                   </span>
                 </div>
                 <span className="text-[11px] text-black/60 -mt-1 flex items-center gap-1">
-                  Powered by <img src="/redstring.png" alt="Redstring" className="h-3 w-auto" />
+                  Powered by <img src="/redstring.png" alt="Redstring" className="h-3 w-auto mt-1" />
                 </span>
               </div>
             </Link>
@@ -607,10 +607,10 @@ export default function DashboardPage() {
                   <Briefcase className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-sm sm:text-base font-semibold text-gray-900">Land your next role faster</p>
+                  <p className="text-sm sm:text-base font-semibold text-gray-900">Discover the undiscovered startup opportunities</p>
                   <div className="mt-1 flex items-center gap-2 text-xs sm:text-sm text-gray-600">
-                     <span>Redstring Talent Network Powered by</span>
-                    <img src="/redstring.png" alt="Redstring" className="h-5 w-auto" />
+                     <span>find the jobs from top Indian startups</span>
+                   
                    
                   </div>
                 
@@ -618,7 +618,8 @@ export default function DashboardPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-2 rounded-full border border-[#c7d2fe] bg-white px-4 py-2 text-xs font-semibold text-[#2563eb] shadow-sm">
-                  Visit Job Portal
+                  Try 
+                   <img src="/redstring.png" alt="Redstring" className="h-5 w-auto mt-1" />
                 </span>
               </div>
             </motion.a>
