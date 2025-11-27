@@ -17,6 +17,7 @@ import {
   Blocks,
   MessageSquare,
   Upload,
+  Briefcase,
 } from 'lucide-react';
 
 const featureHighlights = [
@@ -709,6 +710,40 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Redstring Banner */}
+      <section className="relative mt-16 max-w-6xl mx-auto">
+        <div className="container mx-auto px-4">
+          <motion.a
+            href="https://www.redstring.co.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col gap-3 rounded-2xl border border-[#c7d2fe]/70 bg-gradient-to-r from-[#e3ecff] via-white to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-[rgba(37,99,235,0.12)] transition duration-300 hover:-translate-y-1 hover:border-[#9bbcff] hover:shadow-[rgba(37,99,235,0.2)]"
+          >
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2563eb]/10 text-[#2563eb]">
+                <Briefcase className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">Discover the undiscovered startup opportunities</p>
+                <div className="mt-1 flex items-center gap-2 text-xs sm:text-sm text-gray-600">
+                  <span>find the jobs from top Indian startups</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#c7d2fe] bg-white px-4 py-2 text-xs font-semibold text-[#2563eb] shadow-sm">
+                Try 
+                <img src="/redstring.png" alt="Redstring" className="h-5 w-auto mt-1" />
+              </span>
+            </div>
+          </motion.a>
+        </div>
+      </section>
+
       {/* Features */}
       <section ref={featuresRef} className="relative mt-32 max-w-6xl mx-auto">
         <div className="container mx-auto px-4">
@@ -720,7 +755,7 @@ export default function HomePage() {
           >
             <motion.div variants={fadeInUp} className="relative">
               <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-                <div className="space-y-4">
+                <div className="space-y-4 text-center lg:text-left">
                  
                   <h2 className="text-4xl font-black leading-tight tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
                     Powerful features
@@ -983,39 +1018,107 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative border-t border-[#dbeafe] py-6 mt-16">
+      <footer className="relative py-12 mt-16">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:justify-between">
-            <div className="flex flex-col items-center gap-2 text-sm text-gray-600 sm:flex-row sm:items-center sm:gap-3">
-              <span>© 2025 Resumae. All rights reserved.</span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowFeedbackModal(true)}
-                className="rounded-full gap-1.5 border-[#c7d2fe] bg-white/80 text-[#2563eb] hover:bg-[#f5f9ff] text-xs sm:text-sm px-3 py-1.5 h-auto"
-              >
-                <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Share Feedback</span>
-                <span className="sm:hidden">Feedback</span>
-              </Button>
+          {/* Top Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+              {/* Brand Section */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2 text-black focus-visible text-3xl font-semibold">
+               Resumae
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Transforming resume building for job seekers with right tools,<br />
+                  rapid creation, and zero hassle
+                </p>
+                <p className="text-gray-500 text-sm">
+                  Built with <span className="text-red-500">❤</span> for job seekers.
+                </p>
+              </div>
+
+              {/* Socials Section */}
+              <div className="flex flex-col gap-4">
+                <h3 className="text-gray-900 font-semibold text-lg">Socials</h3>
+                <div className="flex flex-col gap-2">
+                  <a 
+                    href="https://www.instagram.com/redstring.connect/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-[#2563eb] transition-colors text-sm"
+                  >
+                    Instagram
+                  </a>
+                  <a 
+                    href="https://www.linkedin.com/company/redstring-invisible-thread/?viewAsMember=true" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-[#2563eb] transition-colors text-sm"
+                  >
+                    Linkedin
+                  </a>
+                  <a 
+                    href="https://www.youtube.com/@Redstring.connect" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-[#2563eb] transition-colors text-sm"
+                  >
+                    Youtube
+                  </a>
+                </div>
+              </div>
+
+              {/* Info Section */}
+              <div className="flex flex-col gap-4">
+                <h3 className="text-gray-900 font-semibold text-lg">Info</h3>
+                <div className="flex flex-col gap-2">
+                  <a 
+                    href="https://docs.google.com/document/d/1se7on8TdC82QbPBHmL1JnDifGbMCWxxdWFk_nyqCYQY/edit?tab=t.0" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-[#2563eb] transition-colors text-sm"
+                  >
+                    Privacy Policy
+                  </a>
+                  <a 
+                    href="https://docs.google.com/document/d/1Ysptt6UfxyZoXH4SEQJJUPRAs0cHqvSTZyXIRBGSe38/edit?tab=t.0" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-[#2563eb] transition-colors text-sm"
+                  >
+                    Terms and Condition
+                  </a>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-gray-500">Powered by</span>
-              <a 
-                href="https://redstring.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="transition-opacity hover:opacity-70"
-              >
-                <img 
-                  src="/redstring.png" 
-                  alt="Redstring" 
-                  className="h-4 w-auto"
-                />
-              </a>
+
+            {/* Bottom Section */}
+            <div className="border-t border-[#dbeafe] pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <span className="text-gray-600 text-sm">© 2025 Resumae. All rights reserved</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowFeedbackModal(true)}
+                  className="rounded-full gap-1.5 border-[#c7d2fe] bg-white text-[#2563eb] hover:bg-[#f5f9ff] text-xs sm:text-sm px-3 py-1.5 h-auto"
+                >
+                  <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <span>Feedback</span>
+                </Button>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-500 text-sm">Powered by</span>
+                <a 
+                  href="https://redstring.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="transition-opacity hover:opacity-70"
+                >
+                  <span className="text-red-500 font-semibold">red</span>
+                  <span className="text-gray-900 font-semibold">string</span>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
       </footer>
     </div>
   );
