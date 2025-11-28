@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent } from 'react';
-import { motion, useInView, useScroll, useTransform, type Variants } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useScroll, useTransform, type Variants } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ import {
   MessageSquare,
   Upload,
   Briefcase,
+  Menu,
 } from 'lucide-react';
 
 const featureHighlights = [
@@ -165,6 +166,7 @@ const GradientOrbs = () => (
 
 export default function HomePage() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isCursorActive, setIsCursorActive] = useState(false);
   const [scrollX, setScrollX] = useState(0);
@@ -180,6 +182,7 @@ export default function HomePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const parallax = useTransform(scrollY, [0, 400], [0, -80]);
 
@@ -190,6 +193,31 @@ export default function HomePage() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!mobileMenuRef.current) return;
+      if (!mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
   }, []);
 
   // Infinite scroll animation for templates
@@ -555,8 +583,56 @@ export default function HomePage() {
          
           </motion.div>
           <div className="flex items-center gap-3">
-            <LoginButton />
-           
+            <div className="relative md:hidden" ref={mobileMenuRef}>
+              <button
+                type="button"
+                aria-label="Toggle menu"
+                aria-expanded={isMobileMenuOpen}
+                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                className={`inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#dbeafe] bg-white text-[#2563eb] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#f5f9ff] ${
+                  isMobileMenuOpen ? 'ring-2 ring-[#2563eb]/30' : ''
+                }`}
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+              <AnimatePresence>
+                {isMobileMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-3 w-64 rounded-2xl border border-[#e0e7ff] bg-white p-4 shadow-xl shadow-[rgba(15,23,42,0.12)]"
+                  >
+                    <a
+                      href="https://chat.whatsapp.com/LcE580c36xd6b63QnPuoJq"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="inline-flex w-full items-center justify-between gap-2 rounded-full bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-[#1d4ed8]"
+                    >
+                      <span>Join the Talent Network</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                    <div className="my-3 h-px bg-gradient-to-r from-transparent via-[#e0e7ff] to-transparent" />
+                    <LoginButton className="w-full justify-center" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="hidden md:flex items-center gap-3">
+              <a
+                href="https://chat.whatsapp.com/LcE580c36xd6b63QnPuoJq"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-[#2563eb] px-5 text-sm font-semibold text-white shadow-lg  transition hover:-translate-y-0.5 hover:bg-[#1d4ed8]"
+              >
+                <span>Join the Talent Network</span>
+                <ArrowRight className="h-4 w-4" />
+              </a>
+              <LoginButton />
+            </div>
           </div>
         </div>
       </motion.nav>
@@ -571,7 +647,7 @@ export default function HomePage() {
             animate="show"
             className="mx-auto max-w-6xl"
           >
-            <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            <div className="grid gap-12 lg:gap-20 xl:gap-28 lg:grid-cols-2 lg:items-center">
               <div className="text-center lg:text-left">
                 <div className='flex flex-col sm:flex-row gap-3 items-center justify-center lg:justify-start mb-6'>
                   <a href="https://www.producthunt.com/products/resumae?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-resumae" target="_blank" rel="noopener noreferrer">
@@ -711,7 +787,7 @@ export default function HomePage() {
       </section>
 
       {/* Redstring Banner */}
-      <section className="relative mt-16 max-w-6xl mx-auto">
+      {/* <section className="relative mt-16 max-w-6xl mx-auto">
         <div className="container mx-auto px-4">
           <motion.a
             href="https://www.redstring.co.in/"
@@ -742,7 +818,7 @@ export default function HomePage() {
             </div>
           </motion.a>
         </div>
-      </section>
+      </section> */}
 
       {/* Features */}
       <section ref={featuresRef} className="relative mt-32 max-w-6xl mx-auto">

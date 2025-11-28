@@ -4,8 +4,13 @@ import { Button } from './ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { cn } from '@/lib/utils';
 
-export default function LoginButton() {
+type LoginButtonProps = {
+  className?: string;
+};
+
+export default function LoginButton({ className }: LoginButtonProps) {
   const { signInWithGoogle, user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -30,7 +35,7 @@ export default function LoginButton() {
         onClick={() => navigate('/dashboard')}
         size="lg"
         variant="outline"
-        className="rounded-full border border-[#2563eb] bg-[#2563eb]/10 text-black hover:bg-[#2563eb]/20 text-xs sm:text-sm md:text-base px-4 sm:px-6 py-2 sm:py-3 h-auto whitespace-nowrap"
+        className={cn('h-11 rounded-full border border-[#2563eb] bg-[#2563eb]/10 px-5 text-sm font-semibold text-black hover:bg-[#2563eb]/20 whitespace-nowrap', className)}
       >
         Go to Dashboard
       </Button>
@@ -43,7 +48,7 @@ export default function LoginButton() {
       disabled={loading}
       variant="outline"
       size="lg"
-      className="border text-[#1d4ed8] border-[#2563eb] bg-[#2563eb]/10 rounded-full hover:bg-[#2563eb]/20 text-xs sm:text-sm md:text-base px-4 sm:px-6 py-2 sm:py-3 h-auto whitespace-nowrap"
+      className={cn('h-11 rounded-full border border-[#2563eb] bg-[#2563eb]/10 px-5 text-sm font-semibold text-[#1d4ed8] hover:bg-[#2563eb]/20 whitespace-nowrap', className)}
     >
       {loading ? (
         <>
