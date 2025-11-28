@@ -17,7 +17,6 @@ import {
   Blocks,
   MessageSquare,
   Upload,
-  Briefcase,
   Menu,
 } from 'lucide-react';
 
