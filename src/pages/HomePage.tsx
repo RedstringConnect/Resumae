@@ -1071,17 +1071,21 @@ export default function HomePage() {
           {/* Top Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
               {/* Brand Section */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2 text-black focus-visible text-3xl font-semibold">
                Resumae
                 </div>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Transforming resume building for job seekers with right tools,<br />
-                  rapid creation, and zero hassle
+                  Transforming resume building for job seekers with right tools, rapid creation, and zero hassle
                 </p>
-                <p className="text-gray-500 text-sm flex items-center gap-1">
-                  Built with <span className="text-red-500">❤</span> for job seekers by <a href="https://www.gowthamoleti.com/" target="_blank" rel="noopener noreferrer" className='text-zinc-850 font-semibold hover:text-black transition-colors'>Gowtham</a> and <img src='/redstring.png' alt="Redstring" className="h-4 w-auto mt-1" />
-                </p>
+                <div className="text-gray-500 text-sm">
+                  <p className="inline">Built with <span className="text-red-500">❤</span> for job seekers by</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-1">
+                    <a href="https://www.gowthamoleti.com/" target="_blank" rel="noopener noreferrer" className='text-zinc-850 font-semibold hover:text-black transition-colors'>Gowtham</a>
+                    <span>and</span>
+                    <img src='/redstring.png' alt="Redstring" className="h-4 w-auto mt-1" />
+                  </div>
+                </div>
               </div>
 
               {/* Socials Section */}
