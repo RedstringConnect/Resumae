@@ -602,34 +602,13 @@ export default function HomePage() {
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.15 }}
                     className="absolute right-0 mt-3 w-64 rounded-2xl border border-[#e0e7ff] bg-white p-4 shadow-xl shadow-[rgba(15,23,42,0.12)]"
-                  >
-                    <a
-                      href="https://chat.whatsapp.com/LcE580c36xd6b63QnPuoJq"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="inline-flex w-full items-center justify-between gap-2 rounded-full bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-[#1d4ed8]"
-                    >
-                      <span>Join the Talent Network</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </a>
-                    <div className="my-3 h-px bg-gradient-to-r from-transparent via-[#e0e7ff] to-transparent" />
-                    <LoginButton className="w-full justify-center" />
+                  >                    <LoginButton className="w-full justify-center" />
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
             <div className="hidden md:flex items-center gap-3">
-              <a
-                href="https://chat.whatsapp.com/LcE580c36xd6b63QnPuoJq"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-11 items-center gap-2 rounded-full bg-[#2563eb] px-5 text-sm font-semibold text-white shadow-lg  transition hover:-translate-y-0.5 hover:bg-[#1d4ed8]"
-              >
-                <span>Join the Talent Network</span>
-                <ArrowRight className="h-4 w-4" />
-              </a>
               <LoginButton />
             </div>
           </div>
@@ -663,12 +642,9 @@ export default function HomePage() {
                       className="h-6 sm:h-8 w-auto"
                     />
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                      <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2563eb]">Resumae</p>
-                      <span className="text-xs text-gray-400">|</span>
-                      <p className="text-[10px] sm:text-xs text-gray-500 flex items-center gap-1">
-                        <span className="hidden sm:inline">Powered by</span>
-                        <img src="/redstring.png" alt="Redstring" className="h-2.5 sm:h-3 w-auto mt-1" />
-                      </p>
+                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2563eb]">Resumae</p>
+                    
+                      
                     </div>
                   </motion.div>
                 </div>
@@ -848,16 +824,13 @@ export default function HomePage() {
                 </div>
 
                 <div className="relative flex items-center justify-center">
-                  <Button
-                    onClick={handleStartBuilding}
-                    className="rounded-full bg-[#2563eb] px-10 py-4 text-lg font-semibold text-white  transition-transform hover:-translate-y-1 hover:bg-[#1d4ed8]"
-                  >
-                    Get Started Free
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-
-
-
+                  <p className="text-4xl z-10 sm:text-5xl font-extrabold tracking-tight text-black">
+                   <span className="relative inline-block">
+                      <span className="relative z-10">Start building!!</span>
+                     
+                    </span>
+                     <span className="pointer-events-none absolute inset-x-0 bottom-0 h-3 rounded-full bg-[#2563eb]/60" />
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -1106,8 +1079,8 @@ export default function HomePage() {
                   Transforming resume building for job seekers with right tools,<br />
                   rapid creation, and zero hassle
                 </p>
-                <p className="text-gray-500 text-sm">
-                  Built with <span className="text-red-500">❤</span> for job seekers.
+                <p className="text-gray-500 text-sm flex items-center gap-1">
+                  Built with <span className="text-red-500">❤</span> for job seekers by <a href="https://www.gowthamoleti.com/" target="_blank" rel="noopener noreferrer" className='text-zinc-850 font-semibold hover:text-black transition-colors'>Gowtham</a> and <img src='/redstring.png' alt="Redstring" className="h-4 w-auto mt-1" />
                 </p>
               </div>
 
@@ -1188,8 +1161,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="transition-opacity hover:opacity-70"
                 >
-                  <span className="text-red-500 font-semibold">red</span>
-                  <span className="text-gray-900 font-semibold">string</span>
+                  <img src="/redstring.png" alt="Redstring" className="h-4 w-auto mt-1" />
                 </a>
               </div>
             </div>

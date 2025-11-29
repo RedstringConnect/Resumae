@@ -595,35 +595,7 @@ export default function DashboardPage() {
             
             </motion.div>
 
-            <motion.a
-              variants={fadeInUp}
-              href="https://www.redstring.co.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 sm:mt-8 flex flex-col gap-3 rounded-2xl border border-[#c7d2fe]/70 bg-gradient-to-r from-[#e3ecff] via-white to-purple-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 shadow-lg shadow-[rgba(37,99,235,0.12)] transition duration-300 hover:-translate-y-1 hover:border-[#9bbcff] hover:shadow-[rgba(37,99,235,0.2)]"
-            >
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2563eb]/10 text-[#2563eb]">
-                  <Briefcase className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-sm sm:text-base font-semibold text-gray-900">Discover the undiscovered startup opportunities</p>
-                  <div className="mt-1 flex items-center gap-2 text-xs sm:text-sm text-gray-600">
-                     <span>find the jobs from top Indian startups</span>
-                   
-                   
-                  </div>
-                
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#c7d2fe] bg-white px-4 py-2 text-xs font-semibold text-[#2563eb] shadow-sm">
-                  Try 
-                   <img src="/redstring.png" alt="Redstring" className="h-5 w-auto mt-1" />
-                </span>
-              </div>
-            </motion.a>
-
+    
           
 
             <motion.div variants={fadeInUp} className="mt-6 sm:mt-10 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
