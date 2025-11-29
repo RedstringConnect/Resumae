@@ -574,7 +574,7 @@ export default function HomePage() {
                 </span>
               </div>
               <div className="text-[10px] sm:text-[11px] text-gray-500 -mt-0.5 flex items-center gap-1">
-                <span className="hidden sm:inline">Powered by</span>
+                <span className=" sm:inline">Powered by</span>
                 <img src="/redstring.png" alt="Redstring" className="h-2.5 sm:h-3 w-auto mt-1" />
               </div>
             </motion.div>
@@ -635,18 +635,7 @@ export default function HomePage() {
                       className="w-[200px] sm:w-[250px] h-auto" 
                     />
                   </a>
-                  <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 sm:gap-3 rounded-full border border-[#dbeafe] bg-[#eff6ff]/80 px-3 sm:px-4 py-1.5 sm:py-2 shadow-sm backdrop-blur">
-                    <img
-                      src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
-                      alt="Resumae"
-                      className="h-6 sm:h-8 w-auto"
-                    />
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2563eb]">Resumae</p>
-                    
-                      
-                    </div>
-                  </motion.div>
+                
                 </div>
 
                 <motion.h1

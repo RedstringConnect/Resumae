@@ -1,4 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { ResumeData, WorkExperience, Education, Skill, Language, Certification, Project, SpacingSettings } from '../types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,26 @@ interface ResumeFormProps {
 }
 
 export default function ResumeForm({ data, onChange }: ResumeFormProps) {
+  // Track technology input values locally to prevent cursor jumping
+  const [techInputs, setTechInputs] = useState<Record<string, string>>({});
+
+  // Update local state when data changes (e.g., switching projects or data updates)
+  useEffect(() => {
+    const newTechInputs: Record<string, string> = {};
+    data.projects.forEach(project => {
+      // Only update if the input isn't currently focused (being edited)
+      const currentValue = techInputs[project.id];
+      const dataValue = project.technologies.join(', ');
+      // Update if it's a new project or if the data changed from outside this component
+      if (currentValue === undefined || document.activeElement?.id !== `project-tech-${project.id}`) {
+        newTechInputs[project.id] = dataValue;
+      } else {
+        newTechInputs[project.id] = currentValue;
+      }
+    });
+    setTechInputs(newTechInputs);
+  }, [data.projects]);
+
   const updatePersonalInfo = (field: string, value: string) => {
     onChange({
       ...data,
@@ -221,7 +242,12 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
   };
 
   const updateProjectTechnologies = (id: string, value: string) => {
-    const technologies = value.split(',').map(t => t.trim()).filter(t => t);
+    // Split by comma, trim each item, and filter out empty strings
+    const technologies = value
+      .split(',')
+      .map(t => t.trim())
+      .filter(t => t.length > 0);
+    
     updateProject(id, 'technologies', technologies);
   };
 
@@ -757,9 +783,14 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                     <Label htmlFor={`project-tech-${project.id}`}>Technologies (comma-separated)</Label>
                     <Input
                       id={`project-tech-${project.id}`}
-                      type="text"
-                      value={project.technologies.join(', ')}
-                      onChange={(e) => updateProjectTechnologies(project.id, e.target.value)}
+                      value={techInputs[project.id] || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Update local state for smooth typing
+                        setTechInputs(prev => ({ ...prev, [project.id]: value }));
+                        // Update data immediately for live preview
+                        updateProjectTechnologies(project.id, value);
+                      }}
                       placeholder="React, Node.js, MongoDB"
                     />
                   </div>
