@@ -33,7 +33,6 @@ import {
   ShieldCheck,
   Upload,
   Download,
-  Briefcase,
   MessageSquare,
 } from 'lucide-react';
 
