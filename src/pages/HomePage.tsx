@@ -1079,8 +1079,8 @@ export default function HomePage() {
                   Transforming resume building for job seekers with right tools, rapid creation, and zero hassle
                 </p>
                 <div className="text-gray-500 text-sm">
-                  <p className="inline">Built with <span className="text-red-500">❤</span> for job seekers by</p>
-                  <div className="mt-1 flex flex-wrap items-center gap-1">
+                  <div className="flex flex-wrap items-center gap-1">
+                    <span>Built with <span className="text-red-500">❤</span> for job seekers by</span>
                     <a href="https://www.gowthamoleti.com/" target="_blank" rel="noopener noreferrer" className='text-zinc-850 font-semibold hover:text-black transition-colors'>Gowtham</a>
                     <span>and</span>
                     <img src='/redstring.png' alt="Redstring" className="h-4 w-auto mt-1" />
