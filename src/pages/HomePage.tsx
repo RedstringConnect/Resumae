@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import LoginButton from '@/components/LoginButton';
+import { ArcadeEmbed } from '@/components/ArcadeEmbed';
 import toast from 'react-hot-toast';
 import emailjs from '@emailjs/browser';
 import {
@@ -746,6 +747,21 @@ export default function HomePage() {
                 />
               </motion.div>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Arcade Embed - Product Video */}
+      <section className="relative mt-24 mb-32">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="rounded-2xl border border-[#dbeafe] bg-white/30 backdrop-blur-xs p-2 sm:p-4 shadow-xl shadow-[rgba(37,99,235,0.12)] overflow-hidden"
+          >
+            <ArcadeEmbed />
           </motion.div>
         </div>
       </section>
