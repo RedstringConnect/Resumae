@@ -105,7 +105,8 @@ const premiumTemplates = [
 export default function RewardsCenter({ open, onOpenChange }: RewardsCenterProps) {
   const { user } = useAuth();
   const { 
-    referralStats, 
+    referralStats,
+    loading,
     getReferralLink, 
     isTemplateUnlocked, 
     unlockTemplate,
@@ -116,6 +117,9 @@ export default function RewardsCenter({ open, onOpenChange }: RewardsCenterProps
   const [unlocking, setUnlocking] = useState<string | null>(null);
 
   const referralLink = getReferralLink();
+
+  // Generate a fallback referral link using user's uid if userProfile hasn't loaded yet
+  const displayReferralLink = referralLink || (loading ? 'Loading...' : 'Unable to load referral link');
 
   const handleCopyLink = async () => {
     try {
@@ -256,7 +260,7 @@ export default function RewardsCenter({ open, onOpenChange }: RewardsCenterProps
             <p className="text-sm font-medium text-[#334155]">Invite friends</p>
             <div className="flex gap-2">
               <Input
-                value={referralLink}
+                value={displayReferralLink}
                 readOnly
                 className="text-xs bg-[#f8fafc] border-[#e2e8f0] text-[#64748b] h-9"
               />
@@ -264,6 +268,7 @@ export default function RewardsCenter({ open, onOpenChange }: RewardsCenterProps
                 size="sm"
                 variant="outline"
                 onClick={handleCopyLink}
+                disabled={!referralLink}
                 className={cn(
                   "px-3 h-9 border-[#e2e8f0] transition-all",
                   copied ? "bg-[#dcfce7] border-[#86efac]" : "hover:bg-[#f8fafc]"
