@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import resumeRoutes from './routes/resumeRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use('/api', resumeRoutes);
+app.use('/api/user', userRoutes);
 
 export default app;
 

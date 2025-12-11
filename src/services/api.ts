@@ -149,3 +149,83 @@ export const checkHealth = async (): Promise<boolean> => {
   }
 };
 
+// User & Referral API
+
+export interface UserProfile {
+  id: string;
+  firebaseUid: string;
+  email: string;
+  displayName: string;
+  referralCode: string;
+  referredBy: string | null;
+  referralCount: number;
+  credits: number;
+  unlockedTemplates: string[];
+  hasClaimedWelcomeBonus: boolean;
+}
+
+export interface ReferralStats {
+  referralCode: string;
+  referralCount: number;
+  credits: number;
+  unlockedTemplates: string[];
+  creditsPerReferral: number;
+  creditsToUnlock: number;
+}
+
+// Initialize or get user profile
+export const initUserProfile = async (referralCode?: string): Promise<UserProfile> => {
+  try {
+    const params = referralCode ? `?referralCode=${referralCode}` : '';
+    const response = await api.get(`/api/user/init${params}`);
+    return response.data.user;
+  } catch (error) {
+    console.error('Error initializing user profile:', error);
+    throw error;
+  }
+};
+
+// Get user profile
+export const getUserProfile = async (): Promise<UserProfile> => {
+  try {
+    const response = await api.get('/api/user/profile');
+    return response.data.user;
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    throw error;
+  }
+};
+
+// Validate referral code
+export const validateReferralCode = async (code: string): Promise<{ valid: boolean; referrerName?: string }> => {
+  try {
+    const response = await api.get(`/api/user/validate-referral/${code}`);
+    return { valid: response.data.valid, referrerName: response.data.referrerName };
+  } catch (error) {
+    console.error('Error validating referral code:', error);
+    return { valid: false };
+  }
+};
+
+// Get referral stats
+export const getReferralStats = async (): Promise<ReferralStats> => {
+  try {
+    const response = await api.get('/api/user/referral-stats');
+    return response.data.stats;
+  } catch (error) {
+    console.error('Error fetching referral stats:', error);
+    throw error;
+  }
+};
+
+// Unlock template
+export const unlockTemplate = async (templateId: string): Promise<{ credits: number; unlockedTemplates: string[] }> => {
+  try {
+    const response = await api.post('/api/user/unlock-template', { templateId });
+    return { credits: response.data.credits, unlockedTemplates: response.data.unlockedTemplates };
+  } catch (error) {
+    console.error('Error unlocking template:', error);
+    throw error;
+  }
+};
+

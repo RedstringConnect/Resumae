@@ -9,14 +9,18 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Sparkles, Briefcase, Code, FileText, Building2, Minimize2, XCircle, GraduationCap, Users, Rocket, TrendingUp } from 'lucide-react';
+import { CheckCircle2, Sparkles, Briefcase, Code, FileText, Building2, Minimize2, XCircle, GraduationCap, Users, Rocket, TrendingUp, Lock, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import { useReferral } from '@/contexts/ReferralContext';
+import toast from 'react-hot-toast';
 
 interface TemplateSelectorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedTemplate: TemplateType;
   onSelectTemplate: (template: TemplateType) => void;
+  onOpenRewards?: () => void;
 }
 
 interface TemplateInfo {
@@ -30,6 +34,7 @@ interface TemplateInfo {
   imageUrl: string;
   recommended?: boolean;
   new?: boolean;
+  premium?: boolean;
   bestFor: string[];
 }
 
@@ -109,7 +114,7 @@ const templates: TemplateInfo[] = [
     bgGradient: 'from-indigo-600 to-blue-800',
     features: ['Navy sidebar', 'Executive style', 'Leadership roles'],
     imageUrl: 'https://static.wixstatic.com/media/5c0589_ede979d665e9417fa087494a38873355~mv2.png',
-    new: true,
+    premium: true,
     bestFor: ['senior', 'career-change']
   },
   {
@@ -121,7 +126,7 @@ const templates: TemplateInfo[] = [
     bgGradient: 'from-green-600 to-teal-600',
     features: ['Terminal style', 'Developer-focused', 'Tech skills'],
     imageUrl: 'https://static.wixstatic.com/media/5c0589_3dbd1d9927654d0392a47bd075897d8a~mv2.png',
-    new: true,
+    premium: true,
     bestFor: ['tech', 'first-job', 'internship']
   },
   {
@@ -176,12 +181,31 @@ export default function TemplateSelector({
   onOpenChange,
   selectedTemplate,
   onSelectTemplate,
+  onOpenRewards,
 }: TemplateSelectorProps) {
   const [selectedUseCase, setSelectedUseCase] = useState<UseCase>('all');
+  const { user } = useAuth();
+  const { isTemplateUnlocked, isPremiumTemplate } = useReferral();
 
   const filteredTemplates = selectedUseCase === 'all' 
     ? templates 
     : templates.filter(template => template.bestFor.includes(selectedUseCase));
+
+  const handleTemplateClick = (template: TemplateInfo) => {
+    if (template.premium && !isTemplateUnlocked(template.id)) {
+      if (!user) {
+        toast.error('Please sign in to unlock premium templates');
+        return;
+      }
+      // Open rewards modal directly for premium templates
+      onOpenChange(false);
+      onOpenRewards?.();
+      return;
+    }
+    
+    onSelectTemplate(template.id);
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -222,18 +246,21 @@ export default function TemplateSelector({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {filteredTemplates.map((template) => (
+          {filteredTemplates.map((template) => {
+            const isPremium = isPremiumTemplate(template.id);
+            const isUnlocked = isTemplateUnlocked(template.id);
+            const isLocked = isPremium && !isUnlocked;
+
+            return (
             <button
               key={template.id}
-              onClick={() => {
-                onSelectTemplate(template.id);
-                onOpenChange(false);
-              }}
+              onClick={() => handleTemplateClick(template)}
               className={cn(
                 "relative group p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 text-left",
                 selectedTemplate === template.id
                   ? "border-primary bg-primary/5 shadow-lg"
-                  : "border-gray-200 hover:border-primary/50"
+                  : "border-gray-200 hover:border-primary/50",
+                isLocked && "opacity-90"
               )}
             >
               {/* Selected Indicator */}
@@ -250,18 +277,43 @@ export default function TemplateSelector({
                     ⭐ Popular
                   </Badge>
                 )}
+                {isPremium && (
+                  <Badge variant="secondary" className={cn(
+                    "text-xs",
+                    isUnlocked 
+                      ? "bg-green-100 text-green-800" 
+                      : "bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800"
+                  )}>
+                    {isUnlocked ? (
+                      <>✓ Unlocked</>
+                    ) : (
+                      <><Crown className="h-3 w-3 mr-1 inline" /> Premium</>
+                    )}
+                  </Badge>
+                )}
               </div>
 
               {/* Template Preview Image */}
               <div className={cn(
-                "w-full aspect-[8.5/11] rounded-lg mb-4 shadow-lg overflow-hidden group-hover:scale-105 transition-transform bg-white border border-gray-200"
+                "relative w-full aspect-[8.5/11] rounded-lg mb-4 shadow-lg overflow-hidden group-hover:scale-105 transition-transform bg-white border border-gray-200"
               )}>
                 <img
                   src={template.imageUrl}
                   alt={`${template.name} template preview`}
-                  className="w-full h-full object-contain"
+                  className={cn(
+                    "w-full h-full object-contain transition-all",
+                    isLocked && "blur-[2px]"
+                  )}
                   loading="lazy"
                 />
+                {isLocked && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-[1px]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg mb-2">
+                      <Lock className="h-6 w-6 text-gray-700" />
+                    </div>
+                    <p className="text-white text-sm font-medium drop-shadow-md">Invite to Unlock</p>
+                  </div>
+                )}
               </div>
 
               {/* Template Info */}
@@ -295,7 +347,7 @@ export default function TemplateSelector({
                 "bg-gradient-to-br from-transparent via-transparent to-primary/5"
               )} />
             </button>
-          ))}
+          )})}
         </div>
 
         {/* Info Footer */}

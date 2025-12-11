@@ -317,7 +317,12 @@ Return ONLY the JSON object in this exact structure:
       "gpa": "<GPA if mentioned>"
     }
   ],
-  "skills": ["<skill1>", "<skill2>", ...],
+  "skills": [
+    {
+      "name": "<skill name>",
+      "category": "<category like Technical, Soft Skills, Tools, Languages, Frameworks, etc.>"
+    }
+  ],
   "certifications": [
     {
       "name": "<certification name>",
@@ -405,10 +410,21 @@ Important:
         ...edu,
         id: edu.id || `${Date.now()}-edu-${index}`,
       })),
-      skills: (parsedData.skills || []).map((skill: any, index: number) => ({
-        ...skill,
-        id: skill.id || `${Date.now()}-skill-${index}`,
-      })),
+      skills: (parsedData.skills || []).map((skill: any, index: number) => {
+        // Handle both string format and object format
+        if (typeof skill === 'string') {
+          return {
+            id: `${Date.now()}-skill-${index}`,
+            name: skill,
+            category: 'General',
+          };
+        }
+        return {
+          id: skill.id || `${Date.now()}-skill-${index}`,
+          name: skill.name || skill.skill || '',
+          category: skill.category || 'General',
+        };
+      }),
       languages: (parsedData.languages || []).map((lang: any, index: number) => ({
         ...lang,
         id: lang.id || `${Date.now()}-lang-${index}`,

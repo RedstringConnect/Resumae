@@ -6,7 +6,18 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
+import { Select } from '@/components/ui/select';
 import SpacingControls from './SpacingControls';
+
+// Predefined skill categories
+const SKILL_CATEGORIES = [
+  'Technical Skills',
+  'Programming Languages',
+  'Frameworks & Libraries',
+  'Tools & Software',
+  'Soft Skills',
+  'Other',
+] as const;
 
 interface ResumeFormProps {
   data: ResumeData;
@@ -16,6 +27,8 @@ interface ResumeFormProps {
 export default function ResumeForm({ data, onChange }: ResumeFormProps) {
   // Track technology input values locally to prevent cursor jumping
   const [techInputs, setTechInputs] = useState<Record<string, string>>({});
+  // Track which skills are using custom category mode
+  const [customCategoryMode, setCustomCategoryMode] = useState<Record<string, boolean>>({});
 
   // Update local state when data changes (e.g., switching projects or data updates)
   useEffect(() => {
@@ -592,7 +605,12 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
       <div>
         <h2 className="text-2xl font-bold mb-6">Skills</h2>
         <div className="space-y-4">
-        {data.skills.map((skill) => (
+        {data.skills.map((skill) => {
+          const isExistingCustomCategory = !SKILL_CATEGORIES.includes(skill.category as any) && skill.category !== '';
+          const isInCustomMode = customCategoryMode[skill.id] || isExistingCustomCategory;
+          const selectValue = isInCustomMode ? 'custom' : skill.category;
+          
+          return (
             <Card key={skill.id} className="border-2">
               <CardContent className="pt-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -600,36 +618,62 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                     <Label htmlFor={`skill-name-${skill.id}`}>Skill Name</Label>
                     <Input
                       id={`skill-name-${skill.id}`}
-                  type="text"
-                  value={skill.name}
-                  onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
-                  placeholder="React, Python, Leadership..."
+                      type="text"
+                      value={skill.name}
+                      onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
+                      placeholder="React, Python, Leadership..."
                       autoComplete="off"
-                />
-              </div>
+                    />
+                  </div>
                   <div>
                     <Label htmlFor={`skill-category-${skill.id}`}>Category</Label>
-                    <Input
+                    <Select
                       id={`skill-category-${skill.id}`}
-                  type="text"
-                  value={skill.category}
-                  onChange={(e) => updateSkill(skill.id, 'category', e.target.value)}
-                  placeholder="Technical, Soft Skills..."
+                      value={selectValue}
+                      onChange={(e) => {
+                        if (e.target.value === 'custom') {
+                          setCustomCategoryMode(prev => ({ ...prev, [skill.id]: true }));
+                          updateSkill(skill.id, 'category', '');
+                        } else {
+                          setCustomCategoryMode(prev => ({ ...prev, [skill.id]: false }));
+                          updateSkill(skill.id, 'category', e.target.value);
+                        }
+                      }}
+                    >
+                      <option value="">Select category...</option>
+                      {SKILL_CATEGORIES.map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                      <option value="custom">+ Custom Category</option>
+                    </Select>
+                  </div>
+                </div>
+                {isInCustomMode && (
+                  <div>
+                    <Label htmlFor={`skill-custom-category-${skill.id}`}>Custom Category</Label>
+                    <Input
+                      id={`skill-custom-category-${skill.id}`}
+                      type="text"
+                      value={skill.category}
+                      onChange={(e) => updateSkill(skill.id, 'category', e.target.value)}
+                      placeholder="Enter your custom category..."
                       autoComplete="off"
-                />
-              </div>
-            </div>
+                      autoFocus
+                    />
+                  </div>
+                )}
                 <Button
                   variant="outline"
-              onClick={() => removeSkill(skill.id)}
+                  onClick={() => removeSkill(skill.id)}
                   className="gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
-            >
-              <Trash2 size={16} />
-              Remove Skill
+                >
+                  <Trash2 size={16} />
+                  Remove Skill
                 </Button>
               </CardContent>
             </Card>
-        ))}
+          );
+        })}
           <Button onClick={addSkill} className="gap-2 w-full">
           <Plus size={18} />
           Add Skill
