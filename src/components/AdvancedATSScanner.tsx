@@ -4,7 +4,7 @@ import { ResumeData } from '@/types';
 import { analyzeResumeWithGemini, GeminiATSAnalysis } from '@/services/groqService';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface AdvancedATSScannerProps {
   data: ResumeData;
