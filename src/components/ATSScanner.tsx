@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, TrendingUp, Award, Target, Zap, Shield, CheckCircle2 } from 'lucide-react';
 import { ResumeData, ATSScore } from '../types';
 import { Card } from '@/components/ui/card';
+import { motion } from 'framer-motion';
 
 interface ATSScannerProps {
   data: ResumeData;
@@ -179,67 +180,173 @@ export default function ATSScanner({ data }: ATSScannerProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">ATS Score</h2>
-      
-      {/* Overall Score Circle */}
-      <div className="flex flex-col items-center">
-        <div 
-          className="w-36 h-36 rounded-full flex flex-col items-center justify-center border-8 relative"
-          style={{ borderColor: getScoreColor(score.overall) }}
-        >
-          <div className="text-5xl font-bold" style={{ color: getScoreColor(score.overall) }}>
-            {score.overall}
-          </div>
-          <div className="text-sm text-muted-foreground mt-1">out of 100</div>
-        </div>
-        <div className="mt-3 text-lg font-semibold" style={{ color: getScoreColor(score.overall) }}>
-          {getScoreLabel(score.overall)}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-6"
+    >
+      <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">ATS Score Analysis</h2>
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <Shield className="h-4 w-4" />
+          <span>Compatibility Check</span>
         </div>
       </div>
+      
+      {/* Overall Score Circle */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col items-center py-8"
+      >
+        <div className="relative">
+          <svg className="w-44 h-44 transform -rotate-90">
+            <defs>
+              <linearGradient id="score-gradient-basic" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor={score.overall >= 80 ? '#22c55e' : score.overall >= 60 ? '#eab308' : '#ef4444'} />
+                <stop offset="100%" stopColor={score.overall >= 80 ? '#16a34a' : score.overall >= 60 ? '#ca8a04' : '#dc2626'} />
+              </linearGradient>
+            </defs>
+            <circle
+              cx="88"
+              cy="88"
+              r="80"
+              stroke="#e5e7eb"
+              strokeWidth="14"
+              fill="none"
+            />
+            <motion.circle
+              cx="88"
+              cy="88"
+              r="80"
+              stroke="url(#score-gradient-basic)"
+              strokeWidth="14"
+              fill="none"
+              strokeLinecap="round"
+              initial={{ strokeDasharray: '502', strokeDashoffset: '502' }}
+              animate={{ strokeDashoffset: 502 - (502 * score.overall) / 100 }}
+              transition={{ duration: 1.5, ease: 'easeOut' }}
+              style={{ strokeDasharray: '502' }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.5, type: 'spring' }}
+              className="text-6xl font-bold"
+              style={{ color: getScoreColor(score.overall) }}
+            >
+              {score.overall}
+            </motion.div>
+            <div className="text-xs text-muted-foreground mt-2 font-medium">out of 100</div>
+          </div>
+        </div>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="mt-5 flex items-center gap-2"
+        >
+          {score.overall >= 80 && <Award className="h-6 w-6" style={{ color: getScoreColor(score.overall) }} />}
+          <span className="text-2xl font-bold" style={{ color: getScoreColor(score.overall) }}>
+            {getScoreLabel(score.overall)}
+          </span>
+        </motion.div>
+      </motion.div>
 
       {/* Metrics */}
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[
-          { label: 'Contact Info', value: score.contactInfo },
-          { label: 'Experience', value: score.workExperience },
-          { label: 'Education', value: score.education },
-          { label: 'Skills', value: score.skills },
-          { label: 'Formatting', value: score.formatting },
-          { label: 'Keywords', value: score.keywords },
-        ].map((metric) => (
-          <div key={metric.label} className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium">{metric.label}</span>
-              <span className="font-semibold">{metric.value}</span>
-            </div>
-            <div className="h-2 bg-secondary rounded-full overflow-hidden">
-              <div 
-                className="h-full rounded-full transition-all duration-300"
-                style={{ 
-                  width: `${metric.value}%`, 
-                  backgroundColor: getScoreColor(metric.value) 
-                }}
-              />
-            </div>
-          </div>
-        ))}
+          { label: 'Contact Info', value: score.contactInfo, icon: Target },
+          { label: 'Experience', value: score.workExperience, icon: Award },
+          { label: 'Education', value: score.education, icon: CheckCircle2 },
+          { label: 'Skills', value: score.skills, icon: Zap },
+          { label: 'Formatting', value: score.formatting, icon: Shield },
+          { label: 'Keywords', value: score.keywords, icon: TrendingUp },
+        ].map((metric, index) => {
+          const Icon = metric.icon;
+          return (
+            <motion.div
+              key={metric.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + index * 0.05 }}
+            >
+              <Card className="p-4 hover:shadow-lg transition-all duration-300 border-gray-200 hover:border-blue-200 bg-white">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`p-1.5 rounded-lg ${
+                      metric.value >= 80 ? 'bg-green-100' : metric.value >= 60 ? 'bg-yellow-100' : 'bg-red-100'
+                    }`}>
+                      <Icon className={`h-4 w-4 ${
+                        metric.value >= 80 ? 'text-green-600' : metric.value >= 60 ? 'text-yellow-600' : 'text-red-600'
+                      }`} />
+                    </div>
+                    <span className="text-sm font-semibold text-gray-700">{metric.label}</span>
+                  </div>
+                  <span className="text-xl font-bold tabular-nums" style={{ color: getScoreColor(metric.value) }}>
+                    {metric.value}
+                  </span>
+                </div>
+                <div className="relative h-2.5 bg-secondary rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${metric.value}%` }}
+                    transition={{ duration: 1, delay: 0.2 + index * 0.05, ease: 'easeOut' }}
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: getScoreColor(metric.value) }}
+                  />
+                </div>
+              </Card>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Suggestions */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <AlertCircle size={18} />
-          Suggestions
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="space-y-4"
+      >
+        <h3 className="text-xl font-bold flex items-center gap-2 text-gray-900">
+          <div className="p-2 rounded-lg bg-blue-100">
+            <AlertCircle className="h-5 w-5 text-blue-600" />
+          </div>
+          <span>Suggestions</span>
+          <span className="ml-2 text-xs font-semibold px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full">{score.suggestions.length}</span>
         </h3>
-        <div className="space-y-2">
-          {score.suggestions.map((suggestion, index) => (
-            <Card key={index} className="p-3 border-l-4 border-l-blue-500">
-              <p className="text-sm leading-relaxed">{suggestion}</p>
-            </Card>
-          ))}
+        <div className="space-y-3">
+          {score.suggestions.map((suggestion, index) => {
+            const isHighPriority = index === 0;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 + index * 0.05 }}
+              >
+                <Card className={`p-4 border-l-4 transition-all hover:shadow-md ${
+                  isHighPriority 
+                    ? 'border-l-purple-500 bg-gradient-to-r from-purple-50 to-blue-50' 
+                    : 'border-l-blue-500 bg-white hover:bg-blue-50/50'
+                }`}>
+                  {isHighPriority && (
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <TrendingUp className="h-3.5 w-3.5 text-purple-600" />
+                      <span className="text-xs font-bold text-purple-600 uppercase tracking-wide">Priority</span>
+                    </div>
+                  )}
+                  <p className="text-sm leading-relaxed text-gray-700">{suggestion}</p>
+                </Card>
+              </motion.div>
+            );
+          })}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

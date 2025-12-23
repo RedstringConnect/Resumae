@@ -632,9 +632,18 @@ export default function BuilderPage() {
 
       {/* ATS Score Analysis Modal */}
       <Dialog open={showATSModal} onOpenChange={setShowATSModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border border-[#dbeafe] bg-white/95 shadow-xl shadow-[rgba(37,99,235,0.12)] backdrop-blur">
-         
-          <div className="py-4">
+        <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto border-2 border-purple-200/50 bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 shadow-2xl shadow-purple-500/20 backdrop-blur-xl">
+          <DialogHeader className="border-b border-gray-200 pb-4 mb-2">
+            <DialogTitle className="text-2xl font-bold flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
+                <Sparkles className="h-5 w-5 text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-blue-700 via-purple-700 to-indigo-700 bg-clip-text text-transparent">
+                Resume Analysis Report
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
             <AdvancedATSScanner data={resumeData} />
           </div>
         </DialogContent>
