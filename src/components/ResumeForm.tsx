@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { ResumeData, WorkExperience, Education, Skill, Language, Certification, Project, SpacingSettings } from '../types';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,45 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import SpacingControls from './SpacingControls';
 
+// Curated skill categories and quick suggestions per category
+const SKILL_CATEGORIES = [
+  'Programming Languages',
+  'Technical',
+  'Frontend',
+  'Backend',
+  'DevOps',
+  'Data',
+  'Cloud',
+  'AI/ML',
+  'Databases',
+  'Product',
+  'Methodologies',
+  'Soft Skills',
+  'Tools',
+  'Mobile',
+  'Security',
+  'Analytics',
+];
+
+const SKILL_SUGGESTIONS: Record<string, string[]> = {
+  'Programming Languages': ['JavaScript', 'TypeScript', 'Python', 'Go', 'C++'],
+  Technical: ['System Design', 'APIs', 'Microservices', 'Testing', 'Design Patterns'],
+  Frontend: ['React', 'Next.js', 'Vue', 'Tailwind CSS', 'Redux'],
+  Backend: ['Node.js', 'Express', 'Django', 'NestJS', 'GraphQL'],
+  DevOps: ['Docker', 'Kubernetes', 'CI/CD', 'Terraform', 'Linux'],
+  Data: ['SQL', 'ETL', 'Data Modeling', 'Pandas', 'Spark'],
+  Cloud: ['AWS', 'GCP', 'Azure', 'Cloud Architecture', 'Serverless'],
+  'AI/ML': ['Machine Learning', 'LLMs', 'TensorFlow', 'PyTorch', 'MLOps'],
+  Databases: ['PostgreSQL', 'MongoDB', 'Redis', 'MySQL', 'Elasticsearch'],
+  Product: ['Product Strategy', 'Roadmapping', 'Discovery', 'Prioritization', 'A/B Testing'],
+  Methodologies: ['Agile', 'Scrum', 'Kanban', 'OKRs', 'Lean'],
+  'Soft Skills': ['Leadership', 'Communication', 'Collaboration', 'Stakeholder Management', 'Mentoring'],
+  Tools: ['Git', 'Jira', 'Figma', 'Postman', 'Storybook'],
+  Mobile: ['React Native', 'Swift', 'Kotlin', 'Flutter', 'Mobile CI/CD'],
+  Security: ['OWASP', 'Threat Modeling', 'Zero Trust', 'IAM', 'Vulnerability Management'],
+  Analytics: ['Experimentation', 'SQL Analytics', 'Dashboards', 'Amplitude', 'Mixpanel'],
+};
+
 interface ResumeFormProps {
   data: ResumeData;
   onChange: (data: ResumeData) => void;
@@ -16,6 +55,37 @@ interface ResumeFormProps {
 export default function ResumeForm({ data, onChange }: ResumeFormProps) {
   // Track technology input values locally to prevent cursor jumping
   const [techInputs, setTechInputs] = useState<Record<string, string>>({});
+  const [skillSectionInputs, setSkillSectionInputs] = useState<Record<string, string>>({});
+  const [customCategoryInputs, setCustomCategoryInputs] = useState<Record<string, string>>({});
+  const [showCustomCategory, setShowCustomCategory] = useState<Record<string, boolean>>({});
+
+  // Normalize skills on mount and when data changes from outside
+  useEffect(() => {
+    // Check if skills are in old format (individual skills) and convert to new format (grouped)
+    const needsConversion = data.skills.some(skill => 
+      skill.name && !skill.name.includes(',') && 
+      data.skills.filter(s => s.category === skill.category).length > 1
+    );
+
+    if (needsConversion) {
+      // Group skills by category
+      const grouped = data.skills.reduce<Record<string, string[]>>((acc, skill) => {
+        const category = skill.category || 'Uncategorized';
+        if (!acc[category]) acc[category] = [];
+        if (skill.name) acc[category].push(skill.name);
+        return acc;
+      }, {});
+
+      // Convert to new format
+      const newSkills = Object.entries(grouped).map(([category, names]) => ({
+        id: Date.now().toString() + Math.random(),
+        name: names.join(', '),
+        category,
+      }));
+
+      onChange({ ...data, skills: newSkills });
+    }
+  }, []);
 
   // Update local state when data changes (e.g., switching projects or data updates)
   useEffect(() => {
@@ -140,20 +210,61 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
     });
   };
 
-  const addSkill = () => {
+  const addSkillSection = () => {
     const newSkill: Skill = {
       id: Date.now().toString(),
       name: '',
-      category: 'Technical',
+      category: SKILL_CATEGORIES[0],
     };
     onChange({ ...data, skills: [...data.skills, newSkill] });
   };
 
-  const updateSkill = (id: string, field: string, value: string) => {
+  const updateSkillCategory = (id: string, category: string) => {
     onChange({
       ...data,
       skills: data.skills.map((skill) =>
-        skill.id === id ? { ...skill, [field]: value } : skill
+        skill.id === id ? { ...skill, category } : skill
+      ),
+    });
+  };
+
+  const addSkillToSection = (sectionId: string, skillName: string, category: string) => {
+    const trimmedName = skillName.trim();
+    if (!trimmedName) return;
+
+    const section = data.skills.find((s) => s.id === sectionId);
+    if (!section) return;
+
+    const existingSkills = section.name.split(',').map((s) => s.trim()).filter(Boolean);
+    
+    if (existingSkills.some((s) => s.toLowerCase() === trimmedName.toLowerCase())) {
+      setSkillSectionInputs((prev) => ({ ...prev, [sectionId]: '' }));
+      return;
+    }
+
+    const updatedSkills = [...existingSkills, trimmedName].join(', ');
+    
+    onChange({
+      ...data,
+      skills: data.skills.map((skill) =>
+        skill.id === sectionId ? { ...skill, name: updatedSkills, category } : skill
+      ),
+    });
+    
+    setSkillSectionInputs((prev) => ({ ...prev, [sectionId]: '' }));
+  };
+
+  const removeSkillFromSection = (sectionId: string, skillToRemove: string) => {
+    const section = data.skills.find((s) => s.id === sectionId);
+    if (!section) return;
+
+    const existingSkills = section.name.split(',').map((s) => s.trim()).filter(Boolean);
+    const updatedSkills = existingSkills.filter((s) => s !== skillToRemove).join(', ');
+    
+    onChange({
+      ...data,
+      skills: data.skills.map((skill) =>
+        skill.id === sectionId ? { ...skill, name: updatedSkills } : skill
       ),
     });
   };
@@ -264,6 +375,8 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
       spacing,
     });
   };
+
+
 
   return (
     <div className="space-y-8">
@@ -592,47 +705,191 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
       <div>
         <h2 className="text-2xl font-bold mb-6">Skills</h2>
         <div className="space-y-4">
-        {data.skills.map((skill) => (
-            <Card key={skill.id} className="border-2">
-              <CardContent className="pt-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor={`skill-name-${skill.id}`}>Skill Name</Label>
-                    <Input
-                      id={`skill-name-${skill.id}`}
-                  type="text"
-                  value={skill.name}
-                  onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
-                  placeholder="React, Python, Leadership..."
-                      autoComplete="off"
-                />
-              </div>
-                  <div>
-                    <Label htmlFor={`skill-category-${skill.id}`}>Category</Label>
-                    <Input
-                      id={`skill-category-${skill.id}`}
-                  type="text"
-                  value={skill.category}
-                  onChange={(e) => updateSkill(skill.id, 'category', e.target.value)}
-                  placeholder="Technical, Soft Skills..."
-                      autoComplete="off"
-                />
-              </div>
-            </div>
-                <Button
-                  variant="outline"
-              onClick={() => removeSkill(skill.id)}
-                  className="gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
-            >
-              <Trash2 size={16} />
-              Remove Skill
-                </Button>
-              </CardContent>
-            </Card>
-        ))}
-          <Button onClick={addSkill} className="gap-2 w-full">
-          <Plus size={18} />
-          Add Skill
+          {data.skills.map((skillSection) => {
+            const currentSuggestions = SKILL_SUGGESTIONS[skillSection.category] || [];
+            const sectionSkills = (skillSection.name || '').split(',').map((s) => s.trim()).filter(Boolean);
+            const sectionInput = skillSectionInputs[skillSection.id] || '';
+
+            return (
+              <Card key={skillSection.id} className="border-2">
+                <CardContent className="pt-6 space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor={`skill-category-${skillSection.id}`}>Category</Label>
+                    {showCustomCategory[skillSection.id] ? (
+                      <div className="space-y-2">
+                        <Input
+                          id={`custom-category-${skillSection.id}`}
+                          value={customCategoryInputs[skillSection.id] || ''}
+                          onChange={(e) => setCustomCategoryInputs((prev) => ({ ...prev, [skillSection.id]: e.target.value }))}
+                          placeholder="Enter custom category"
+                          autoComplete="off"
+                        />
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              const customCategory = customCategoryInputs[skillSection.id]?.trim();
+                              if (customCategory) {
+                                updateSkillCategory(skillSection.id, customCategory);
+                                setShowCustomCategory((prev) => ({ ...prev, [skillSection.id]: false }));
+                                setCustomCategoryInputs((prev) => ({ ...prev, [skillSection.id]: '' }));
+                              }
+                            }}
+                            disabled={!customCategoryInputs[skillSection.id]?.trim()}
+                            className="flex-1"
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setShowCustomCategory((prev) => ({ ...prev, [skillSection.id]: false }))}
+                            className="flex-1"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <select
+                          id={`skill-category-${skillSection.id}`}
+                          value={SKILL_CATEGORIES.includes(skillSection.category) ? skillSection.category : 'custom'}
+                          onChange={(e) => {
+                            if (e.target.value === 'custom') {
+                              setShowCustomCategory((prev) => ({ ...prev, [skillSection.id]: true }));
+                              setCustomCategoryInputs((prev) => ({ ...prev, [skillSection.id]: skillSection.category }));
+                            } else {
+                              updateSkillCategory(skillSection.id, e.target.value);
+                            }
+                          }}
+                          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-[#2563eb] focus:outline-none focus:ring-1 focus:ring-[#2563eb]"
+                        >
+                          {SKILL_CATEGORIES.map((category) => (
+                            <option key={category} value={category}>
+                              {category}
+                            </option>
+                          ))}
+                          {!SKILL_CATEGORIES.includes(skillSection.category) && (
+                            <option value="custom">{skillSection.category}</option>
+                          )}
+                          <option value="custom">+ Custom Category</option>
+                        </select>
+                        {!SKILL_CATEGORIES.includes(skillSection.category) && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setShowCustomCategory((prev) => ({ ...prev, [skillSection.id]: true }));
+                              setCustomCategoryInputs((prev) => ({ ...prev, [skillSection.id]: skillSection.category }));
+                            }}
+                            className="w-full"
+                          >
+                            Edit
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`skill-input-${skillSection.id}`}>Add Skills</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id={`skill-input-${skillSection.id}`}
+                        value={sectionInput}
+                        onChange={(e) => setSkillSectionInputs((prev) => ({ ...prev, [skillSection.id]: e.target.value }))}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            addSkillToSection(skillSection.id, sectionInput, skillSection.category);
+                          }
+                        }}
+                        placeholder="Add a skill for this category"
+                        autoComplete="off"
+                      />
+                      <Button
+                        onClick={() => addSkillToSection(skillSection.id, sectionInput, skillSection.category)}
+                        disabled={!sectionInput.trim()}
+                        size="sm"
+                        className="gap-2"
+                      >
+                        <Plus size={16} />
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+
+                  {currentSuggestions.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">Suggestions</p>
+                      <div className="flex flex-wrap gap-2">
+                        {currentSuggestions.map((suggestion) => {
+                          const alreadyAdded = sectionSkills.some(
+                            (s) => s.toLowerCase() === suggestion.toLowerCase()
+                          );
+
+                          return (
+                            <Button
+                              key={suggestion}
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className={`rounded-full transition ${
+                                alreadyAdded
+                                  ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
+                                  : 'border-gray-300 bg-white text-gray-700 hover:bg-[#f5f9ff]'
+                              }`}
+                              onClick={() => addSkillToSection(skillSection.id, suggestion, skillSection.category)}
+                              disabled={alreadyAdded}
+                            >
+                              + {suggestion}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {sectionSkills.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">Skills</p>
+                      <div className="flex flex-wrap gap-2">
+                        {sectionSkills.map((skill, index) => (
+                          <span
+                            key={`${skillSection.id}-${index}`}
+                            className="group inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm text-gray-800 hover:border-gray-300"
+                          >
+                            <span>{skill}</span>
+                            <button
+                              type="button"
+                              aria-label={`Remove ${skill}`}
+                              onClick={() => removeSkillFromSection(skillSection.id, skill)}
+                              className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-gray-600 transition hover:bg-red-100 hover:text-red-600"
+                            >
+                              <X size={12} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <Button
+                    variant="outline"
+                    onClick={() => removeSkill(skillSection.id)}
+                    className="gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+                  >
+                    <Trash2 size={16} />
+                    Remove Section
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+          <Button onClick={addSkillSection} className="gap-2 w-full">
+            <Plus size={18} />
+            Add Skill Section
           </Button>
         </div>
       </div>

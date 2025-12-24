@@ -355,18 +355,7 @@ export default function BuilderPage() {
           setShowSaveDialog(true);
         }
       } else if (loginAction === 'download') {
-        setIsExporting(true);
-        exportToPDF(resumeData, selectedTemplate)
-          .then(() => {
-            toast.success('PDF downloaded successfully!');
-          })
-          .catch((error) => {
-            console.error('Error exporting PDF:', error);
-            toast.error('Failed to export PDF. Please try again.');
-          })
-          .finally(() => {
-            setIsExporting(false);
-          });
+        setShowSaveDialog(true);
       } else if (loginAction === 'ats') {
         setShowATSModal(true);
       }
@@ -403,6 +392,11 @@ export default function BuilderPage() {
     try {
       await exportToPDF(resumeData, selectedTemplate);
       toast.success('PDF downloaded successfully!');
+      
+      // After successful download, show save dialog if resume is not saved
+      if (!currentResumeId) {
+        setShowSaveDialog(true);
+      }
     } catch (error) {
       console.error('Error exporting PDF:', error);
       toast.error('Failed to export PDF. Please try again.');
@@ -614,7 +608,23 @@ export default function BuilderPage() {
             <Button variant="outline" onClick={() => setShowSaveDialog(false)} disabled={isSaving} className="rounded-full">
               Cancel
             </Button>
-            <Button onClick={handleSaveResume} disabled={isSaving} className="rounded-full gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8]">
+            <Button onClick={async () => {
+              await handleSaveResume();
+              if (loginAction === 'download') {
+                setIsExporting(true);
+                exportToPDF(resumeData, selectedTemplate)
+                  .then(() => {
+                    toast.success('PDF downloaded successfully!');
+                  })
+                  .catch((error) => {
+                    console.error('Error exporting PDF:', error);
+                    toast.error('Failed to export PDF. Please try again.');
+                  })
+                  .finally(() => {
+                    setIsExporting(false);
+                  });
+              }
+            }} disabled={isSaving} className="rounded-full gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8]">
               {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               {isSaving ? 'Saving...' : 'Save'}
             </Button>

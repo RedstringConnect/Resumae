@@ -317,7 +317,17 @@ Return ONLY the JSON object in this exact structure:
       "gpa": "<GPA if mentioned>"
     }
   ],
-  "skills": ["<skill1>", "<skill2>", ...],
+  "skills": {
+    "Programming Languages": ["JavaScript", "TypeScript", "Python"],
+    "Frontend": ["React", "Vue"],
+    "Backend": ["Node.js", "Express"],
+    "Databases": ["MongoDB", "PostgreSQL"],
+    "Cloud": ["AWS", "Azure"],
+    "DevOps": ["Docker", "Kubernetes"],
+    "Tools": ["Git", "Jira"],
+    "Methodologies": ["Agile", "Scrum"],
+    "Soft Skills": ["Leadership", "Communication"]
+  },
   "certifications": [
     {
       "name": "<certification name>",
@@ -343,8 +353,11 @@ Return ONLY the JSON object in this exact structure:
 
 Important:
 - Extract all information accurately from the resume text
-- Use empty arrays [] if sections are not found
+- Use empty object {} if skills section is not found
 - Use empty strings "" for missing fields
+- For skills: Organize skills by category (Programming Languages, Frontend, Backend, Databases, Cloud, DevOps, Tools, Methodologies, Soft Skills, etc.)
+- For skills: If the resume already has categorized skills, preserve those categories
+- For skills: If skills are not categorized in the resume, intelligently categorize them based on the skill type
 - For workExperience.description: ALWAYS return an array of strings (bullet points)
 - For projects.description: Return a single string summary
 - For projects.technologies: ALWAYS return an array of technology names
@@ -395,6 +408,30 @@ Important:
     const parsedData = JSON.parse(responseText);
 
     // Add unique IDs to all array items if they don't have them
+    // Convert skills from object of arrays to grouped format
+    const skillsData = parsedData.skills || {};
+    const groupedSkills: any[] = [];
+    
+    if (typeof skillsData === 'object' && !Array.isArray(skillsData)) {
+      // Skills is an object with categories as keys
+      Object.entries(skillsData).forEach(([category, skills]: [string, any]) => {
+        if (Array.isArray(skills) && skills.length > 0) {
+          groupedSkills.push({
+            id: `${Date.now()}-${Math.random()}-${category}`,
+            name: skills.join(', '),
+            category: category,
+          });
+        }
+      });
+    } else if (Array.isArray(skillsData) && skillsData.length > 0) {
+      // Skills is an array (old format), put all in Technical
+      groupedSkills.push({
+        id: `${Date.now()}-skills-technical`,
+        name: skillsData.join(', '),
+        category: 'Technical',
+      });
+    }
+
     const resumeData: ResumeData = {
       ...parsedData,
       workExperience: (parsedData.workExperience || []).map((exp: any, index: number) => ({
@@ -405,13 +442,11 @@ Important:
         ...edu,
         id: edu.id || `${Date.now()}-edu-${index}`,
       })),
-      skills: (parsedData.skills || []).map((skill: any, index: number) => ({
-        ...skill,
-        id: skill.id || `${Date.now()}-skill-${index}`,
-      })),
+      skills: groupedSkills,
       languages: (parsedData.languages || []).map((lang: any, index: number) => ({
-        ...lang,
         id: lang.id || `${Date.now()}-lang-${index}`,
+        name: lang.name || lang.language || '',
+        proficiency: lang.proficiency || '',
       })),
       certifications: (parsedData.certifications || []).map((cert: any, index: number) => ({
         ...cert,
