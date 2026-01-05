@@ -1,84 +1,84 @@
-import { useState, useEffect } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, type MouseEvent as ReactMouseEvent } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import {
   Download,
-  ArrowLeft,
   LayoutTemplate,
   RotateCcw,
   Save,
   Loader2,
   Sparkles,
-  Eye,
-  Edit,
-} from 'lucide-react';
-import { motion, type Variants } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { ResumeData, TemplateType } from '@/types';
-import ResumeForm from '@/components/ResumeForm';
-import AdvancedATSScanner from '@/components/AdvancedATSScanner';
-import PDFATSUploader from '@/components/PDFATSUploader';
-import TemplateSelector from '@/components/TemplateSelector';
-import { exportToPDF } from '@/utils/pdfExport';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import ModernTemplate from '@/components/templates/ModernTemplate';
-import ClassicTemplate from '@/components/templates/ClassicTemplate';
-import MinimalTemplate from '@/components/templates/MinimalTemplate';
-import ProfessionalTemplate from '@/components/templates/ProfessionalTemplate';
-import ExecutiveTemplate from '@/components/templates/ExecutiveTemplate';
-import TechnicalTemplate from '@/components/templates/TechnicalTemplate';
-import UglyTemplate from '@/components/templates/UglyTemplate';
-import { useAuth } from '@/contexts/AuthContext';
-import { getResumeById, createResume, updateResume } from '@/services/api';
+  Check,
+  User,
+  Briefcase,
+  GraduationCap,
+  BrainCog,
+  CopyPlus,
+  MessageCircle,
+  ChevronRight,
+  Moon,
+  Sun,
+  Maximize2,
+} from "lucide-react";
 
-const easing: [number, number, number, number] = [0.16, 1, 0.3, 1];
+import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
+import { ResumeData, TemplateType } from "@/types";
+import MultiStepResumeForm from "@/components/MultiStepResumeForm";
+import AdvancedATSScanner from "@/components/AdvancedATSScanner";
+import PDFATSUploader from "@/components/PDFATSUploader";
+import TemplateSelector from "@/components/TemplateSelector";
+import ResumeChatAssistant from "@/components/ResumeChatAssistant";
+import { exportToPDF } from "@/utils/pdfExport";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+// Templates
+import ModernTemplate from "@/components/templates/ModernTemplate";
+import ClassicTemplate from "@/components/templates/ClassicTemplate";
+import MinimalTemplate from "@/components/templates/MinimalTemplate";
+import ProfessionalTemplate from "@/components/templates/ProfessionalTemplate";
+import ExecutiveTemplate from "@/components/templates/ExecutiveTemplate";
+import TechnicalTemplate from "@/components/templates/TechnicalTemplate";
+import UglyTemplate from "@/components/templates/UglyTemplate";
+import { useAuth } from "@/contexts/AuthContext";
+import { getResumeById, createResume, updateResume } from "@/services/api";
 
-const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: easing },
-  },
-};
+// --- Constants & Animations ---
 
 const GradientOrbs = () => (
-  <>
+  <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
     <motion.div
-      className="absolute top-[-12rem] -right-32 h-[28rem] w-[28rem] rounded-full bg-[#2563eb]/10 blur-3xl"
-      animate={{
-        y: [0, 40, 0],
-        scale: [1, 1.05, 1],
-      }}
-      transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+      className="absolute top-[-10%] -right-[10%] h-[50vh] w-[50vh] rounded-full bg-black/5 dark:bg-white/5 blur-[100px]"
+      animate={{ scale: [1, 1.1, 1] }}
+      transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
     />
     <motion.div
-      className="absolute bottom-[-14rem] -left-24 h-[30rem] w-[30rem] rounded-full bg-[#2563eb]/5 blur-3xl"
-      animate={{
-        y: [0, -50, 0],
-        scale: [1, 1.08, 1],
-      }}
-      transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      className="absolute bottom-[-10%] -left-[10%] h-[50vh] w-[50vh] rounded-full bg-black/4 dark:bg-white/6 blur-[100px]"
+      animate={{ scale: [1, 1.2, 1] }}
+      transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
     />
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.06),rgba(255,255,255,0))]" />
-  </>
+  </div>
 );
 
-// LocalStorage keys
-const STORAGE_KEY_RESUME_DATA = 'resumatic_resume_data';
-const STORAGE_KEY_TEMPLATE = 'resumatic_selected_template';
+// --- Data & Types ---
+const STORAGE_KEY_RESUME_DATA = "resumatic_resume_data";
+const STORAGE_KEY_TEMPLATE = "resumatic_selected_template";
 
 const emptyData: ResumeData = {
   personalInfo: {
-    fullName: '',
-    email: '',
-    phone: '',
-    location: '',
-    linkedin: '',
-    website: '',
-    summary: '',
+    fullName: "",
+    email: "",
+    phone: "",
+    location: "",
+    linkedin: "",
+    website: "",
+    summary: "",
   },
   spacing: {
     pageMargin: 20,
@@ -97,13 +97,14 @@ const emptyData: ResumeData = {
 
 const sampleData: ResumeData = {
   personalInfo: {
-    fullName: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    location: 'San Francisco, CA',
-    linkedin: 'linkedin.com/in/johndoe',
-    website: 'johndoe.dev',
-    summary: 'Results-driven Software Engineer with 5+ years of experience building scalable web applications. Passionate about creating efficient, user-friendly solutions and mentoring junior developers. Proven track record of delivering high-impact projects on time.',
+    fullName: "John Doe",
+    email: "john.doe@example.com",
+    phone: "+1 (555) 123-4567",
+    location: "San Francisco, CA",
+    linkedin: "linkedin.com/in/johndoe",
+    website: "johndoe.dev",
+    summary:
+      "Results-driven Software Engineer with 5+ years of experience building scalable web applications and leading cross-functional teams. Proven track record of delivering high-quality solutions that drive business growth and improve user experience. Passionate about clean code, system architecture, and mentoring junior developers.",
   },
   spacing: {
     pageMargin: 20,
@@ -114,194 +115,269 @@ const sampleData: ResumeData = {
   },
   workExperience: [
     {
-      id: '1',
-      company: 'Tech Solutions Inc.',
-      position: 'Senior Software Engineer',
-      location: 'San Francisco, CA',
-      startDate: 'Jan 2021',
-      endDate: '',
+      id: "1",
+      company: "Tech Solutions Inc.",
+      position: "Senior Software Engineer",
+      location: "San Francisco, CA",
+      startDate: "Jan 2021",
+      endDate: "",
       current: true,
       description: [
-        'Led development of microservices architecture serving 2M+ users, improving system reliability by 40%',
-        'Mentored team of 5 junior developers, conducting code reviews and technical training sessions',
-        'Implemented CI/CD pipeline reducing deployment time from 2 hours to 15 minutes',
-        'Collaborated with product team to design and launch 3 major features, increasing user engagement by 25%',
+        "Led development of microservices architecture serving 2M+ users, improving system reliability by 40% and reducing latency by 35%",
+        "Architected and implemented RESTful APIs and GraphQL services using Node.js and Express, handling 10K+ requests per second",
+        "Mentored team of 5 junior developers, conducting code reviews and establishing best practices that improved code quality by 50%",
+        "Collaborated with product managers and designers to deliver 15+ features on time, resulting in 25% increase in user engagement",
+        "Implemented CI/CD pipelines using Jenkins and Docker, reducing deployment time from 2 hours to 15 minutes",
       ],
     },
     {
-      id: '2',
-      company: 'StartupXYZ',
-      position: 'Full Stack Developer',
-      location: 'Remote',
-      startDate: 'Jun 2019',
-      endDate: 'Dec 2020',
+      id: "2",
+      company: "Digital Innovation Labs",
+      position: "Full Stack Developer",
+      location: "San Jose, CA",
+      startDate: "Jun 2019",
+      endDate: "Dec 2020",
       current: false,
       description: [
-        'Built responsive web applications using React, Node.js, and MongoDB',
-        'Optimized database queries reducing page load time by 60%',
-        'Integrated third-party APIs including Stripe, Twilio, and SendGrid',
-        'Participated in agile ceremonies and contributed to sprint planning',
+        "Built responsive web applications using React, TypeScript, and Redux, serving 500K+ monthly active users",
+        "Developed backend services with Python Django and PostgreSQL, optimizing database queries to reduce response time by 60%",
+        "Integrated third-party APIs including Stripe, Twilio, and AWS S3 for payment processing, notifications, and file storage",
+        "Implemented automated testing using Jest and Pytest, achieving 85% code coverage and reducing bugs by 40%",
+        "Participated in agile ceremonies and collaborated with cross-functional teams to deliver projects in 2-week sprints",
+      ],
+    },
+    {
+      id: "3",
+      company: "StartupHub",
+      position: "Junior Software Engineer",
+      location: "Palo Alto, CA",
+      startDate: "Jul 2018",
+      endDate: "May 2019",
+      current: false,
+      description: [
+        "Developed and maintained features for an e-commerce platform using JavaScript, HTML5, and CSS3",
+        "Collaborated with senior engineers to implement new features and fix bugs in production environment",
+        "Wrote technical documentation and user guides for internal tools and APIs",
+        "Participated in daily standups and sprint planning meetings to ensure timely delivery of features",
       ],
     },
   ],
   education: [
     {
-      id: '1',
-      school: 'University of California, Berkeley',
-      degree: 'Bachelor of Science',
-      field: 'Computer Science',
-      location: 'Berkeley, CA',
-      startDate: '2015',
-      endDate: '2019',
-      gpa: '3.8',
+      id: "1",
+      school: "University of California, Berkeley",
+      degree: "Bachelor of Science",
+      field: "Computer Science",
+      location: "Berkeley, CA",
+      startDate: "2015",
+      endDate: "2019",
+      gpa: "3.8",
+    },
+    {
+      id: "2",
+      school: "Stanford University",
+      degree: "Certificate",
+      field: "Machine Learning Specialization",
+      location: "Stanford, CA",
+      startDate: "2020",
+      endDate: "2021",
+      gpa: "",
     },
   ],
   skills: [
-    { id: '1', name: 'JavaScript', category: 'Programming Languages' },
-    { id: '2', name: 'TypeScript', category: 'Programming Languages' },
-    { id: '3', name: 'Python', category: 'Programming Languages' },
-    { id: '4', name: 'React', category: 'Frontend' },
-    { id: '5', name: 'Node.js', category: 'Backend' },
-    { id: '6', name: 'MongoDB', category: 'Databases' },
-    { id: '7', name: 'PostgreSQL', category: 'Databases' },
-    { id: '8', name: 'AWS', category: 'Cloud' },
-    { id: '9', name: 'Docker', category: 'DevOps' },
-    { id: '10', name: 'Git', category: 'Tools' },
-    { id: '11', name: 'Agile/Scrum', category: 'Methodologies' },
-    { id: '12', name: 'Problem Solving', category: 'Soft Skills' },
+    { id: "1", name: "JavaScript", category: "Programming Languages" },
+    { id: "2", name: "TypeScript", category: "Programming Languages" },
+    { id: "3", name: "Python", category: "Programming Languages" },
+    { id: "4", name: "Java", category: "Programming Languages" },
+    { id: "5", name: "React", category: "Frontend" },
+    { id: "6", name: "Vue.js", category: "Frontend" },
+    { id: "7", name: "HTML5", category: "Frontend" },
+    { id: "8", name: "CSS3", category: "Frontend" },
+    { id: "9", name: "Tailwind CSS", category: "Frontend" },
+    { id: "10", name: "Node.js", category: "Backend" },
+    { id: "11", name: "Express.js", category: "Backend" },
+    { id: "12", name: "Django", category: "Backend" },
+    { id: "13", name: "PostgreSQL", category: "Databases" },
+    { id: "14", name: "MongoDB", category: "Databases" },
+    { id: "15", name: "Redis", category: "Databases" },
+    { id: "16", name: "Docker", category: "DevOps" },
+    { id: "17", name: "Kubernetes", category: "DevOps" },
+    { id: "18", name: "AWS", category: "Cloud" },
+    { id: "19", name: "Git", category: "Tools" },
+    { id: "20", name: "REST APIs", category: "Tools" },
+    { id: "21", name: "GraphQL", category: "Tools" },
   ],
   languages: [
-    { id: '1', name: 'English', proficiency: 'Native' },
-    { id: '2', name: 'Spanish', proficiency: 'Professional' },
+    { id: "1", name: "English", proficiency: "Native" },
+    { id: "2", name: "Spanish", proficiency: "Professional Working" },
+    { id: "3", name: "Mandarin", proficiency: "Limited Working" },
   ],
   certifications: [
     {
-      id: '1',
-      name: 'AWS Certified Solutions Architect',
-      issuer: 'Amazon Web Services',
-      date: 'Mar 2023',
-      url: 'https://aws.amazon.com/certification/',
+      id: "1",
+      name: "AWS Certified Solutions Architect",
+      issuer: "Amazon Web Services",
+      date: "2022",
+      url: "https://aws.amazon.com/certification/",
     },
     {
-      id: '2',
-      name: 'Professional Scrum Master I',
-      issuer: 'Scrum.org',
-      date: 'Jan 2022',
-      url: 'https://www.scrum.org/professional-scrum-master-i-certification',
+      id: "2",
+      name: "Professional Scrum Master I (PSM I)",
+      issuer: "Scrum.org",
+      date: "2021",
+      url: "https://www.scrum.org/",
+    },
+    {
+      id: "3",
+      name: "Google Cloud Professional Developer",
+      issuer: "Google Cloud",
+      date: "2023",
+      url: "https://cloud.google.com/certification",
     },
   ],
   projects: [
     {
-      id: '1',
-      name: 'E-Commerce Platform',
-      description: 'Built a full-stack e-commerce platform with payment processing, inventory management, and admin dashboard',
-      technologies: ['React', 'Node.js', 'MongoDB', 'Stripe', 'AWS'],
-      url: 'https://github.com/johndoe/ecommerce',
-      date: 'Jan 2023 - Jun 2023',
+      id: "1",
+      name: "E-Commerce Platform",
+      description:
+        "Built a full-stack e-commerce application with React, Node.js, and MongoDB, featuring user authentication, product catalog, shopping cart, and payment integration",
+      technologies: ["React", "Node.js", "MongoDB", "Stripe API", "Redux"],
+      url: "https://github.com/johndoe/ecommerce",
+      startDate: "2022",
+      endDate: "2023",
     },
     {
-      id: '2',
-      name: 'Task Management App',
-      description: 'Developed a collaborative task management application with real-time updates and team features',
-      technologies: ['React', 'Firebase', 'Material-UI', 'WebSockets'],
-      url: 'https://taskmaster.johndoe.dev',
-      date: 'Sep 2022 - Dec 2022',
+      id: "2",
+      name: "Real-Time Chat Application",
+      description:
+        "Developed a real-time chat application using WebSocket technology, supporting group chats, direct messages, file sharing, and message encryption",
+      technologies: ["Vue.js", "Socket.io", "Express", "PostgreSQL", "AWS S3"],
+      url: "https://github.com/johndoe/chat-app",
+      startDate: "2021",
+      endDate: "2022",
+    },
+    {
+      id: "3",
+      name: "Task Management Dashboard",
+      description:
+        "Created a Kanban-style task management tool with drag-and-drop functionality, user collaboration, and real-time updates using Firebase",
+      technologies: ["React", "TypeScript", "Firebase", "Material-UI"],
+      url: "https://github.com/johndoe/task-manager",
+      startDate: "2020",
+      endDate: "2021",
     },
   ],
 };
 
-// Helper function to load data from localStorage
+// --- Helper Functions ---
 const loadResumeData = (): ResumeData => {
   try {
     const savedData = localStorage.getItem(STORAGE_KEY_RESUME_DATA);
-    if (savedData) {
-      return JSON.parse(savedData);
-    }
+    return savedData ? JSON.parse(savedData) : emptyData;
   } catch (error) {
-    console.error('Error loading resume data from localStorage:', error);
+    return emptyData;
   }
-  // Return empty data for fresh start
-  return emptyData;
 };
 
-// Helper function to load template from localStorage
 const loadTemplate = (): TemplateType => {
-  try {
-    const savedTemplate = localStorage.getItem(STORAGE_KEY_TEMPLATE);
-    if (savedTemplate) {
-      return savedTemplate as TemplateType;
-    }
-  } catch (error) {
-    console.error('Error loading template from localStorage:', error);
-  }
-  return 'modern';
+  return (
+    (localStorage.getItem(STORAGE_KEY_TEMPLATE) as TemplateType) || "modern"
+  );
 };
 
+// --- Main Component ---
 export default function BuilderPage() {
   const { user, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const resumeId = searchParams.get('resumeId');
-  const isNewResume = searchParams.get('new') === 'true';
-  const isUploaded = searchParams.get('uploaded') === 'true';
+  const resumeId = searchParams.get("resumeId");
+  const isNewResume = searchParams.get("new") === "true";
+  const isUploaded = searchParams.get("uploaded") === "true";
 
-  // If editing existing resume, start with empty data and load from API
-  // Otherwise, load from localStorage or use empty data
-  const [resumeData, setResumeData] = useState<ResumeData>(resumeId ? emptyData : loadResumeData);
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateType>(loadTemplate);
+  // State
+  const [resumeData, setResumeData] = useState<ResumeData>(
+    resumeId ? emptyData : loadResumeData
+  );
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<TemplateType>(loadTemplate);
+  const [currentResumeId, setCurrentResumeId] = useState<string | null>(
+    resumeId
+  );
+  const [resumeTitle, setResumeTitle] = useState("");
+
+  // UI Flags
   const [isExporting, setIsExporting] = useState(false);
-  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
-  const [currentResumeId, setCurrentResumeId] = useState<string | null>(resumeId);
   const [isSaving, setIsSaving] = useState(false);
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [resumeTitle, setResumeTitle] = useState('');
   const [isLoadingResume, setIsLoadingResume] = useState(!!resumeId);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showFullView, setShowFullView] = useState(false);
   const [showATSModal, setShowATSModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('builder');
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginAction, setLoginAction] = useState<'save' | 'download' | 'ats' | null>(null);
-  const [pendingActionAfterLogin, setPendingActionAfterLogin] = useState(false);
-  const [mobileView, setMobileView] = useState<'editor' | 'preview'>('editor');
+  const [showChatAssistant, setShowChatAssistant] = useState(true);
+  const [activeTab, setActiveTab] = useState("builder");
+  const [mobileView, setMobileView] = useState<"editor" | "preview">("editor");
+  const [showMobileChatModal, setShowMobileChatModal] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("theme");
+      return (
+        saved === "dark" ||
+        (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      );
+    }
+    return false;
+  });
 
-  // Load sample data when creating a new resume
+  // Login flow handling
+  const [loginAction, setLoginAction] = useState<
+    "save" | "download" | "ats" | null
+  >(null);
+  const [pendingActionAfterLogin, setPendingActionAfterLogin] = useState(false);
+
+  // Form Steps
+  const [currentStep, setCurrentStep] = useState(0);
+  const formSteps = [
+    { id: "personal", label: "Personal", icon: <User className="w-4 h-4" /> },
+    {
+      id: "experience",
+      label: "Work",
+      icon: <Briefcase className="w-4 h-4" />,
+    },
+    {
+      id: "education",
+      label: "Education",
+      icon: <GraduationCap className="w-4 h-4" />,
+    },
+    { id: "skills", label: "Skills", icon: <BrainCog className="w-4 h-4" /> },
+    {
+      id: "additional",
+      label: "Extras",
+      icon: <CopyPlus className="w-4 h-4" />,
+    },
+  ];
+
+  // --- Effects ---
+
+  // 1. Initial Data Loading
   useEffect(() => {
     if (isNewResume) {
       setResumeData(sampleData);
       setCurrentResumeId(null);
-      setResumeTitle('');
+      setResumeTitle("");
       localStorage.removeItem(STORAGE_KEY_RESUME_DATA);
-      toast.success('Sample resume loaded! Replace with your own information.', { duration: 4000 });
-    }
-  }, [isNewResume]);
-
-  // Load uploaded resume data
-  useEffect(() => {
-    if (isUploaded) {
-      const uploadedData = localStorage.getItem('resumatic_uploaded_data');
+      toast.success("Sample resume loaded!");
+    } else if (isUploaded) {
+      const uploadedData = localStorage.getItem("resumatic_uploaded_data");
       if (uploadedData) {
-        try {
-          const parsedData = JSON.parse(uploadedData);
-          setResumeData(parsedData);
-          setCurrentResumeId(null);
-          setResumeTitle('');
-          // Remove both uploaded data and any existing draft
-          localStorage.removeItem('resumatic_uploaded_data');
-          localStorage.removeItem(STORAGE_KEY_RESUME_DATA);
-          // Set the uploaded data as the new draft
-          localStorage.setItem(STORAGE_KEY_RESUME_DATA, uploadedData);
-          toast.success('Resume data loaded! Review and edit as needed.');
-        } catch (error) {
-          console.error('Error loading uploaded data:', error);
-          toast.error('Failed to load uploaded resume data');
-        }
+        setResumeData(JSON.parse(uploadedData));
+        setCurrentResumeId(null);
+        localStorage.removeItem("resumatic_uploaded_data");
+        localStorage.setItem(STORAGE_KEY_RESUME_DATA, uploadedData);
+        toast.success("Uploaded resume loaded!");
       }
-    }
-  }, [isUploaded]);
-
-  // Load resume from database if resumeId is provided
-  useEffect(() => {
-    const loadResume = async () => {
-      if (resumeId && !isNewResume && !isUploaded) {
+    } else if (resumeId) {
+      const loadResume = async () => {
         try {
           setIsLoadingResume(true);
           const resume = await getResumeById(resumeId);
@@ -310,169 +386,130 @@ export default function BuilderPage() {
           setCurrentResumeId(resume._id);
           setResumeTitle(resume.title);
         } catch (error) {
-          console.error('Error loading resume:', error);
-          toast.error('Failed to load resume');
+          toast.error("Failed to load resume");
         } finally {
           setIsLoadingResume(false);
         }
-      }
-    };
-
-    loadResume();
+      };
+      loadResume();
+    }
   }, [resumeId, isNewResume, isUploaded]);
 
-  // Save resume data to localStorage whenever it changes (debounced)
+  // 2. Auto-save to LocalStorage
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      try {
-        localStorage.setItem(STORAGE_KEY_RESUME_DATA, JSON.stringify(resumeData));
-      } catch (error) {
-        console.error('Error saving resume data to localStorage:', error);
-      }
-    }, 1000); // Debounce by 1000ms (1 second)
-
+      localStorage.setItem(STORAGE_KEY_RESUME_DATA, JSON.stringify(resumeData));
+    }, 1000);
     return () => clearTimeout(timeoutId);
   }, [resumeData]);
 
-  // Save selected template to localStorage whenever it changes
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_TEMPLATE, selectedTemplate);
-    } catch (error) {
-      console.error('Error saving template to localStorage:', error);
-    }
+    localStorage.setItem(STORAGE_KEY_TEMPLATE, selectedTemplate);
   }, [selectedTemplate]);
 
-  // Execute pending action after user logs in
+  // 3. Post-Login Actions
   useEffect(() => {
     if (user && pendingActionAfterLogin && loginAction) {
       setPendingActionAfterLogin(false);
-      
-      if (loginAction === 'save') {
-        if (currentResumeId) {
-          handleSaveResume();
-        } else {
-          setShowSaveDialog(true);
-        }
-      } else if (loginAction === 'download') {
-        setShowSaveDialog(true);
-      } else if (loginAction === 'ats') {
-        setShowATSModal(true);
-      }
+      if (loginAction === "save")
+        currentResumeId ? handleSaveResume() : setShowSaveDialog(true);
+      else if (loginAction === "download") setShowSaveDialog(true);
+      else if (loginAction === "ats") setShowATSModal(true);
       setLoginAction(null);
     }
-  }, [user, pendingActionAfterLogin, loginAction, currentResumeId, resumeData, selectedTemplate]);
+  }, [user, pendingActionAfterLogin, loginAction, currentResumeId]);
 
-  const handleDataChange = (data: ResumeData) => {
-    try {
-      // Use functional update to avoid stale closures
-      setResumeData(data);
-    } catch (error) {
-      console.error('BuilderPage: Error updating resume data:', error);
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
-  };
+  }, [isDarkMode]);
+
+  // --- Handlers ---
+
+  const handleDataChange = (data: ResumeData) => setResumeData(data);
 
   const handleUploadComplete = (data: ResumeData) => {
-    // Clear localStorage before setting uploaded data
-    localStorage.removeItem('resumatic_uploaded_data');
+    localStorage.removeItem("resumatic_uploaded_data");
     setResumeData(data);
-    // Switch to builder tab after successful upload
-    setActiveTab('builder');
-    toast.success('Resume loaded! You can now edit and customize it.');
+    setActiveTab("builder");
+    toast.success("Resume loaded successfully!");
   };
 
   const handleExportPDF = async () => {
     if (!user) {
-      setLoginAction('download');
+      setLoginAction("download");
       setShowLoginModal(true);
       return;
     }
-    
     setIsExporting(true);
     try {
       await exportToPDF(resumeData, selectedTemplate);
-      toast.success('PDF downloaded successfully!');
-      
-      // After successful download, show save dialog if resume is not saved
-      if (!currentResumeId) {
-        setShowSaveDialog(true);
-      }
-    } catch (error) {
-      console.error('Error exporting PDF:', error);
-      toast.error('Failed to export PDF. Please try again.');
+      toast.success("PDF downloaded!");
+      if (!currentResumeId) setShowSaveDialog(true);
+    } catch (e) {
+      toast.error("Export failed.");
     } finally {
       setIsExporting(false);
     }
   };
 
   const handleReset = () => {
-    if (window.confirm('Are you sure you want to clear all data and start fresh? This action cannot be undone.')) {
-      const newEmptyData = { ...emptyData };
-      setResumeData(newEmptyData);
+    if (confirm("Clear all data? This cannot be undone.")) {
+      setResumeData(emptyData);
       setCurrentResumeId(null);
-      setResumeTitle('');
-      try {
-        localStorage.removeItem(STORAGE_KEY_RESUME_DATA);
-        localStorage.removeItem(STORAGE_KEY_TEMPLATE);
-      } catch (error) {
-        console.error('Error clearing localStorage:', error);
-      }
-      toast.success('Resume cleared successfully');
+      setResumeTitle("");
+      localStorage.removeItem(STORAGE_KEY_RESUME_DATA);
+      toast.success("Cleared!");
     }
   };
 
   const handleSaveClick = () => {
     if (!user) {
-      setLoginAction('save');
+      setLoginAction("save");
       setShowLoginModal(true);
       return;
     }
-
-    if (currentResumeId) {
-      handleSaveResume();
-    } else {
-      setShowSaveDialog(true);
-    }
+    currentResumeId ? handleSaveResume() : setShowSaveDialog(true);
   };
 
   const handleSaveResume = async () => {
-    if (!user) {
-      setLoginAction('save');
-      setShowLoginModal(true);
-      return;
-    }
-
     try {
       setIsSaving(true);
+      const title =
+        resumeTitle || resumeData.personalInfo.fullName || "Untitled Resume";
 
       if (currentResumeId) {
-        const updated = await updateResume(currentResumeId, {
-          title: resumeTitle || 'Untitled Resume',
+        await updateResume(currentResumeId, {
+          title,
           resumeData,
           templateType: selectedTemplate,
         });
-        setCurrentResumeId(updated._id);
-        toast.success('Resume updated successfully! Redirecting to dashboard...');
-        setShowSaveDialog(false);
-        setTimeout(() => navigate('/dashboard'), 1000);
+        toast.success("Resume updated!");
       } else {
-        const title = resumeTitle || resumeData.personalInfo.fullName || 'Untitled Resume';
         const created = await createResume(
-          user.uid,
-          user.email || '',
+          user!.uid,
+          user!.email!,
           title,
           resumeData,
-          selectedTemplate,
+          selectedTemplate
         );
         setCurrentResumeId(created._id);
         setResumeTitle(created.title);
-        toast.success('Resume saved successfully! Redirecting to dashboard...');
-        setShowSaveDialog(false);
-        setTimeout(() => navigate('/dashboard'), 1000);
+        toast.success("Resume saved!");
       }
-    } catch (error) {
-      console.error('Error saving resume:', error);
-      toast.error('Failed to save resume. Please try again.');
+      setShowSaveDialog(false);
+
+      // Navigate to dashboard after successful save
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 500);
+    } catch (e) {
+      toast.error("Save failed.");
     } finally {
       setIsSaving(false);
     }
@@ -481,423 +518,580 @@ export default function BuilderPage() {
   const handleLoginAndContinue = async () => {
     try {
       await signInWithGoogle();
-      toast.success('Signed in successfully!');
       setShowLoginModal(false);
       setPendingActionAfterLogin(true);
-    } catch (error) {
-      console.error('Login error:', error);
-      toast.error('Failed to sign in. Please try again.');
+    } catch (e) {
+      toast.error("Login failed.");
     }
   };
 
-  const getTemplateName = (template: TemplateType): string => {
-    const names: Record<TemplateType, string> = {
-      modern: 'Modern',
-      classic: 'Classic',
-      minimal: 'Minimal',
-      professional: 'Professional',
-      executive: 'Executive',
-      technical: 'Technical',
-      ugly: "I Don't Want a Job",
+  const updateHoverPosition = (event: ReactMouseEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    event.currentTarget.style.setProperty("--hover-x", `${x}px`);
+    event.currentTarget.style.setProperty("--hover-y", `${y}px`);
+  };
+
+  const resetHoverPosition = (event: ReactMouseEvent<HTMLElement>) => {
+    event.currentTarget.style.removeProperty("--hover-x");
+    event.currentTarget.style.removeProperty("--hover-y");
+  };
+
+  // --- Render Helpers ---
+  const getTemplateName = (t: TemplateType) => {
+    const names = {
+      modern: "Modern",
+      classic: "Classic",
+      minimal: "Minimal",
+      professional: "Professional",
+      executive: "Executive",
+      technical: "Technical",
+      ugly: "Plain",
     };
-    return names[template];
+    return names[t] || "Modern";
   };
 
   const renderTemplate = () => {
+    const props = { data: resumeData };
     switch (selectedTemplate) {
-      case 'modern':
-        return <ModernTemplate data={resumeData} />;
-      case 'classic':
-        return <ClassicTemplate data={resumeData} />;
-      case 'minimal':
-        return <MinimalTemplate data={resumeData} />;
-      case 'professional':
-        return <ProfessionalTemplate data={resumeData} />;
-      case 'executive':
-        return <ExecutiveTemplate data={resumeData} />;
-      case 'technical':
-        return <TechnicalTemplate data={resumeData} />;
-      case 'ugly':
-        return <UglyTemplate data={resumeData} />;
+      case "classic":
+        return <ClassicTemplate {...props} />;
+      case "minimal":
+        return <MinimalTemplate {...props} />;
+      case "professional":
+        return <ProfessionalTemplate {...props} />;
+      case "executive":
+        return <ExecutiveTemplate {...props} />;
+      case "technical":
+        return <TechnicalTemplate {...props} />;
+      case "ugly":
+        return <UglyTemplate {...props} />;
       default:
-        return <ModernTemplate data={resumeData} />;
+        return <ModernTemplate {...props} />;
     }
   };
 
+  const heroBaseColor = isDarkMode ? "#050505" : "#f7f7fb";
+  const heroGridLineColor = isDarkMode
+    ? "rgba(255, 255, 255, 0.05)"
+    : "rgba(0, 0, 0, 0.05)";
+
   if (isLoadingResume) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-white via-white to-[#e9f1ff] text-gray-700">
-        <div className="rounded-2xl border border-[#dbeafe] bg-white/80 px-10 py-8 shadow-lg shadow-[rgba(37,99,235,0.12)]">
-          <p className="text-base font-medium">Loading your resume...</p>
+      <div className="flex h-screen items-center justify-center dark:bg-black bg-white dark:text-gray-200 text-black">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin " />
+          <p className="font-medium">Loading your resume...</p>
         </div>
       </div>
     );
   }
 
   return (
+    // MAIN LAYOUT FIX: Fixed height screen, flex column
     <div
-      className="relative min-h-screen overflow-hidden text-gray-900"
+      className="fixed inset-0 flex flex-col text-black dark:text-white font-sans overflow-hidden"
       style={{
-        backgroundColor: '#f4f7ff',
-        backgroundImage: 'radial-gradient(#c7d2fe 1.15px, transparent 1.15px)',
-        backgroundSize: '22px 22px',
+        backgroundColor: heroBaseColor,
+        backgroundImage: `
+          linear-gradient(${heroGridLineColor} 1px, transparent 1px),
+          linear-gradient(90deg, ${heroGridLineColor} 1px, transparent 1px)
+        `,
+        backgroundSize: "72px 72px",
       }}
     >
       <GradientOrbs />
 
-      {/* Login Modal */}
-      <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
-        <DialogContent className="max-w-md border border-[#dbeafe] bg-white/90 shadow-xl shadow-[rgba(37,99,235,0.12)] backdrop-blur">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-gray-900">Sign In Required</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-gray-600 mb-4">
-              {loginAction === 'save' 
-                ? 'Please sign in to save your resume and access it from anywhere.' 
-                : loginAction === 'ats'
-                ? 'Please sign in to analyze your resume with our advanced ATS scanner.'
-                : 'Please sign in to download your resume as a PDF.'}
-            </p>
-            <p className="text-sm text-gray-500">
-              Your work is saved locally and won't be lost. Sign in to unlock all features!
-            </p>
+      {/* --- Header (Fixed Height) --- */}
+      <header className="flex-none z-50 bg-transparent">
+        <div className="w-full px-4 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to={"/"} className="flex items-center gap-2 sm:gap-3">
+              <img
+                src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
+                alt="Resumae"
+                className="h-7 sm:h-9 w-auto hidden sm:block"
+              />
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base sm:text-lg font-medium  text-black dark:text-white">
+                    Resumae
+                  </span>
+                  <span className="rounded bg-gray-200 dark:bg-zinc-900 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-black dark:text-white">
+                    Beta
+                  </span>
+                </div>
+                <div className="text-[10px] sm:text-[11px] text-gray-600 dark:text-gray-400 -mt-0.5 flex items-center gap-1">
+                  <span className=" sm:inline">Powered by</span>
+                  <img
+                    src="/redstring.png"
+                    alt="Redstring"
+                    className="h-2.5 sm:h-3 w-auto mt-1"
+                  />
+                </div>
+              </div>
+            </Link>
           </div>
-          <DialogFooter className="gap-2 sm:gap-3">
-            
-            <Button 
-              onClick={handleLoginAndContinue}
-              className="rounded-full w-full gap-2 bg-[#2563eb]/10 border border-[#2563eb] text-[#2563eb] hover:bg-[#1d4ed8]/20"
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsDarkMode((prev) => !prev)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-300 dark:border-[#2c2c2d] bg-white dark:bg-black text-black dark:text-white transition hover:-translate-y-0.5 hover:bg-gray-100 dark:hover:bg-gray-900"
+              aria-label="Toggle theme"
             >
-              <svg className="h-4 w-4" viewBox="-3 0 262 262" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" fill="#000000">
-                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
-                <g id="SVGRepo_iconCarrier">
-                  <path d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027" fill="#4285F4"></path>
-                  <path d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1" fill="#34A853"></path>
-                  <path d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782" fill="#FBBC05"></path>
-                  <path d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251" fill="#EB4335"></path>
-                </g>
-              </svg>
-              Sign in with Google
+              {isDarkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowTemplateSelector(true)}
+              className="gap-2 rounded-xl border-gray-300 dark:border-[#2c2c2d] text-black dark:text-white bg-white/80 dark:bg-black/80"
+            >
+              <LayoutTemplate className="w-4 h-4" />{" "}
+              <span className="hidden sm:inline">Templates</span>
             </Button>
-          </DialogFooter>
+
+            <Button
+              size="sm"
+              onClick={() =>
+                user
+                  ? setShowATSModal(true)
+                  : (setLoginAction("ats"), setShowLoginModal(true))
+              }
+              className="gap-2 rounded-xl bg-black dark:bg-white text-white dark:text-black hover:bg-[#0b0b0a] dark:hover:bg-gray-100 border border-gray-900 dark:border-white"
+            >
+              <Sparkles className="w-4 h-4" />{" "}
+              <span className="hidden sm:inline">ATS Check</span>
+            </Button>
+
+            {user && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSaveClick}
+                disabled={isSaving}
+                className="gap-2 rounded-xl border-gray-300 dark:border-[#2c2c2d] text-black dark:text-white bg-white/80 dark:bg-black/80 hover:bg-gray-100 dark:hover:bg-gray-900"
+              >
+                {isSaving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                <span className="hidden md:inline">Save</span>
+              </Button>
+            )}
+
+            <Button
+              size="sm"
+              onClick={handleExportPDF}
+              disabled={isExporting}
+              className="gap-2 rounded-xl bg-black dark:bg-white text-white dark:text-black hover:bg-[#0b0b0a] dark:hover:bg-gray-100"
+            >
+              {isExporting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              <span className="hidden md:inline">Download</span>
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* --- Main Content Area (Fills remaining space) --- */}
+      <main className="flex-1 min-h-0 relative z-10 w-full max-w-[1920px] mx-auto p-2 sm:p-4">
+        {/* Mobile View Toggle */}
+        <div className="lg:hidden flex justify-center pb-2">
+          <div className="bg-white/90 dark:bg-black/80 rounded-full p-1 border border-gray-200 dark:border-[#2c2c2d] flex gap-1">
+            <button
+              onClick={() => setMobileView("editor")}
+              className={`px-4 py-1.5 rounded-xl text-sm font-medium transition ${
+                mobileView === "editor"
+                  ? "bg-black dark:bg-white text-white dark:text-black hover:bg-[#0b0b0a] dark:hover:bg-gray-100"
+                  : "text-gray-600 dark:text-gray-300"
+              }`}
+            >
+              Editor
+            </button>
+            <button
+              onClick={() => setMobileView("preview")}
+              className={`px-4 py-1.5 rounded-xl text-sm font-medium transition ${
+                mobileView === "preview"
+                  ? "bg-black dark:bg-white text-white dark:text-black hover:bg-[#0b0b0a] dark:hover:bg-gray-100"
+                  : "text-gray-600 dark:text-gray-300"
+              }`}
+            >
+              Preview
+            </button>
+          </div>
+        </div>
+
+        {activeTab === "builder" ? (
+          <div
+            className={`h-full grid gap-4 transition-all duration-300 ${
+              showChatAssistant
+                ? "lg:grid-cols-[1fr_1.4fr_22rem]"
+                : "lg:grid-cols-[1fr_1.5fr]"
+            }`}
+          >
+            {/* 1. EDITOR COLUMN */}
+            <div
+              className={`hover-glow flex flex-col h-[85vh] md:h-full  bg-white/85 dark:bg-black/85 border border-dashed border-gray-200/80 dark:border-[#2c2c2d] rounded-2xl overflow-hidden ${
+                mobileView === "preview" ? "hidden lg:flex" : "flex"
+              }`}
+              onMouseMove={updateHoverPosition}
+              onMouseLeave={resetHoverPosition}
+            >
+              {/* Editor Header */}
+              <div className="flex-none flex items-center justify-between px-4 py-3 ">
+                <h2 className="font-semibold text-gray-800 dark:text-white">
+                  Editor
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleReset}
+                  className="h-8 w-8 p-0 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </Button>
+              </div>
+
+              {/* Steps */}
+              <div className="flex-none px-2 py-2 bg-gray-50/80 dark:bg-black/40 overflow-x-auto no-scrollbar">
+                <div className="flex items-center min-w-max px-2">
+                  {formSteps.map((step, idx) => (
+                    <div key={step.id} className="flex items-center flex-1">
+                      <button
+                        onClick={() => setCurrentStep(idx)}
+                        className={`flex flex-col items-center gap-1 min-w-[3.5rem] transition-colors ${
+                          idx === currentStep
+                            ? "text-black dark:text-white"
+                            : idx < currentStep
+                            ? "text-black dark:text-white"
+                            : "text-gray-400 dark:text-gray-600"
+                        }`}
+                      >
+                        <motion.div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                            idx === currentStep
+                              ? "bg-black dark:bg-white text-white dark:text-black"
+                              : idx < currentStep
+                              ? "bg-black dark:bg-white text-white dark:text-black"
+                              : "bg-gray-200 dark:bg-neutral-900 text-gray-400 dark:text-neutral-500"
+                          }`}
+                          animate={{
+                            scale: idx === currentStep ? 1.1 : 1,
+                          }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {idx < currentStep ? (
+                            <Check className="w-5 h-5" />
+                          ) : (
+                            <span className="text-base">{step.icon}</span>
+                          )}
+                        </motion.div>
+                        <span className="text-[10px] font-medium">
+                          {step.label}
+                        </span>
+                      </button>
+                      {idx < formSteps.length - 1 && (
+                        <div className="flex-1 h-0.5 mx-0.5 relative">
+                          <div className="absolute inset-0 bg-gray-200 dark:bg-gray-800 rounded-full" />
+                          <motion.div
+                            className="absolute inset-0 bg-black dark:bg-white origin-left rounded-full"
+                            initial={{ scaleX: 0 }}
+                            animate={{
+                              scaleX: idx < currentStep ? 1 : 0,
+                            }}
+                            transition={{ duration: 0.4 }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Scrollable Form Area */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+                <MultiStepResumeForm
+                  data={resumeData}
+                  onChange={handleDataChange}
+                  currentStep={currentStep}
+                  onStepChange={setCurrentStep}
+                  totalSteps={formSteps.length}
+                  onComplete={handleSaveClick}
+                />
+              </div>
+            </div>
+
+            {/* 2. PREVIEW COLUMN */}
+            <div
+              className={`hover-glow flex  flex-col h-[85vh] md:h-full overflow-hidden bg-white/85 dark:bg-black/80 border border-dashed border-gray-200/80 dark:border-[#2c2c2d] rounded-2xl relative ${
+                mobileView === "editor" ? "hidden lg:flex" : "flex"
+              }`}
+              onMouseMove={updateHoverPosition}
+              onMouseLeave={resetHoverPosition}
+            >
+              <div className="flex-none rounded-2xl flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-black/70 backdrop-blur  z-10">
+                <h2 className="font-semibold text-black dark:text-white">
+                  Preview
+                </h2>
+                <div className="flex items-center gap-2">
+                  <div className="text-xs font-medium text-black dark:text-white px-2 py-1 bg-white dark:bg-black rounded border border-gray-200 dark:border-[#2c2c2d]">
+                    {getTemplateName(selectedTemplate)} Template
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowFullView(true)}
+                    className="gap-1.5 border-gray-300 dark:border-[#2c2c2d] bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
+                  >
+                    <Maximize2 className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Full View</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Scrollable Preview Area */}
+              <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-gray-50/50 dark:bg-gray-950/40">
+                <div
+                  className="bg-white shadow-2xl mx-auto transition-transform origin-top"
+                  style={{
+                    width: "210mm",
+                    minHeight: "297mm",
+                  }}
+                >
+                  {renderTemplate()}
+                </div>
+              </div>
+            </div>
+
+            {/* 3. CHAT ASSISTANT COLUMN (Desktop Only) */}
+            {showChatAssistant && (
+              <div
+                className="hover-glow hidden lg:flex flex-col h-full bg-white dark:bg-black border border-dashed border-gray-200 dark:border-[#2c2c2d] rounded-2xl overflow-hidden relative"
+                onMouseMove={updateHoverPosition}
+                onMouseLeave={resetHoverPosition}
+              >
+                <div className="flex-none p-3  flex items-center justify-between bg-white dark:bg-black">
+                  <span className="font-semibold text-sm flex items-center gap-2 text-black dark:text-white">
+                    <Sparkles className="w-4 h-4 text-gray-700 dark:text-gray-300" />{" "}
+                    AI Assistant
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 rounded-xl"
+                    onClick={() => setShowChatAssistant(false)}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex-1 overflow-hidden relative">
+                  <ResumeChatAssistant
+                    resumeData={resumeData}
+                    onResumeUpdate={handleDataChange}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Chat Toggle Fab */}
+            {!showChatAssistant && (
+              <div className="absolute bottom-6 right-6 z-50 hidden lg:block">
+                <Button
+                  onClick={() => setShowChatAssistant(true)}
+                  className="rounded-xl h-12 w-12 bg-black dark:bg-white text-white dark:text-black hover:bg-[#0b0b0a] dark:hover:bg-gray-100 hover:scale-105 transition-transform p-0 flex items-center justify-center"
+                >
+                  <MessageCircle className="w-6 h-6" />
+                </Button>
+              </div>
+            )}
+
+            {/* Mobile Chat FAB */}
+            <div className="fixed bottom-24 right-4 z-50 lg:hidden">
+              <Button
+                onClick={() => setShowMobileChatModal(true)}
+                className="rounded-full h-12 w-12 bg-black dark:bg-white text-white dark:text-black hover:bg-[#0b0b0a] dark:hover:bg-gray-100 shadow-lg p-0 flex items-center justify-center"
+              >
+                <Sparkles className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        ) : (
+          // Upload Tab View
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="h-full flex items-center justify-center"
+          >
+            <div
+              className="hover-glow w-full max-w-2xl bg-white dark:bg-black rounded-3xl p-8 border border-gray-200 dark:border-[#2c2c2d]"
+              onMouseMove={updateHoverPosition}
+              onMouseLeave={resetHoverPosition}
+            >
+              <PDFATSUploader onParseComplete={handleUploadComplete} />
+            </div>
+          </motion.div>
+        )}
+      </main>
+
+      {/* --- Hidden Print Container --- */}
+      <div id="resume-preview" className="fixed left-[-9999px] top-0">
+        <div style={{ width: "210mm", backgroundColor: "#ffffff" }}>
+          {renderTemplate()}
+        </div>
+      </div>
+
+      {/* --- Modals (Keep these as they were, just organized) --- */}
+      <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Sign in Required</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-gray-600">
+            Please sign in with Google to{" "}
+            {loginAction === "save" ? "save your resume" : "continue"}.
+          </div>
+          <Button
+            onClick={handleLoginAndContinue}
+            className="w-full gap-2"
+            variant="outline"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              className="w-5 h-5"
+            />
+            Continue with Google
+          </Button>
         </DialogContent>
       </Dialog>
 
-      {/* Save Dialog */}
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent className="max-w-md border border-[#dbeafe] bg-white/90 shadow-xl shadow-[rgba(37,99,235,0.12)] backdrop-blur">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-gray-900">Save Resume</DialogTitle>
+            <DialogTitle>Save Resume</DialogTitle>
           </DialogHeader>
-          <div className="py-4">
-            <label htmlFor="resume-title" className="mb-2 block text-sm font-medium text-gray-700">
-              Resume Title
-            </label>
-            <Input
-              id="resume-title"
-              placeholder="e.g. Principal Product Manager Resume"
-              value={resumeTitle}
-              onChange={(e) => setResumeTitle(e.target.value)}
-              disabled={isSaving}
-              className="border-[#dbeafe] focus-visible:ring-[#2563eb]"
-            />
-          </div>
-          <DialogFooter className="gap-2 sm:gap-3">
-            <Button variant="outline" onClick={() => setShowSaveDialog(false)} disabled={isSaving} className="rounded-full">
+          <Input
+            placeholder="Resume Title (e.g. Software Engineer)"
+            value={resumeTitle}
+            onChange={(e) => setResumeTitle(e.target.value)}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={async () => {
-              await handleSaveResume();
-              if (loginAction === 'download') {
-                setIsExporting(true);
-                exportToPDF(resumeData, selectedTemplate)
-                  .then(() => {
-                    toast.success('PDF downloaded successfully!');
-                  })
-                  .catch((error) => {
-                    console.error('Error exporting PDF:', error);
-                    toast.error('Failed to export PDF. Please try again.');
-                  })
-                  .finally(() => {
-                    setIsExporting(false);
-                  });
-              }
-            }} disabled={isSaving} className="rounded-full gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8]">
-              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {isSaving ? 'Saving...' : 'Save'}
+            <Button
+              onClick={() => {
+                handleSaveResume();
+                if (loginAction === "download") handleExportPDF();
+              }}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save & Continue"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Template Selector Modal */}
+      <Dialog open={showATSModal} onOpenChange={setShowATSModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+          <AdvancedATSScanner data={resumeData} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Mobile Chat Modal (Bottom Sheet) */}
+      <AnimatePresence>
+        {showMobileChatModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-[100] lg:hidden"
+              onClick={() => setShowMobileChatModal(false)}
+            />
+            {/* Bottom Sheet */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 h-[85vh] bg-white dark:bg-black rounded-t-3xl z-[101] lg:hidden flex flex-col overflow-hidden"
+            >
+              {/* Header */}
+              <div className="flex-none p-4 flex items-center justify-between border-b border-gray-200 dark:border-[#2c2c2d]">
+                <span className="font-semibold text-base flex items-center gap-2 text-black dark:text-white">
+                  <Sparkles className="w-5 h-5" /> AI Assistant
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 rounded-full"
+                  onClick={() => setShowMobileChatModal(false)}
+                >
+                  <ChevronRight className="w-5 h-5 rotate-90" />
+                </Button>
+              </div>
+              {/* Chat Content */}
+              <div className="flex-1 overflow-hidden">
+                <ResumeChatAssistant
+                  resumeData={resumeData}
+                  onResumeUpdate={handleDataChange}
+                />
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       <TemplateSelector
         open={showTemplateSelector}
         onOpenChange={setShowTemplateSelector}
         selectedTemplate={selectedTemplate}
         onSelectTemplate={setSelectedTemplate}
       />
-
-      {/* ATS Score Analysis Modal */}
-      <Dialog open={showATSModal} onOpenChange={setShowATSModal}>
-        <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto border-2 border-purple-200/50 shadow-2xl shadow-purple-500/20 backdrop-blur-xl" style={{ backgroundColor: '#f5f4f5' }}>
-          <DialogHeader className="border-b border-gray-200 pb-4 mb-2">
-            <DialogTitle className="text-2xl font-bold flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
-                <Sparkles className="h-5 w-5 text-white" />
-              </div>
-              <span className="bg-gradient-to-r from-blue-700 via-purple-700 to-indigo-700 bg-clip-text text-transparent">
-                Resume Analysis Report
-              </span>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="py-2">
-            <AdvancedATSScanner data={resumeData} />
+      {/* Full View Resume Modal */}
+      <Dialog open={showFullView} onOpenChange={setShowFullView}>
+        <DialogContent className="max-w-[95vw] w-fit h-[90vh] p-0 bg-gray-100/95 dark:bg-black/95 backdrop-blur-sm border-none overflow-hidden flex flex-col">
+          <div className="flex items-center justify-between px-6 py-4 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 shrink-0">
+            <h2 className="text-lg font-semibold text-black dark:text-white flex items-center gap-2">
+              <Maximize2 className="w-4 h-4" /> Full Preview
+            </h2>
+            <div className="flex items-center gap-2 pr-8">
+              <Button
+                size="sm"
+                onClick={() => exportToPDF(resumeData, selectedTemplate)}
+                className="gap-2 bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+              >
+                <Download className="h-4 w-4" /> Download PDF
+              </Button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-auto p-4 md:p-8 flex justify-center custom-scrollbar">
+            <div
+              className="bg-white shadow-2xl transition-transform origin-top mb-8"
+              style={{
+                width: "210mm",
+                minHeight: "297mm",
+                transform: "scale(0.85)",
+                marginBottom: "-100px",
+              }}
+            >
+              {renderTemplate()}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
-
-      <motion.header
-        initial={{ y: -60, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: easing }}
-        className="fixed left-0 right-0 top-0 z-40 backdrop-blur-lg"
-      >
-        <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Link to={user ? '/dashboard' : '/'} className="flex items-center gap-2">
-                <img
-                  src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
-                  alt="Resumae"
-                  className="h-6 sm:h-9 w-auto"
-                />
-                <div className="hidden md:flex flex-col">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-base sm:text-lg font-semibold tracking-tight">Resumae</span>
-                    <span className="text-[8px] font-medium uppercase tracking-wider text-[#2563eb]/60">
-                      Beta
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-black/60 -mt-1 flex items-center gap-1">
-                    Powered by <img src="/redstring.png" alt="Redstring" className="h-3 w-auto mt-1" />
-                  </span>
-                </div>
-              </Link>
-              <Link
-                to={user ? '/dashboard' : '/'}
-                className="flex items-center gap-1.5 sm:gap-2 rounded-full bg-[#f5f9ff] border border-[#9bbcff] px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-[#2563eb] shadow-sm shadow-[rgba(37,99,235,0.12)] transition hover:border-[#c7d2fe] hover:text-[#1d4ed8] whitespace-nowrap"
-              >
-                <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Back
-              </Link>
-            </div>
-            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setShowTemplateSelector(true)}
-                className="rounded-full gap-1.5 border-[#c7d2fe] bg-white/80 text-gray-700 hover:bg-[#f5f9ff] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
-                size="sm"
-              >
-                <LayoutTemplate className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Template</span>
-              </Button>
-
-              <Button
-                onClick={() => {
-                  if (!user) {
-                    setLoginAction('ats');
-                    setShowLoginModal(true);
-                  } else {
-                    setShowATSModal(true);
-                  }
-                }}
-                className="gap-1.5 rounded-full bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 text-white hover:from-purple-700 hover:via-purple-600 hover:to-indigo-700  transition-all hover:scale-[1.02] text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 h-auto whitespace-nowrap font-semibold"
-                size="sm"
-              >
-                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">ATS Score</span>
-              </Button>
-
-              {user && (
-                <Button
-                  onClick={handleSaveClick}
-                  disabled={isSaving}
-                  variant="outline"
-                  className="rounded-full gap-2.5 border-[#c7d2fe] bg-[#2563eb]/10 text-[#1d4ed8] hover:bg-[#2563eb] hover:text-white text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
-                  size="sm"
-                >
-                  {isSaving ? <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" /> : <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
-                  <span className="hidden sm:inline">{isSaving ? 'Saving...' : 'Save'}</span>
-                </Button>
-              )}
-
-              <Button
-                onClick={handleExportPDF}
-                disabled={isExporting}
-                className="rounded-full gap-1.5 bg-[#2563eb] text-white shadow-lg shadow-[rgba(37,99,235,0.3)] hover:bg-[#1d4ed8] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto whitespace-nowrap"
-                size="sm"
-              >
-                <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Download PDF'}</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </motion.header>
-
-      <main className="relative z-10 pt-20 pb-12 sm:pt-28 md:pt-32 sm:pb-16">
-        <div className="container mx-auto px-3 sm:px-4">
-          <motion.section
-            variants={fadeInUp}
-            initial="hidden"
-            animate="show"
-            className="rounded-2xl sm:rounded-2xl border border-dashed border-[#dbeafe] bg-white/85 p-3 sm:p-4 md:p-6 shadow-2xl shadow-[rgba(37,99,235,0.12)] backdrop-blur"
-          >
-           
-
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 rounded-xl sm:rounded-2xl border border-[#dbeafe] bg-[#f5f9ff]/60 text-xs sm:text-sm font-semibold text-[#1d4ed8] h-auto">
-                <TabsTrigger value="builder" className="py-2 sm:py-2.5 text-xs sm:text-sm">Resume Builder</TabsTrigger>
-                <TabsTrigger value="upload" className="py-2 sm:py-2.5 text-xs sm:text-sm">Upload & Analyze</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="builder" className="mt-4 sm:mt-6 md:mt-8 space-y-4 sm:space-y-6">
-                {/* Mobile View Toggle - Only visible on mobile */}
-                <div className="lg:hidden flex items-center justify-center gap-2 mb-4">
-                  <Button
-                    onClick={() => setMobileView('editor')}
-                    variant={mobileView === 'editor' ? 'default' : 'outline'}
-                    className={`rounded-full gap-2 text-xs sm:text-sm px-4 py-2 h-auto ${
-                      mobileView === 'editor'
-                        ? 'bg-[#2563eb] text-white'
-                        : 'border-[#c7d2fe] text-gray-700 hover:bg-[#f5f9ff]'
-                    }`}
-                    size="sm"
-                  >
-                    <Edit className="h-4 w-4" />
-                    Editor
-                  </Button>
-                  <Button
-                    onClick={() => setMobileView('preview')}
-                    variant={mobileView === 'preview' ? 'default' : 'outline'}
-                    className={`rounded-full gap-2 text-xs sm:text-sm px-4 py-2 h-auto ${
-                      mobileView === 'preview'
-                        ? 'bg-[#2563eb] text-white'
-                        : 'border-[#c7d2fe] text-gray-700 hover:bg-[#f5f9ff]'
-                    }`}
-                    size="sm"
-                  >
-                    <Eye className="h-4 w-4" />
-                    Preview
-                  </Button>
-                </div>
-
-                <div className="grid gap-4 sm:gap-6 lg:grid-cols-[420px_1fr]">
-                  {/* Editor Panel - Hidden on mobile when preview is active */}
-                  <div className={`overflow-hidden rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/80 border-dashed shadow-lg shadow-[rgba(37,99,235,0.12)] ${mobileView === 'preview' ? 'hidden lg:block' : ''}`}>
-                    <div className="flex items-center justify-between  px-4 sm:px-6 py-3 sm:py-4">
-                      <h2 className="text-sm sm:text-base font-semibold text-gray-900">Resume Builder</h2>
-                      <Button
-                        variant="outline"
-                        onClick={handleReset}
-                        className="rounded-full gap-1.5 sm:gap-2 border-[#dbeafe] text-gray-700 hover:bg-[#f5f9ff] text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
-                        size="sm"
-                      >
-                        <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Reset
-                      </Button>
-                    </div>
-                    <div className="h-[500px] sm:h-[600px] md:h-[650px] overflow-y-auto px-4 sm:px-6 py-4 sm:py-6">
-                      <ResumeForm data={resumeData} onChange={handleDataChange} />
-                    </div>
-                  </div>
-
-                  {/* Desktop Preview Panel - Always visible on desktop, hidden on mobile */}
-                  <div className="hidden overflow-hidden rounded-2xl sm:rounded-3xl border border-dashed border-[#dbeafe] bg-[#eef2ff] shadow-lg lg:block">
-                    <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
-                      <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowTemplateSelector(true)}
-                        className="rounded-full gap-1.5 sm:gap-2 text-xs text-[#2563eb] hover:bg-[#f5f9ff] px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
-                      >
-                        <LayoutTemplate className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                        {getTemplateName(selectedTemplate)}
-                      </Button>
-                    </div>
-
-                    <div className="h-[600px] md:h-[650px] overflow-y-auto bg-gradient-to-b from-[#e3ecff]/40 via-white to-white px-1 py-2">
-                      <div
-                        className="rounded-xl bg-white shadow-xl shadow-[rgba(37,99,235,0.18)] mx-auto"
-                        style={{ 
-                          width: '210mm', 
-                          transform: 'scale(0.85)', 
-                          transformOrigin: 'top center',
-                        }}
-                      >
-                        <div className="resume-preview">{renderTemplate()}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mobile Preview Panel - Only visible when preview is active */}
-                <div className={`lg:hidden ${mobileView === 'editor' ? 'hidden' : ''}`}>
-                  <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/80 shadow-lg shadow-[rgba(37,99,235,0.12)]">
-                    <div className="flex items-center justify-between border-b border-[#dbeafe] px-4 sm:px-6 py-3 sm:py-4">
-                      <h2 className="text-sm sm:text-base font-semibold text-gray-900">Preview</h2>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowTemplateSelector(true)}
-                        className="rounded-full gap-1.5 sm:gap-2 text-xs text-[#2563eb] hover:bg-[#f5f9ff] px-2.5 sm:px-3 py-1.5 sm:py-2 h-auto"
-                      >
-                        <LayoutTemplate className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                        <span className="hidden xs:inline">{getTemplateName(selectedTemplate)}</span>
-                      </Button>
-                    </div>
-                    <div className="relative overflow-auto bg-[#eef2ff] touch-pan-x touch-pan-y" style={{ height: '600px', WebkitOverflowScrolling: 'touch' }}>
-                      <div className="inline-block min-w-full" >
-                        <div
-                          className="rounded-lg sm:rounded-xl bg-white shadow-xl shadow-[rgba(37,99,235,0.18)] mx-auto"
-                          style={{
-                            width: '210mm',
-                            transform: 'scale(1)',
-                            transformOrigin: 'top left',
-                           
-                           
-                          }}
-                        >
-                          <div className="resume-preview">{renderTemplate()}</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-[#f5f9ff]/50 px-3 sm:px-4 py-2 text-center border-t border-[#dbeafe]">
-                      <p className="text-[10px] sm:text-xs text-gray-600">↔ Scroll to view full resume ↕</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div id="resume-preview" style={{ position: 'absolute', left: '-9999px', top: 0 }}>
-                  <div style={{ width: '210mm', backgroundColor: '#ffffff' }}>{renderTemplate()}</div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="upload" className="mt-4 sm:mt-6 md:mt-8">
-                <motion.div
-                  variants={fadeInUp}
-                  className="rounded-2xl sm:rounded-3xl border border-[#dbeafe] bg-white/80 p-4 sm:p-6 shadow-lg shadow-[rgba(37,99,235,0.12)] backdrop-blur"
-                >
-                  <PDFATSUploader onParseComplete={handleUploadComplete} />
-                </motion.div>
-              </TabsContent>
-            </Tabs>
-          </motion.section>
-        </div>
-      </main>
     </div>
   );
 }
-

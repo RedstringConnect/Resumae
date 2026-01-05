@@ -58,7 +58,9 @@ export interface Project {
   description: string;
   technologies: string[];
   url?: string;
-  date: string;
+  date?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface SpacingSettings {
@@ -80,7 +82,14 @@ export interface ResumeData {
   spacing?: SpacingSettings;
 }
 
-export type TemplateType = 'modern' | 'classic' | 'minimal' | 'professional' | 'executive' | 'technical' | 'ugly';
+export type TemplateType =
+  | "modern"
+  | "classic"
+  | "minimal"
+  | "professional"
+  | "executive"
+  | "technical"
+  | "ugly";
 
 export interface ATSScore {
   overall: number;
@@ -92,4 +101,3 @@ export interface ATSScore {
   keywords: number;
   suggestions: string[];
 }
-

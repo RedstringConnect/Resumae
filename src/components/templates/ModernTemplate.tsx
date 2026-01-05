@@ -105,15 +105,27 @@ export default function ModernTemplate({ data }: TemplateProps) {
               <div style={{ fontSize: '13.5px', color: '#6b7280', marginBottom: '6px', fontWeight: '500' }}>
                 {exp.company}{exp.location && ` • ${exp.location}`}
               </div>
-              {exp.description.some(d => d.trim()) && (
-                <div style={{ marginTop: `${spacingSettings.bulletSpacing}px`, color: '#4b5563', fontSize: '13px' }}>
-                  {exp.description.filter(d => d.trim()).map((desc, idx) => (
-                    <div key={idx} style={{ marginBottom: `${spacingSettings.bulletSpacing}px`, lineHeight: spacingSettings.lineSpacing, paddingLeft: '0' }}>
-                      - {desc}
-                    </div>
-                  ))}
-                </div>
-              )}
+              {/* Handle description as string or array */}
+              {(() => {
+                const desc = exp.description as string[] | string | undefined;
+                const hasContent = Array.isArray(desc) ? desc.some(d => d.trim()) : typeof desc === 'string' && desc.trim();
+                if (!hasContent) return null;
+                return (
+                  <div style={{ marginTop: `${spacingSettings.bulletSpacing}px`, color: '#4b5563', fontSize: '13px' }}>
+                    {Array.isArray(desc) ? (
+                      desc.filter(d => d.trim()).map((d, idx) => (
+                        <div key={idx} style={{ marginBottom: `${spacingSettings.bulletSpacing}px`, lineHeight: spacingSettings.lineSpacing, paddingLeft: '0' }}>
+                          - {d}
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ marginBottom: `${spacingSettings.bulletSpacing}px`, lineHeight: spacingSettings.lineSpacing, paddingLeft: '0' }}>
+                        - {desc}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           ))}
         </div>
@@ -148,10 +160,10 @@ export default function ModernTemplate({ data }: TemplateProps) {
                 </div>
               )}
               <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                {project.technologies.length > 0 && (
-                  <span><span style={{ fontWeight: '600' }}>Tech:</span> {project.technologies.join(', ')}</span>
+                {(project.technologies || []).length > 0 && (
+                  <span><span style={{ fontWeight: '600' }}>Tech:</span> {(project.technologies || []).join(', ')}</span>
                 )}
-                {project.url && project.technologies.length > 0 && <span> • </span>}
+                {project.url && (project.technologies || []).length > 0 && <span> • </span>}
                 {project.url && <span style={{ color: '#3b82f6' }}>{project.url}</span>}
               </div>
             </div>

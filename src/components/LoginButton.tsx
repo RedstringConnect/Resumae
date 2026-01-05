@@ -35,7 +35,7 @@ export default function LoginButton({ className }: LoginButtonProps) {
         onClick={() => navigate('/dashboard')}
         size="lg"
         variant="outline"
-        className={cn('h-11 rounded-full border border-[#2563eb] bg-[#2563eb]/10 px-5 text-sm font-semibold text-black hover:bg-[#2563eb]/20 whitespace-nowrap', className)}
+        className={cn('h-11 rounded-xl border-2 dark:border-[#2f2e2f] border-[#ededed] dark:text-white bg- px-5 text-sm font-semibold text-black hover:bg-gray-200 dark:hover:bg-zinc-900 whitespace-nowrap', className)}
       >
         Go to Dashboard
       </Button>
@@ -48,7 +48,7 @@ export default function LoginButton({ className }: LoginButtonProps) {
       disabled={loading}
       variant="outline"
       size="lg"
-      className={cn('h-11 rounded-full border border-[#2563eb] bg-[#2563eb]/10 px-5 text-sm font-semibold text-[#1d4ed8] hover:bg-[#2563eb]/20 whitespace-nowrap', className)}
+      className={cn('h-11 rounded-xl border-2 dark:border-[#2f2e2f] border-[#ededed] dark:text-white bg- px-5 text-sm font-semibold text-black dark:hover:bg-zinc-900  hover:bg-gray-200 whitespace-nowrap', className)}
     >
       {loading ? (
         <>

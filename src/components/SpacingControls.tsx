@@ -150,9 +150,7 @@ export default function SpacingControls({ spacing, onChange }: SpacingControlsPr
         </div>
       </div>
 
-      <div className="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-600">
-        <strong>Tip:</strong> Adjust spacing to fit more content or improve readability. Changes apply to all templates.
-      </div>
+      
     </Card>
   );
 }
