@@ -244,6 +244,7 @@ export async function getChatSuggestions(
 ): Promise<string[]> {
   const suggestions: string[] = [];
 
+  // Dynamic suggestions based on resume state
   if (!resumeData.personalInfo.fullName) {
     suggestions.push("Add your full name");
   }
@@ -252,16 +253,32 @@ export async function getChatSuggestions(
   }
   if (resumeData.workExperience.length === 0) {
     suggestions.push("Add your work experience");
+  } else {
+    suggestions.push("Improve my work experience descriptions");
   }
+  
   if (resumeData.education.length === 0) {
     suggestions.push("Add your education details");
   }
+  
   if (resumeData.skills.length === 0) {
     suggestions.push("Add your skills");
+  } else if (resumeData.skills.length < 10) {
+    suggestions.push("Suggest more relevant skills");
   }
+  
   if (!resumeData.personalInfo.summary) {
     suggestions.push("Add a professional summary");
+  } else {
+    suggestions.push("Improve my professional summary");
   }
 
-  return suggestions;
+  // Always show these helpful suggestions
+  if (suggestions.length < 3) {
+    suggestions.push("Make my resume more ATS-friendly");
+    suggestions.push("Add action verbs to my descriptions");
+    suggestions.push("Quantify my achievements");
+  }
+
+  return suggestions.slice(0, 3);
 }

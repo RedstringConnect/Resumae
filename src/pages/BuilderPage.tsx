@@ -13,7 +13,6 @@ import {
   GraduationCap,
   BrainCog,
   CopyPlus,
-  MessageCircle,
   ChevronRight,
   Moon,
   Sun,
@@ -328,6 +327,7 @@ export default function BuilderPage() {
     }
     return false;
   });
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Login flow handling
   const [loginAction, setLoginAction] = useState<
@@ -358,6 +358,15 @@ export default function BuilderPage() {
   ];
 
   // --- Effects ---
+
+  // Scroll detection for header blur
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // 1. Initial Data Loading
   useEffect(() => {
@@ -604,10 +613,17 @@ export default function BuilderPage() {
       <GradientOrbs />
 
       {/* --- Header (Fixed Height) --- */}
-      <header className="flex-none z-50 bg-transparent">
+      <header
+        className={`flex-none z-50 transition-all duration-300 ${
+          isScrolled ? "bg-transparent backdrop-blur-md" : "bg-transparent"
+        }`}
+      >
         <div className="w-full px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to={"/"} className="flex items-center gap-2 sm:gap-3">
+            <Link
+              to={"/dashboard"}
+              className="flex items-center gap-2 sm:gap-3"
+            >
               <img
                 src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
                 alt="Resumae"
@@ -911,7 +927,7 @@ export default function BuilderPage() {
                   onClick={() => setShowChatAssistant(true)}
                   className="rounded-xl h-12 w-12 bg-black dark:bg-white text-white dark:text-black hover:bg-[#0b0b0a] dark:hover:bg-gray-100 hover:scale-105 transition-transform p-0 flex items-center justify-center"
                 >
-                  <MessageCircle className="w-6 h-6" />
+                  <Sparkles className="w-6 h-6" />
                 </Button>
               </div>
             )}
@@ -1003,7 +1019,7 @@ export default function BuilderPage() {
       </Dialog>
 
       <Dialog open={showATSModal} onOpenChange={setShowATSModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <DialogContent className="max-w-4xl bg-white/95 dark:bg-black/90 max-h-[90vh] overflow-y-auto custom-scrollbar">
           <AdvancedATSScanner data={resumeData} />
         </DialogContent>
       </Dialog>

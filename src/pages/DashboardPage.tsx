@@ -154,11 +154,20 @@ export default function DashboardPage() {
     }
     return false;
   });
+  const [isScrolled, setIsScrolled] = useState(false);
   const [, setHoveredCell] = useState<{
     x: number;
     y: number;
   } | null>(null);
   const [isCursorActive, setIsCursorActive] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -595,12 +604,7 @@ export default function DashboardPage() {
         onOpenChange={(open) => !open && setAnalyzingResume(null)}
       >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-200 dark:border-[#2e2e2e] bg-white/95 dark:bg-black/90 backdrop-blur">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl font-bold text-black dark:text-white">
-              <Sparkles className="h-6 w-6 text-black dark:text-white" />
-              AI-Powered ATS Score Analysis
-            </DialogTitle>
-          </DialogHeader>
+          <DialogHeader></DialogHeader>
           <div className="py-4">
             {analyzingResume && (
               <AdvancedATSScanner data={analyzingResume.resumeData} />
@@ -613,33 +617,38 @@ export default function DashboardPage() {
         initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: easing }}
-        className="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-xs "
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+          isScrolled ? "backdrop-blur-md " : "bg-transparent "
+        }`}
       >
         <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
+           <Link
+              to={"/"}
+              className="flex items-center gap-2 sm:gap-3"
+            >
               <img
                 src="https://static.wixstatic.com/media/5c0589_e30e6ff390554063b3ccb163b93366aa~mv2.png"
                 alt="Resumae"
-                className="h-6 sm:h-9 w-auto"
+                className="h-7 sm:h-9 w-auto hidden sm:block"
               />
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-base sm:text-lg font-semibold tracking-tight">
+                  <span className="text-base sm:text-lg font-medium  text-black dark:text-white">
                     Resumae
                   </span>
-                  <span className="text-[8px] font-medium uppercase tracking-wider text-[#2563eb]/60">
+                  <span className="rounded bg-gray-200 dark:bg-zinc-900 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-black dark:text-white">
                     Beta
                   </span>
                 </div>
-                <span className="text-[11px] text-black/60 -mt-1 flex items-center gap-1">
-                  Powered by{" "}
+                <div className="text-[10px] sm:text-[11px] text-gray-600 dark:text-gray-400 -mt-0.5 flex items-center gap-1">
+                  <span className=" sm:inline">Powered by</span>
                   <img
                     src="/redstring.png"
                     alt="Redstring"
-                    className="h-3 w-auto mt-1"
+                    className="h-2.5 sm:h-3 w-auto mt-1"
                   />
-                </span>
+                </div>
               </div>
             </Link>
             <div className="flex items-center gap-2 sm:gap-3">
@@ -744,7 +753,7 @@ export default function DashboardPage() {
                 <div className="inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-[#2e2e2e] bg-white/60 dark:bg-black/40 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-black dark:text-white">
                   Dashboard
                 </div>
-                <h1 className="mt-3 sm:mt-4 text-2xl sm:text-3xl md:text-4xl font-bold ">
+                <h1 className="text-2xl md:text-4xl font-normal mt-3 bg-clip-text text-black dark:text-white">
                   Welcome back,{" "}
                   {user.displayName ||
                     user.email?.split("@")[0] ||
@@ -814,7 +823,7 @@ export default function DashboardPage() {
           </motion.section>
 
           <div className="mt-5 sm:mt-7 ml-2 sm:ml-4">
-            <h2 className="text-xl sm:text-2xl font-semibold ">My Resumes</h2>
+            <h2 className="text-xl md:text-2xl font-normal mt-3 bg-clip-text text-black dark:text-white">My Resumes</h2>
             <p className="text-xs sm:text-sm text-gray-500">
               Manage, preview, and refine every version you&apos;ve saved.
             </p>
@@ -896,8 +905,8 @@ export default function DashboardPage() {
                           {resume.templateType}
                         </div>
                       </div>
-                      <CardHeader className="space-y-3 border-t border-gray-200 dark:border-[#2e2e2e] bg-white/85 dark:bg-black/70 p-4">
-                        <CardTitle className="text-sm font-semibold text-black dark:text-white line-clamp-1">
+                      <CardHeader className="space-y-3   bg-white/85 dark:bg-black/70 p-4">
+                        <CardTitle className="text-sm md:text-base font-normal bg-clip-text text-black dark:text-white">
                           {resume.title}
                         </CardTitle>
                         <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
