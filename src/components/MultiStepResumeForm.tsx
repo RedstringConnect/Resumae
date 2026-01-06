@@ -378,7 +378,7 @@ export default function MultiStepResumeForm({
           placeholder="John Doe"
           value={data.personalInfo.fullName}
           onChange={(e) => handlePersonalInfoChange("fullName", e.target.value)}
-          className="mt-1.5"
+          className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
         />
       </div>
 
@@ -396,7 +396,7 @@ export default function MultiStepResumeForm({
             placeholder="john.doe@example.com"
             value={data.personalInfo.email}
             onChange={(e) => handlePersonalInfoChange("email", e.target.value)}
-            className="mt-1.5"
+            className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
           />
         </div>
 
@@ -413,7 +413,7 @@ export default function MultiStepResumeForm({
             placeholder="+1 (555) 123-4567"
             value={data.personalInfo.phone}
             onChange={(e) => handlePersonalInfoChange("phone", e.target.value)}
-            className="mt-1.5"
+            className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
           />
         </div>
       </div>
@@ -430,7 +430,7 @@ export default function MultiStepResumeForm({
           placeholder="San Francisco, CA"
           value={data.personalInfo.location}
           onChange={(e) => handlePersonalInfoChange("location", e.target.value)}
-          className="mt-1.5"
+          className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
         />
       </div>
 
@@ -449,7 +449,7 @@ export default function MultiStepResumeForm({
             onChange={(e) =>
               handlePersonalInfoChange("linkedin", e.target.value)
             }
-            className="mt-1.5"
+            className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
           />
         </div>
 
@@ -467,7 +467,7 @@ export default function MultiStepResumeForm({
             onChange={(e) =>
               handlePersonalInfoChange("website", e.target.value)
             }
-            className="mt-1.5"
+            className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
           />
         </div>
       </div>
@@ -484,7 +484,8 @@ export default function MultiStepResumeForm({
           placeholder="Results-driven professional with X years of experience..."
           value={data.personalInfo.summary}
           onChange={(e) => handlePersonalInfoChange("summary", e.target.value)}
-          className="mt-1.5 min-h-[100px]"
+          className="mt-1.5 min-h-[100px] bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
+          style={{ scrollbarWidth: 'thin' }}
         />
       </div>
     </div>
@@ -525,7 +526,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateWorkExperience(exp.id, "company", e.target.value)
                     }
-                    className="mt-1.5"
+                    className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
                 <div>
@@ -538,7 +539,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateWorkExperience(exp.id, "position", e.target.value)
                     }
-                    className="mt-1.5"
+                    className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
               </div>
@@ -553,7 +554,7 @@ export default function MultiStepResumeForm({
                   onChange={(e) =>
                     updateWorkExperience(exp.id, "location", e.target.value)
                   }
-                  className="mt-1.5"
+                  className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                 />
               </div>
 
@@ -568,7 +569,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateWorkExperience(exp.id, "startDate", e.target.value)
                     }
-                    className="mt-1.5"
+                    className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
                 <div>
@@ -583,7 +584,7 @@ export default function MultiStepResumeForm({
                         updateWorkExperience(exp.id, "endDate", e.target.value)
                       }
                       disabled={exp.current}
-                      className="flex-1"
+                      className="flex-1 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                     />
                     <label className="flex items-center gap-2 text-sm text-gray-600 whitespace-nowrap">
                       <input
@@ -622,7 +623,8 @@ export default function MultiStepResumeForm({
                           newDesc[descIndex] = e.target.value;
                           updateWorkExperience(exp.id, "description", newDesc);
                         }}
-                        className="min-h-[60px]"
+                        className="min-h-[60px] bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
+                        style={{ scrollbarWidth: 'thin' }}
                       />
                       <Button
                         variant="ghost"
@@ -703,7 +705,7 @@ export default function MultiStepResumeForm({
                   onChange={(e) =>
                     updateEducation(edu.id, "school", e.target.value)
                   }
-                  className="mt-1.5"
+                  className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                 />
               </div>
 
@@ -718,7 +720,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateEducation(edu.id, "degree", e.target.value)
                     }
-                    className="mt-1.5"
+                    className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
                 <div>
@@ -731,7 +733,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateEducation(edu.id, "field", e.target.value)
                     }
-                    className="mt-1.5"
+                    className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
               </div>
@@ -746,7 +748,7 @@ export default function MultiStepResumeForm({
                   onChange={(e) =>
                     updateEducation(edu.id, "location", e.target.value)
                   }
-                  className="mt-1.5"
+                  className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                 />
               </div>
 
@@ -761,7 +763,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateEducation(edu.id, "startDate", e.target.value)
                     }
-                    className="mt-1.5"
+                    className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
                 <div>
@@ -774,7 +776,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateEducation(edu.id, "endDate", e.target.value)
                     }
-                    className="mt-1.5"
+                    className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
                 <div>
@@ -787,7 +789,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateEducation(edu.id, "gpa", e.target.value)
                     }
-                    className="mt-1.5"
+                    className="mt-1.5 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
               </div>
@@ -899,8 +901,8 @@ export default function MultiStepResumeForm({
                         onChange({ ...data, skills: updated });
                       }
                     }}
-                    style={{ maxHeight: '300px' }}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-[#2c2c2d] rounded-md text-base bg-white dark:bg-black text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
+                    style={{ maxHeight: "300px" }}
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-[#2c2c2d] rounded-md text-base bg-white/85 dark:bg-zinc-900/80 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
                   >
                     {[...SKILL_CATEGORIES, skillSection.category]
                       .filter((v, i, a) => a.indexOf(v) === i)
@@ -924,9 +926,13 @@ export default function MultiStepResumeForm({
                           })
                         }
                         onKeyDown={(e) => {
-                          if (e.key === "Enter" && customCategoryInputs[skillSection.id]?.trim()) {
+                          if (
+                            e.key === "Enter" &&
+                            customCategoryInputs[skillSection.id]?.trim()
+                          ) {
                             e.preventDefault();
-                            const newCategory = customCategoryInputs[skillSection.id].trim();
+                            const newCategory =
+                              customCategoryInputs[skillSection.id].trim();
                             const updated = data.skills.map((skill) =>
                               skill.id === skillSection.id
                                 ? { ...skill, category: newCategory }
@@ -943,12 +949,13 @@ export default function MultiStepResumeForm({
                             });
                           }
                         }}
-                        className="flex-1"
+                        className="flex-1 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                       />
                       <Button
                         onClick={() => {
                           if (customCategoryInputs[skillSection.id]?.trim()) {
-                            const newCategory = customCategoryInputs[skillSection.id].trim();
+                            const newCategory =
+                              customCategoryInputs[skillSection.id].trim();
                             const updated = data.skills.map((skill) =>
                               skill.id === skillSection.id
                                 ? { ...skill, category: newCategory }
@@ -1010,12 +1017,13 @@ export default function MultiStepResumeForm({
                             addIndividualSkill(skillSection.id);
                           }
                         }}
-                        className="flex-1"
+                        className="flex-1 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                       />
                       <Button
                         onClick={() => addIndividualSkill(skillSection.id)}
                         size="sm"
-                        className="bg-black dark:bg-white text-white dark:text-black 6px-6"                      >
+                        className="bg-black dark:bg-white text-white dark:text-black 6px-6"
+                      >
                         <Plus className="h-4 w-4 mr-1" />
                         Add
                       </Button>
@@ -1045,7 +1053,7 @@ export default function MultiStepResumeForm({
                               disabled={currentSkills.includes(suggestion)}
                               className={`px-2.5 py-1 text-xs rounded-full transition-colors border ${
                                 currentSkills.includes(suggestion)
-                                  ? "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-700 cursor-not-allowed"
+                                  ? "bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-zinc-700 cursor-not-allowed"
                                   : "bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900 border-gray-300 dark:border-[#2c2c2d]"
                               }`}
                             >
@@ -1119,7 +1127,7 @@ export default function MultiStepResumeForm({
                   onChange={(e) =>
                     updateLanguage(lang.id, "name", e.target.value)
                   }
-                  className="flex-1"
+                  className="flex-1 bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                 />
                 <select
                   size={1}
@@ -1127,8 +1135,8 @@ export default function MultiStepResumeForm({
                   onChange={(e) =>
                     updateLanguage(lang.id, "proficiency", e.target.value)
                   }
-                  style={{ maxHeight: '200px' }}
-                  className="rounded-md border border-gray-300 dark:border-[#2c2c2d] px-4 py-3 text-base bg-white dark:bg-black text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  style={{ maxHeight: "200px" }}
+                  className="rounded-md border border-gray-200 dark:border-[#2c2c2d] px-4 py-3 text-base bg-white/85 dark:bg-zinc-900/80 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
                 >
                   <option value="Native">Native</option>
                   <option value="Fluent">Fluent</option>
@@ -1160,9 +1168,7 @@ export default function MultiStepResumeForm({
 
       {/* Certifications */}
       <div className="space-y-3">
-        <h3 className="text-base font-semibold ">
-          Certifications
-        </h3>
+        <h3 className="text-base font-semibold ">Certifications</h3>
         {data.certifications.map((cert, index) => (
           <Card
             key={cert.id}
@@ -1189,6 +1195,7 @@ export default function MultiStepResumeForm({
                   onChange={(e) =>
                     updateCertification(cert.id, "name", e.target.value)
                   }
+                  className="bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                 />
                 <Input
                   placeholder="Issuing Organization"
@@ -1196,6 +1203,7 @@ export default function MultiStepResumeForm({
                   onChange={(e) =>
                     updateCertification(cert.id, "issuer", e.target.value)
                   }
+                  className="bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <Input
@@ -1204,6 +1212,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateCertification(cert.id, "date", e.target.value)
                     }
+                    className="bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                   <Input
                     placeholder="URL (optional)"
@@ -1211,6 +1220,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateCertification(cert.id, "url", e.target.value)
                     }
+                    className="bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
               </div>
@@ -1256,6 +1266,7 @@ export default function MultiStepResumeForm({
                   onChange={(e) =>
                     updateProject(project.id, "name", e.target.value)
                   }
+                  className="bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                 />
                 <Textarea
                   placeholder="Project Description"
@@ -1263,7 +1274,8 @@ export default function MultiStepResumeForm({
                   onChange={(e) =>
                     updateProject(project.id, "description", e.target.value)
                   }
-                  className="min-h-[80px]"
+                  className="min-h-[80px] bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
+                  style={{ scrollbarWidth: 'thin' }}
                 />
                 <Input
                   id={`project-tech-${project.id}`}
@@ -1278,6 +1290,7 @@ export default function MultiStepResumeForm({
                       .filter(Boolean);
                     updateProject(project.id, "technologies", techArray);
                   }}
+                  className="bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <Input
@@ -1286,6 +1299,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateProject(project.id, "date", e.target.value)
                     }
+                    className="bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                   <Input
                     placeholder="URL (optional)"
@@ -1293,6 +1307,7 @@ export default function MultiStepResumeForm({
                     onChange={(e) =>
                       updateProject(project.id, "url", e.target.value)
                     }
+                    className="bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d]"
                   />
                 </div>
               </div>
@@ -1363,7 +1378,7 @@ export default function MultiStepResumeForm({
       </motion.div>
 
       {/* Navigation Buttons */}
-      <div className="sticky bottom-0 bg-white/95 dark:bg-black/95 backdrop-blur-sm px-4 py-4 mt-4 border-t border-gray-200 dark:border-[#2c2c2d]">
+      <div className="sticky bottom-0 bg-white/95 dark:bg-[#151517] backdrop-blur-sm px-4 py-4 mt-4  border-gray-200 dark:border-[#2c2c2d]">
         <div className="flex items-center justify-between gap-3">
           <Button
             onClick={handlePrevious}

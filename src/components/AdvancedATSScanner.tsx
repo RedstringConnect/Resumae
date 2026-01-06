@@ -145,7 +145,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
       {/* Top Row: Overall Score (Left) + Radar Chart (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Overall Score - Radial Chart */}
-        <Card className="p-6 border-none shadow-none">
+        <Card className="p-6 border-none shadow-none max-w-[350px] md:min-w-full">
           <h4 className="text-base font-semibold text-foreground mb-6 flex items-center gap-2">
             <svg
               className="w-6"
@@ -264,7 +264,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
         </Card>
 
         {/* Radar Chart - Score Overview */}
-        <Card className="p-6 border-none shadow-none">
+        <Card className="p-6 border-none shadow-none max-w-[350px] md:min-w-full">
           <h4 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
             <svg
               className="w-6"
@@ -344,7 +344,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
       </div>
 
       {/* Bottom: Detailed Breakdown - Horizontal Bar Chart */}
-      <Card className="p-6 border-none shadow-none">
+      <Card className="p-6 border-none shadow-none max-w-[350px] md:min-w-full ">
         <h4 className="text-base font-semibold text-foreground mb-6 flex items-center gap-2">
           <svg
             className="w-5 h-5"
@@ -436,7 +436,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
 
       {/* Strengths */}
       {analysis.strengths.length > 0 && (
-        <Card className="p-5 border-none shadow-none">
+        <Card className="p-5 border-none shadow-none max-w-[350px] md:min-w-full">
           <h4 className="text-base font-semibold text-foreground flex items-center gap-2 mb-4">
             <svg
               className="w-6"
@@ -487,7 +487,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
 
       {/* Weaknesses */}
       {analysis.weaknesses.length > 0 && (
-        <Card className="p-5 border-none shadow-none">
+        <Card className="p-5 border-none shadow-none max-w-[350px] md:min-w-full">
           <h4 className="text-base font-semibold text-foreground flex items-center gap-2 mb-4">
             <svg
               className="w-7"
@@ -574,7 +574,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
 
       {/* Suggestions */}
       {analysis.suggestions.length > 0 && (
-        <Card className="p-5 border-none shadow-none">
+        <Card className="p-5 border-none shadow-none max-w-[350px] md:min-w-full">
           <h4 className="text-base font-semibold text-foreground flex items-center gap-2 mb-4">
             <svg
               className="w-6"
@@ -665,7 +665,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
 
       {/* Industry Alignment */}
       {analysis.industryAlignment && (
-        <Card className="p-5 border-none shadow-none">
+        <Card className="p-5 border-none shadow-none max-w-[350px] md:min-w-full">
           <h4 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
             <svg
               className="w-8"
@@ -768,7 +768,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
 
       {/* ATS Compatibility */}
       {analysis.atsCompatibility && (
-        <Card className="p-6 border-none shadow-none">
+        <Card className="p-6 border-none shadow-none max-w-[350px] md:min-w-full">
           <h4 className="text-base font-semibold text-foreground mb-6 flex items-center gap-2">
             <svg
               className="w-8"
@@ -876,7 +876,7 @@ export default function AdvancedATSScanner({ data }: AdvancedATSScannerProps) {
 
       {/* Actionable Insights */}
       {analysis.actionableInsights.length > 0 && (
-        <Card className="p-5 border-none shadow-none">
+        <Card className="p-5 border-none shadow-none max-w-[350px] md:min-w-full">
           <h4 className="text-base font-semibold text-foreground flex items-center gap-2 mb-4">
             <svg
               viewBox="0 0 1024 1024"

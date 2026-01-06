@@ -805,10 +805,11 @@ export default function HomePage() {
               </div>
               <div className="text-[10px] sm:text-[11px] text-gray-600 dark:text-gray-400 -mt-0.5 flex items-center gap-1">
                 <span className=" sm:inline">Powered by</span>
+
                 <img
-                  src="/redstring.png"
+                  src={isDarkMode ? "/redstringDark.svg" : "/redstring.png"}
                   alt="Redstring"
-                  className="h-2.5 sm:h-3 w-auto mt-1"
+                  className=" w-14 md:w-16 mt-1"
                 />
               </div>
             </motion.div>
@@ -1056,7 +1057,7 @@ export default function HomePage() {
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#c7d2fe] bg-white px-4 py-2 text-xs font-semibold text-[#2563eb] shadow-sm">
                 Try 
-                <img src="/redstring.png" alt="Redstring" className="h-5 w-auto mt-1" />
+                <img src={isDarkMode ? "/redstring-dark.svg" : "/redstring.png"} alt="Redstring" className="h-5 w-auto mt-1" />
               </span>
             </div>
           </motion.a>
@@ -1432,9 +1433,9 @@ export default function HomePage() {
                   </a>
                   <span>and</span>
                   <img
-                    src="/redstring.png"
+                    src={isDarkMode ? "/redstringDark.svg" : "/redstring.png"}
                     alt="Redstring"
-                    className="h-4 w-auto mt-1"
+                    className="w-16 mt-1"
                   />
                 </div>
               </div>
@@ -1526,9 +1527,9 @@ export default function HomePage() {
                 className="transition-opacity hover:opacity-70"
               >
                 <img
-                  src="/redstring.png"
+                  src={isDarkMode ? "/redstringDark.svg" : "/redstring.png"}
                   alt="Redstring"
-                  className="h-4 w-auto mt-1"
+                  className="h-8 mt-1"
                 />
               </a>
             </div>

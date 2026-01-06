@@ -1,0 +1,144 @@
+
+
+<div class="KLM_extensionSingleProfileViewWrapperBlock" style="padding-bottom:100px;box-sizing: border-box;float:left;width:100%;">
+
+        
+
+        <div class="" style="float:left;width:100%;font-size:13px;padding:0px 0px 0px 0px;border-bottom:1px solid #ddd;">
+
+           
+            
+            
+            
+            <button class="KLM__button__view" id="KLMUnlockProfileInformation" style="{{#ifCond has_unlocked "true"}}display:none;{{/ifCond}}margin-top:0px;min-height:40px;background-color:{{companyColor}}!important;"><img src="{{iconUnlock}}" style="margin: 0px 10px -4px 0px;width:15px;height:15px;"> {{translate_minibar.text_210}}</button>
+
+            
+
+            <div class="bindKLMLoaderSaveProfile" style="float:left;width:100%;text-align:center;display:none;">
+                <div class=" bind383738338383" style=""></div>
+            </div>
+           
+            <div class="KLMUnlockLoaderWrapper" style="display:none;text-align:center;">
+                <div class="bind383738338383 KLMUnlockLoader" style=""></div>
+                <br>
+                {{translate_minibar.text_213}}
+            </div>
+            <a href="{{companyUpgradeLink}}" class="KLMWarningNoCreditsUnlockProfileInformation" target="_blank" style="display:none;">
+                <div class="" style="color:#fff;background-color: #d61b1e !important;
+border-color: #c40e1d !important;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+margin: 5px 0px 5px 0px;    padding: 4px 10px 4px 10px;float:left;width:100%;">
+                    {{translate_minibar.text_214}}
+                </div>  
+            </a>
+                <div class="KLMWarningNoDataUnlockProfileInformation" style="display:none;color:#fff;background-color: #df982f !important;
+border-color: #df982f !important;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+margin: 5px 0px 5px 0px;    padding: 4px 10px 4px 10px;float:left;width:100%;">
+{{translate_minibar.text_215}}
+                </div>  
+            
+        </div>
+
+        
+
+        {{#each profile}}
+
+            <div class="KLM_extensionSingleProfileViewWrapperBlockSingleRow" style="{{#ifCond type "head"}}background-color: #eee;{{/ifCond}}font-size:13px;float:left;width:100%;border-bottom:1px solid #ddd;padding:5px 10px 5px 10px;">
+
+                
+
+                        {{#ifCond type "contact_data"}}
+
+                                <div class="KLM_extensionSingleProfileViewWrapperBlockSingleRowIcon" style="margin: 2px 15px 5px 0px;float:left;width:20px;height:20px;">
+
+                                    <span style="padding: 3px 10px 5px 5px;font-size:10px;float:left;">
+                                        <img width="20" height="20" src="{{value}}">
+                                    </span>
+
+                                </div>
+
+                        {{else}}
+
+
+                                <div class="KLM_extensionSingleProfileViewWrapperBlockSingleRowIcon" style="margin: 0px 15px 0px 5px;float:left;{{#ifCond type "head"}}border-radius:50px;width:40px;height:40px;{{else}}width:20px;height:20px;padding-top:7px;{{/ifCond}}">
+
+                                    <img style="float:left;width:100%; {{#ifCond type "head"}}border-radius:50px;width:40px;height:40px;margin-left:-5px;{{else}}width:20px;height:20px;{{/ifCond}}" src="{{picture}}">
+
+                                </div>
+
+                        {{/ifCond}}
+
+               
+
+                <div class="KLM_extensionSingleProfileViewWrapperBlockSingleRowData" style="float:left;">
+
+                    {{#ifCond type "contact_data"}}
+
+                        <div style="float: left;margin: 5px 0px 0px 10px;" class="KLM_extensionSingleProfileViewWrapperBlockSingleRowDataContent KLM_extensionSingleProfileViewWrapperBlockSingleRowDataContentContactData_{{row}}">
+
+                            {{value_second}}
+
+                        </div>
+
+                    {{else}}
+
+                        {{#ifCond type "head"}}
+
+                            <div class="KLM_extensionSingleProfileViewWrapperBlockSingleRowDataTitle" style="margin:8px 0px 0px 0px;font-size:15px;font-weight:bold;width:200px;">
+
+                                    {{value}}
+
+                            </div>
+
+                        {{else}}
+
+                            <div class="KLM_extensionSingleProfileViewWrapperBlockSingleRowDataTitle" style="width:215px;font-weight:bold;">
+
+                                    {{title}}
+
+                            </div>
+
+                            <div class="KLM_extensionSingleProfileViewWrapperBlockSingleRowDataContent" style="float:left;width:220px;min-height:20px;{{#ifCond is_empty "true"}}opacity:0.3;{{/ifCond}}">
+
+                                    {{#ifCond is_empty "true"}}
+
+                                        {{value}}
+                                    
+                                    {{else}}                                                
+
+                                        {{#ifCond has_link "true"}}
+
+                                            <a href="http://{{value}}" target="_blank">{{value}}</a>
+                                        
+                                        {{else}}                                                
+
+                                            {{value}}
+
+                                        {{/ifCond}}
+
+                                    {{/ifCond}}
+
+                                    
+
+                            </div>
+
+                        {{/ifCond}}
+
+                    {{/ifCond}}
+
+                        
+
+                </div>
+
+            </div>    
+
+        {{/each}}
+
+        
+
+</div>

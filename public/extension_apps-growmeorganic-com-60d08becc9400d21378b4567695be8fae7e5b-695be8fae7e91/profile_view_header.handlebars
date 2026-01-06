@@ -1,0 +1,146 @@
+
+<div class="KLM_extensionSingleProfileViewWrapperBlock" style="box-sizing: border-box;float:left;width:100%;">
+
+    <div class="KLM_extension_company_product_name" style="background-color: #eee;font-size:13px;float:left;width:100%;border-bottom:1px solid #ddd;padding:5px 10px 5px 10px;">
+
+                <span style="font-weight:bold;font-size:15px;margin: 0px 0px 0px 0px;float: left;">
+                    {{companyName}}
+                </span>
+
+                <div class="KLM__side__bar__profile__view__close" style="margin: 10px 10px 0px 0px;"></div>
+
+                <span style="float:left;width:100%;margin-top:5px;">
+
+                
+                <span style="cursor:pointer;font-size:11px;float:left;" class="bindRefreshListsViewKllm"><img src="{{iconRefresh}}" width="10" height="10"> {{translate_minibar.text_229}}</span>
+
+                </span>
+
+        </div>
+
+        <div class="" style="position:relative;z-index:3;float:left;width:100%;font-size:13px;padding:5px 10px 5px 10px;">
+            
+            <span style="float:left;width:100%;font-size:13px;">
+                {{extra_help_step_1}}{{translate_minibar.text_211}}
+                
+                <span class="KLM_extensionGlobalTooltip"><img style="margin: 2px 3px -2px 3px;" src="{{iconHelp}}" width="15" height="15">
+                    <span class="KLM_extensionGlobalTooltipText">{{translate_minibar.text_243}}</span>
+                </span>
+                
+                
+                <a href="{{companyLinkLists}}" target="_blank" style="font-size:10px;">
+                        ({{translate_minibar.text_227}})
+                </a>
+            </span>
+            
+            {{{customerLists}}}
+            
+        </div>
+
+        <div class="KLM__bar__information__saved__list" style="">
+
+            {{translate_minibar.text_208}} <strong class="KLM__bar__information__saved__list__count"></strong> {{translate_minibar.text_209}}
+
+        </div>
+
+
+            
+           <button class="KLM__button__view" id="KLMGlobalSingleBarSaveProfil" style="margin-bottom:10px;display:none;margin-top:0px;min-height:40px;background-color:{{companyColor}}!important;"><img src="{{iconSave}}" style="margin: 0px 10px -4px 0px;width:15px;height:15px;">
+                {{translate_minibar.text_211}}
+            </button>
+
+            
+            <button class="KLM__button__view KLMGlobalSingleBarSaveProfilChecked" style="margin-bottom:10px;display:none;cursor:not-allowed!important;margin-top:0px;min-height:40px;background-color:#4caf50!important;border-color: #4caf50 !important;"><img src="{{iconCheck}}" style="margin: 0px 10px -4px 0px;width:15px;height:15px;"> {{translate_minibar.text_212}}</button>
+
+
+        <span style="{{#ifCond has_campaign_tool "false"}}display:none!important;{{/ifCond}}">
+            <span id="KLMGlobalSingleBarPushToCampaign" style="display:none;position:relative;font-size:13px;float:left;width:100%;padding:0px 10px 5px 10px;">
+                    
+                    <span style="position:relative;z-index:2;">
+
+                        <span class="KLMSaveCampaignSingleBarEvent_1">
+                            <input type="checkbox" id="KLMGlobalSingleBarPushToCampaignCheck" class="KLMGlobalSingleBarPushToCampaignCheck">
+                            {{translate_minibar.text_235}}
+
+                            <a href="{{customerLinkCampaigns}}" target="_blank" style="font-size:10px;">
+                                    ({{translate_minibar.text_227}})
+                            </a>
+                        </span>
+
+                        <span class="KLMSaveCampaignSingleBarEvent_2" style="display:none;">
+                           {{extra_help_step_2}}{{translate_minibar.text_236}}
+
+                            <span class="KLM_extensionGlobalTooltip"><img style="margin: 2px 3px -2px 3px;" src="{{iconHelp}}" width="15" height="15">
+                        <span class="KLM_extensionGlobalTooltipText">{{translate_minibar.text_244}}</span>
+                    </span>
+
+                           <a href="{{customerLinkCampaigns}}" target="_blank" style="font-size:10px;">
+                                    ({{translate_minibar.text_227}})
+                            </a>
+                        </span>
+
+                        {{{customerCampaigns}}}
+
+                        
+
+                        
+
+                    </span>
+
+
+
+
+                    <span class="KLMGlobalSingleBarPushToCampaignSelectEmailsWrapper" style="margin-top:3px;z-index:1;float:left;width:100%;display:none;">
+                        {{translate_minibar.text_237}}
+                        <select id="KLMGlobalSingleBarPushToCampaignSelectEmails" name="KLMGlobalSingleBarPushToCampaignSelectEmails" style="position:relative;z-index:1;">
+                            
+                        </select>
+                    </span>
+
+                    <button class="KLM__button__view KLMGlobalSingleBarSaveProfilAndCampaignAction" style="{{#ifCond has_campaign_tool_active "false"}}display:none;{{/ifCond}}{{#ifCond has_campaigns_options_data "false"}}display:none;{{/ifCond}}background-color:{{companyColor}}!important;min-height:40px;">{{translate_minibar.text_238}}</button>
+
+                    
+
+            </span>
+
+                    <button class="KLM__button__view KLMGlobalSingleBarSaveProfilAndCampaignActionExist" style="display:none;cursor: not-allowed!important;min-height: 40px;background-color: #4caf50!important;border-color: #4caf50 !important;margin-top:0px;">
+                        <img src="{{iconCheck}}" style="margin: 0px 10px -4px 0px;width:15px;height:15px;">
+                        {{translate_minibar.text_239}}
+                    </button>
+
+                    <span class="KLMNoCampaignsAvailableHelpCreate" style="font-size:13px;padding:0px 10px 0px 10px;float:left;width:100%;{{#ifCond has_campaigns_options_data "true"}}display:none;{{/ifCond}}color:red;">
+                        {{translate_minibar.text_240}}<br><a style="color:red;" href="{{customerLinkCampaigns}}" target="_blank">{{translate_minibar.text_241}}</a>
+                    </span>
+
+        </span>
+
+</div>
+
+<div class="KLM_extensionSingleProfileViewWrapperBlockBindExchangeLoader">
+        <div class="KLM_ph-item">
+            <div class="KLM_ph-col-12">
+                <div class="KLM_ph-picture"></div>
+                <div class="KLM_ph-row">
+                    <div class="KLM_ph-col-4"></div>
+                    <div class="KLM_ph-col-8 KLM_empty"></div>
+                    <div class="KLM_ph-col-12"></div>
+                </div>
+            </div>
+            <div class="KLM_ph-col-2">
+                <div class="KLM_ph-avatar"></div>
+            </div>
+            <div>
+                <div class="KLM_ph-row">
+                    <div class="KLM_ph-col-12"></div>
+                    <div class="KLM_ph-col-2"></div>
+                    <div class="KLM_ph-col-10 KLM_empty"></div>
+                    <div class="KLM_ph-col-8 KLM_big"></div>
+                    <div class="KLM_ph-col-4 KLM_big KLM_empty"></div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<div class="KLM_extensionSingleProfileViewWrapperBlockBindExchange">
+
+</div>

@@ -1,13 +1,15 @@
-import Groq from 'groq-sdk';
-import { ResumeData } from '@/types';
+import Groq from "groq-sdk";
+import { ResumeData } from "@/types";
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
 if (!GROQ_API_KEY) {
-  console.warn('Groq API key not found. AI-powered features will be disabled.');
+  console.warn("Groq API key not found. AI-powered features will be disabled.");
 }
 
-const groq = GROQ_API_KEY ? new Groq({ apiKey: GROQ_API_KEY, dangerouslyAllowBrowser: true }) : null;
+const groq = GROQ_API_KEY
+  ? new Groq({ apiKey: GROQ_API_KEY, dangerouslyAllowBrowser: true })
+  : null;
 
 export interface GeminiATSAnalysis {
   overallScore: number;
@@ -43,7 +45,7 @@ export async function analyzeResumeWithGemini(
   industry?: string
 ): Promise<GeminiATSAnalysis | null> {
   if (!groq) {
-    console.warn('Groq AI not initialized');
+    console.warn("Groq AI not initialized");
     return null;
   }
 
@@ -53,8 +55,8 @@ export async function analyzeResumeWithGemini(
 Resume Data:
 ${JSON.stringify(resumeData, null, 2)}
 
-${jobTitle ? `Target Job Title: ${jobTitle}` : ''}
-${industry ? `Target Industry: ${industry}` : ''}
+${jobTitle ? `Target Job Title: ${jobTitle}` : ""}
+${industry ? `Target Industry: ${industry}` : ""}
 
 Provide a detailed analysis in the following JSON format (respond ONLY with valid JSON, no markdown or extra text):
 {
@@ -95,10 +97,10 @@ Focus on:
 7. Relevance to target job/industry`;
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: "llama-3.1-8b-instant",
       messages: [
         {
-          role: 'user',
+          role: "user",
           content: prompt,
         },
       ],
@@ -106,27 +108,29 @@ Focus on:
       max_tokens: 2000,
     });
 
-    const text = completion.choices[0]?.message?.content || '';
+    const text = completion.choices[0]?.message?.content || "";
 
     // Clean the response - remove markdown code blocks if present
     let cleanedText = text.trim();
-    if (cleanedText.startsWith('```json')) {
-      cleanedText = cleanedText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    } else if (cleanedText.startsWith('```')) {
-      cleanedText = cleanedText.replace(/```\n?/g, '');
+    if (cleanedText.startsWith("```json")) {
+      cleanedText = cleanedText
+        .replace(/```json\n?/g, "")
+        .replace(/```\n?/g, "");
+    } else if (cleanedText.startsWith("```")) {
+      cleanedText = cleanedText.replace(/```\n?/g, "");
     }
 
     const analysis: GeminiATSAnalysis = JSON.parse(cleanedText);
     return analysis;
   } catch (error) {
-    console.error('Error analyzing resume with Groq:', error);
+    console.error("Error analyzing resume with Groq:", error);
     return null;
   }
 }
 
 export async function getResumeSuggestions(
   resumeData: ResumeData,
-  specificArea?: 'summary' | 'experience' | 'skills' | 'education'
+  specificArea?: "summary" | "experience" | "skills" | "education"
 ): Promise<string[]> {
   if (!groq) {
     return [];
@@ -135,7 +139,7 @@ export async function getResumeSuggestions(
   try {
     const areaPrompt = specificArea
       ? `Focus specifically on the ${specificArea} section.`
-      : 'Provide general improvements.';
+      : "Provide general improvements.";
 
     const prompt = `As a professional resume writer, provide 5-7 specific, actionable suggestions to improve this resume. ${areaPrompt}
 
@@ -146,10 +150,10 @@ Respond with a JSON array of strings (respond ONLY with valid JSON array, no mar
 ["suggestion 1", "suggestion 2", ...]`;
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: "llama-3.3-70b-versatile",
       messages: [
         {
-          role: 'user',
+          role: "user",
           content: prompt,
         },
       ],
@@ -157,19 +161,19 @@ Respond with a JSON array of strings (respond ONLY with valid JSON array, no mar
       max_tokens: 1000,
     });
 
-    let text = completion.choices[0]?.message?.content?.trim() || '[]';
+    let text = completion.choices[0]?.message?.content?.trim() || "[]";
 
     // Clean markdown if present
-    if (text.startsWith('```json')) {
-      text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    } else if (text.startsWith('```')) {
-      text = text.replace(/```\n?/g, '');
+    if (text.startsWith("```json")) {
+      text = text.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+    } else if (text.startsWith("```")) {
+      text = text.replace(/```\n?/g, "");
     }
 
     const suggestions: string[] = JSON.parse(text);
     return suggestions;
   } catch (error) {
-    console.error('Error getting suggestions from Groq:', error);
+    console.error("Error getting suggestions from Groq:", error);
     return [];
   }
 }
@@ -205,10 +209,10 @@ Respond with JSON only (no markdown):
 }`;
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: "llama-3.3-70b-versatile",
       messages: [
         {
-          role: 'user',
+          role: "user",
           content: prompt,
         },
       ],
@@ -216,70 +220,73 @@ Respond with JSON only (no markdown):
       max_tokens: 1500,
     });
 
-    let text = completion.choices[0]?.message?.content?.trim() || '';
+    let text = completion.choices[0]?.message?.content?.trim() || "";
 
-    if (text.startsWith('```json')) {
-      text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    } else if (text.startsWith('```')) {
-      text = text.replace(/```\n?/g, '');
+    if (text.startsWith("```json")) {
+      text = text.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+    } else if (text.startsWith("```")) {
+      text = text.replace(/```\n?/g, "");
     }
 
     return JSON.parse(text);
   } catch (error) {
-    console.error('Error optimizing resume for job:', error);
+    console.error("Error optimizing resume for job:", error);
     return null;
   }
 }
 
-export async function extractResumeFromPDF(pdfFile: File, retryCount = 0): Promise<ResumeData | null> {
+export async function extractResumeFromPDF(
+  pdfFile: File,
+  retryCount = 0
+): Promise<ResumeData | null> {
   if (!groq) {
-    console.warn('Groq AI not initialized');
+    console.warn("Groq AI not initialized");
     return null;
   }
 
   try {
-    console.log('Starting PDF extraction for:', pdfFile.name);
-    
+    console.log("Starting PDF extraction for:", pdfFile.name);
+
     // Convert File to ArrayBuffer
     const arrayBuffer = await pdfFile.arrayBuffer();
-    
-    console.log('File size:', arrayBuffer.byteLength, 'bytes');
-    
+
+    console.log("File size:", arrayBuffer.byteLength, "bytes");
+
     // Dynamically import pdfjs-dist (browser-compatible)
-    const pdfjsLib = await import('pdfjs-dist');
-    
+    const pdfjsLib = await import("pdfjs-dist");
+
     // Set worker source to use unpkg CDN with correct version
-    const pdfjsVersion = pdfjsLib.version || '4.0.379';
+    const pdfjsVersion = pdfjsLib.version || "4.0.379";
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.mjs`;
-    
-    console.log('PDF.js loaded, parsing document...');
-    
+
+    console.log("PDF.js loaded, parsing document...");
+
     // Load the PDF document
     const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
     const pdf = await loadingTask.promise;
-    
-    console.log('PDF loaded, pages:', pdf.numPages);
-    
+
+    console.log("PDF loaded, pages:", pdf.numPages);
+
     // Extract text from all pages
-    let extractedText = '';
-    
+    let extractedText = "";
+
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
       const page = await pdf.getPage(pageNum);
       const textContent = await page.getTextContent();
-      const pageText = textContent.items
-        .map((item: any) => item.str)
-        .join(' ');
-      extractedText += pageText + '\n\n';
+      const pageText = textContent.items.map((item: any) => item.str).join(" ");
+      extractedText += pageText + "\n\n";
     }
 
-    console.log('Text extracted, length:', extractedText?.length || 0);
+    console.log("Text extracted, length:", extractedText?.length || 0);
 
     if (!extractedText || extractedText.trim().length < 50) {
-      console.error('Insufficient text extracted from PDF');
-      throw new Error('Could not extract enough text from PDF. The file might be image-based or corrupted.');
+      console.error("Insufficient text extracted from PDF");
+      throw new Error(
+        "Could not extract enough text from PDF. The file might be image-based or corrupted."
+      );
     }
 
-    console.log('Extracted text preview:', extractedText.substring(0, 200));
+    console.log("Extracted text preview:", extractedText.substring(0, 200));
 
     // Send extracted text to Llama for structured extraction
     const prompt = `You are a resume parser. Your task is to extract information from the resume text and return ONLY a valid JSON object. Do not include any explanatory text, greetings, or markdown formatting.
@@ -366,44 +373,47 @@ Important:
 - Include default spacing values`;
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: "llama-3.1-8b-instant",
       messages: [
         {
-          role: 'system',
-          content: 'You are a JSON-only resume parser. You must respond with valid JSON only, no explanations or markdown.',
+          role: "system",
+          content:
+            "You are a JSON-only resume parser. You must respond with valid JSON only, no explanations or markdown.",
         },
         {
-          role: 'user',
+          role: "user",
           content: prompt,
         },
       ],
       temperature: 0.1, // Very low temperature for consistent JSON output
       max_tokens: 3000,
-      response_format: { type: 'json_object' }, // Force JSON response
+      response_format: { type: "json_object" }, // Force JSON response
     });
 
-    let responseText = completion.choices[0]?.message?.content?.trim() || '';
+    let responseText = completion.choices[0]?.message?.content?.trim() || "";
 
     // Clean markdown code blocks if present
-    if (responseText.startsWith('```json')) {
-      responseText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    } else if (responseText.startsWith('```')) {
-      responseText = responseText.replace(/```\n?/g, '');
+    if (responseText.startsWith("```json")) {
+      responseText = responseText
+        .replace(/```json\n?/g, "")
+        .replace(/```\n?/g, "");
+    } else if (responseText.startsWith("```")) {
+      responseText = responseText.replace(/```\n?/g, "");
     }
 
     // Remove any leading text before the JSON object
-    const jsonStart = responseText.indexOf('{');
+    const jsonStart = responseText.indexOf("{");
     if (jsonStart > 0) {
       responseText = responseText.substring(jsonStart);
     }
 
     // Remove any trailing text after the JSON object
-    const jsonEnd = responseText.lastIndexOf('}');
+    const jsonEnd = responseText.lastIndexOf("}");
     if (jsonEnd > 0 && jsonEnd < responseText.length - 1) {
       responseText = responseText.substring(0, jsonEnd + 1);
     }
 
-    console.log('Cleaned response:', responseText.substring(0, 200));
+    console.log("Cleaned response:", responseText.substring(0, 200));
 
     const parsedData = JSON.parse(responseText);
 
@@ -411,47 +421,57 @@ Important:
     // Convert skills from object of arrays to grouped format
     const skillsData = parsedData.skills || {};
     const groupedSkills: any[] = [];
-    
-    if (typeof skillsData === 'object' && !Array.isArray(skillsData)) {
+
+    if (typeof skillsData === "object" && !Array.isArray(skillsData)) {
       // Skills is an object with categories as keys
-      Object.entries(skillsData).forEach(([category, skills]: [string, any]) => {
-        if (Array.isArray(skills) && skills.length > 0) {
-          groupedSkills.push({
-            id: `${Date.now()}-${Math.random()}-${category}`,
-            name: skills.join(', '),
-            category: category,
-          });
+      Object.entries(skillsData).forEach(
+        ([category, skills]: [string, any]) => {
+          if (Array.isArray(skills) && skills.length > 0) {
+            groupedSkills.push({
+              id: `${Date.now()}-${Math.random()}-${category}`,
+              name: skills.join(", "),
+              category: category,
+            });
+          }
         }
-      });
+      );
     } else if (Array.isArray(skillsData) && skillsData.length > 0) {
       // Skills is an array (old format), put all in Technical
       groupedSkills.push({
         id: `${Date.now()}-skills-technical`,
-        name: skillsData.join(', '),
-        category: 'Technical',
+        name: skillsData.join(", "),
+        category: "Technical",
       });
     }
 
     const resumeData: ResumeData = {
       ...parsedData,
-      workExperience: (parsedData.workExperience || []).map((exp: any, index: number) => ({
-        ...exp,
-        id: exp.id || `${Date.now()}-work-${index}`,
-      })),
-      education: (parsedData.education || []).map((edu: any, index: number) => ({
-        ...edu,
-        id: edu.id || `${Date.now()}-edu-${index}`,
-      })),
+      workExperience: (parsedData.workExperience || []).map(
+        (exp: any, index: number) => ({
+          ...exp,
+          id: exp.id || `${Date.now()}-work-${index}`,
+        })
+      ),
+      education: (parsedData.education || []).map(
+        (edu: any, index: number) => ({
+          ...edu,
+          id: edu.id || `${Date.now()}-edu-${index}`,
+        })
+      ),
       skills: groupedSkills,
-      languages: (parsedData.languages || []).map((lang: any, index: number) => ({
-        id: lang.id || `${Date.now()}-lang-${index}`,
-        name: lang.name || lang.language || '',
-        proficiency: lang.proficiency || '',
-      })),
-      certifications: (parsedData.certifications || []).map((cert: any, index: number) => ({
-        ...cert,
-        id: cert.id || `${Date.now()}-cert-${index}`,
-      })),
+      languages: (parsedData.languages || []).map(
+        (lang: any, index: number) => ({
+          id: lang.id || `${Date.now()}-lang-${index}`,
+          name: lang.name || lang.language || "",
+          proficiency: lang.proficiency || "",
+        })
+      ),
+      certifications: (parsedData.certifications || []).map(
+        (cert: any, index: number) => ({
+          ...cert,
+          id: cert.id || `${Date.now()}-cert-${index}`,
+        })
+      ),
       projects: (parsedData.projects || []).map((proj: any, index: number) => ({
         ...proj,
         id: proj.id || `${Date.now()}-proj-${index}`,
@@ -467,15 +487,57 @@ Important:
 
     return resumeData;
   } catch (error: any) {
-    console.error('Error extracting resume from PDF:', error);
-    
+    console.error("Error extracting resume from PDF:", error);
+
     // Retry logic
     if (retryCount < 2) {
       console.log(`Retrying PDF extraction (attempt ${retryCount + 2}/3)...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return extractResumeFromPDF(pdfFile, retryCount + 1);
     }
-    
+
+    return null;
+  }
+}
+
+// Extract plain text from PDF (for job descriptions)
+export async function extractTextFromPDF(
+  pdfFile: File
+): Promise<string | null> {
+  try {
+    console.log("Extracting text from PDF:", pdfFile.name);
+
+    // Convert File to ArrayBuffer
+    const arrayBuffer = await pdfFile.arrayBuffer();
+
+    // Dynamically import pdfjs-dist (browser-compatible)
+    const pdfjsLib = await import("pdfjs-dist");
+
+    // Set worker source
+    const pdfjsVersion = pdfjsLib.version || "4.0.379";
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.mjs`;
+
+    // Load the PDF document
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+
+    // Extract text from all pages
+    let extractedText = "";
+
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items.map((item: any) => item.str).join(" ");
+      extractedText += pageText + "\n\n";
+    }
+
+    console.log(
+      "Text extracted successfully, length:",
+      extractedText?.length || 0
+    );
+    return extractedText.trim() || null;
+  } catch (error) {
+    console.error("Error extracting text from PDF:", error);
     return null;
   }
 }

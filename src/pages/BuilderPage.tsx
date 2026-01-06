@@ -641,9 +641,9 @@ export default function BuilderPage() {
                 <div className="text-[10px] sm:text-[11px] text-gray-600 dark:text-gray-400 -mt-0.5 flex items-center gap-1">
                   <span className=" sm:inline">Powered by</span>
                   <img
-                    src="/redstring.png"
+                    src={isDarkMode ? "/redstringDark.svg" : "/redstring.png"}
                     alt="Redstring"
-                    className="h-2.5 sm:h-3 w-auto mt-1"
+                    className="w-12 md:w-16 mt-1"
                   />
                 </div>
               </div>
@@ -758,7 +758,7 @@ export default function BuilderPage() {
           >
             {/* 1. EDITOR COLUMN */}
             <div
-              className={`hover-glow flex flex-col h-[85vh] md:h-full  bg-white/85 dark:bg-black/85 border border-dashed border-gray-200/80 dark:border-[#2c2c2d] rounded-2xl overflow-hidden ${
+              className={`hover-glow flex flex-col h-[85vh] lg:h-full  bg-white/85 dark:bg-zinc-900/80 border border-dashed border-gray-200/80 dark:border-[#2c2c2d] rounded-2xl overflow-hidden ${
                 mobileView === "preview" ? "hidden lg:flex" : "flex"
               }`}
               onMouseMove={updateHoverPosition}
@@ -780,7 +780,7 @@ export default function BuilderPage() {
               </div>
 
               {/* Steps */}
-              <div className="flex-none px-2 py-2 bg-gray-50/80 dark:bg-black/40 overflow-x-auto no-scrollbar">
+              <div className="flex-none px-2 py-2  overflow-x-auto no-scrollbar">
                 <div className="flex items-center min-w-max px-2">
                   {formSteps.map((step, idx) => (
                     <div key={step.id} className="flex items-center flex-1">
@@ -791,7 +791,7 @@ export default function BuilderPage() {
                             ? "text-black dark:text-white"
                             : idx < currentStep
                             ? "text-black dark:text-white"
-                            : "text-gray-400 dark:text-gray-600"
+                            : "text-gray-400 dark:text-zinc-500"
                         }`}
                       >
                         <motion.div
@@ -800,7 +800,7 @@ export default function BuilderPage() {
                               ? "bg-black dark:bg-white text-white dark:text-black"
                               : idx < currentStep
                               ? "bg-black dark:bg-white text-white dark:text-black"
-                              : "bg-gray-200 dark:bg-neutral-900 text-gray-400 dark:text-neutral-500"
+                              : "bg-gray-200 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500"
                           }`}
                           animate={{
                             scale: idx === currentStep ? 1.1 : 1,
@@ -819,7 +819,7 @@ export default function BuilderPage() {
                       </button>
                       {idx < formSteps.length - 1 && (
                         <div className="flex-1 h-0.5 mx-0.5 relative">
-                          <div className="absolute inset-0 bg-gray-200 dark:bg-gray-800 rounded-full" />
+                          <div className="absolute inset-0 bg-gray-200 dark:bg-zinc-800 rounded-full" />
                           <motion.div
                             className="absolute inset-0 bg-black dark:bg-white origin-left rounded-full"
                             initial={{ scaleX: 0 }}
@@ -850,18 +850,18 @@ export default function BuilderPage() {
 
             {/* 2. PREVIEW COLUMN */}
             <div
-              className={`hover-glow flex  flex-col h-[85vh] md:h-full overflow-hidden bg-white/85 dark:bg-black/80 border border-dashed border-gray-200/80 dark:border-[#2c2c2d] rounded-2xl relative ${
+              className={`hover-glow flex  flex-col h-[85vh] lg:h-full overflow-hidden bg-white/85 dark:bg-zinc-900/80 border border-dashed border-gray-200/80 dark:border-[#2c2c2d] rounded-2xl relative ${
                 mobileView === "editor" ? "hidden lg:flex" : "flex"
               }`}
               onMouseMove={updateHoverPosition}
               onMouseLeave={resetHoverPosition}
             >
-              <div className="flex-none rounded-2xl flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-black/70 backdrop-blur  z-10">
+              <div className="flex-none rounded-2xl flex items-center justify-between px-4 py-3   z-10">
                 <h2 className="font-semibold text-black dark:text-white">
                   Preview
                 </h2>
                 <div className="flex items-center gap-2">
-                  <div className="text-xs font-medium text-black dark:text-white px-2 py-1 bg-white dark:bg-black rounded border border-gray-200 dark:border-[#2c2c2d]">
+                  <div className="text-xs font-medium text-black dark:text-white px-2 py-1 bg-white dark:bg-zinc-900/80 rounded border border-gray-200 dark:border-[#2c2c2d]">
                     {getTemplateName(selectedTemplate)} Template
                   </div>
                   <Button
@@ -877,14 +877,8 @@ export default function BuilderPage() {
               </div>
 
               {/* Scrollable Preview Area */}
-              <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-gray-50/50 dark:bg-gray-950/40">
-                <div
-                  className="bg-white shadow-2xl mx-auto transition-transform origin-top"
-                  style={{
-                    width: "210mm",
-                    minHeight: "297mm",
-                  }}
-                >
+              <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-gray-50/50 dark:bg-zinc-900/80">
+                <div className="bg-white min-h-[297mm] max-w-[180mm] shadow-2xl mx-auto transition-transform origin-top">
                   {renderTemplate()}
                 </div>
               </div>
@@ -893,11 +887,11 @@ export default function BuilderPage() {
             {/* 3. CHAT ASSISTANT COLUMN (Desktop Only) */}
             {showChatAssistant && (
               <div
-                className="hover-glow hidden lg:flex flex-col h-full bg-white dark:bg-black border border-dashed border-gray-200 dark:border-[#2c2c2d] rounded-2xl overflow-hidden relative"
+                className="hover-glow hidden lg:flex flex-col h-full bg-white dark:bg-zinc-900/80 border border-dashed border-gray-200 dark:border-[#2c2c2d] rounded-2xl overflow-hidden relative"
                 onMouseMove={updateHoverPosition}
                 onMouseLeave={resetHoverPosition}
               >
-                <div className="flex-none p-3  flex items-center justify-between bg-white dark:bg-black">
+                <div className="flex-none p-3  flex items-center justify-between bg-white dark:bg-zinc-900/80">
                   <span className="font-semibold text-sm flex items-center gap-2 text-black dark:text-white">
                     <Sparkles className="w-4 h-4 text-gray-700 dark:text-gray-300" />{" "}
                     AI Assistant

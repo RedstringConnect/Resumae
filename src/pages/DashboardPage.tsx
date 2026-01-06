@@ -534,7 +534,7 @@ export default function DashboardPage() {
         open={!!viewingResume}
         onOpenChange={(open) => !open && setViewingResume(null)}
       >
-        <DialogContent className="max-w-[95vw] w-[900px] max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-200 dark:border-[#2e2e2e] bg-white/90 dark:bg-black/90 backdrop-blur">
+        <DialogContent className="max-w-[900px] max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-200 dark:border-[#2e2e2e] bg-white/90 dark:bg-black/90 backdrop-blur">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between text-xl font-semibold text-black dark:text-white">
               <span>{viewingResume?.title}</span>
@@ -548,7 +548,7 @@ export default function DashboardPage() {
                     }
                   }}
                   disabled={downloadingResume === viewingResume?._id}
-                  className="rounded-full gap-2 border-gray-300 dark:border-[#2e2e2e] bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
+                  className="rounded-full gap-2 mt-3 border-gray-300 dark:border-[#2e2e2e] bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
                 >
                   {downloadingResume === viewingResume?._id ? (
                     <>
@@ -570,7 +570,7 @@ export default function DashboardPage() {
                       handleEdit(viewingResume._id);
                     }
                   }}
-                  className="rounded-full gap-2 border-gray-300 dark:border-[#2e2e2e] bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
+                  className="rounded-full gap-2 mt-3 border-gray-300 dark:border-[#2e2e2e] bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
                 >
                   <Edit className="h-4 w-4" /> Edit
                 </Button>
@@ -582,11 +582,10 @@ export default function DashboardPage() {
               <div className="rounded-3xl border border-gray-200 dark:border-[#2e2e2e] bg-gradient-to-br from-gray-100/60 via-white to-white dark:from-gray-900 dark:via-black dark:to-black p-6">
                 <div className="flex justify-center">
                   <div
-                    className="rounded-xl bg-white dark:bg-black border border-gray-200 dark:border-[#2e2e2e]"
+                    className="rounded-xl max-w-[180mm] bg-white dark:bg-black border border-gray-200 dark:border-[#2e2e2e]"
                     style={{
-                      width: "210mm",
-                      transform: "scale(0.72)",
-                      transformOrigin: "top center",
+                     
+                      
                     }}
                   >
                     {renderTemplate(viewingResume)}
@@ -643,11 +642,11 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-[10px] sm:text-[11px] text-gray-600 dark:text-gray-400 -mt-0.5 flex items-center gap-1">
                   <span className=" sm:inline">Powered by</span>
-                  <img
-                    src="/redstring.png"
-                    alt="Redstring"
-                    className="h-2.5 sm:h-3 w-auto mt-1"
-                  />
+                    <img
+                  src={isDarkMode ? "/redstringDark.svg" : "/redstring.png"}
+                  alt="Redstring"
+                  className="w-14 md:w-16 mt-1"
+                />
                 </div>
               </div>
             </Link>

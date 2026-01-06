@@ -70,11 +70,37 @@ function normalizeResumeData(data: any): ResumeData {
       gpa: edu.gpa || "",
       percentage: edu.percentage || "",
     })),
-    skills: (data.skills || []).map((skill: any) => ({
-      id: String(skill.id || Date.now() + Math.random()),
-      name: skill.name || skill.skill || "",
-      category: skill.category || "Technical",
-    })),
+    skills: (() => {
+      const skillsData = data.skills || [];
+
+      // If skills is an object with categories (like {Technical: [...], Design: [...]})
+      if (typeof skillsData === "object" && !Array.isArray(skillsData)) {
+        const skillsArray: any[] = [];
+        Object.entries(skillsData).forEach(
+          ([category, skills]: [string, any]) => {
+            if (Array.isArray(skills) && skills.length > 0) {
+              skillsArray.push({
+                id: `${Date.now()}-${Math.random()}-${category}`,
+                name: skills.join(", "),
+                category: category,
+              });
+            }
+          }
+        );
+        return skillsArray;
+      }
+
+      // If skills is already an array
+      if (Array.isArray(skillsData)) {
+        return skillsData.map((skill: any) => ({
+          id: String(skill.id || Date.now() + Math.random()),
+          name: skill.name || skill.skill || "",
+          category: skill.category || "Technical",
+        }));
+      }
+
+      return [];
+    })(),
     languages: (data.languages || []).map((lang: any) => ({
       id: String(lang.id || Date.now() + Math.random()),
       name: lang.name || lang.language || "",
@@ -105,21 +131,25 @@ function normalizeResumeData(data: any): ResumeData {
 }
 
 // Helper to parse date ranges like "2004-2008" or "Jan 2020 to Dec 2022"
-function parseDates(dateStr: string | undefined): { start: string; end: string } | null {
+function parseDates(
+  dateStr: string | undefined
+): { start: string; end: string } | null {
   if (!dateStr) return null;
-  
+
   // Handle "2004-2008" format
   const yearMatch = dateStr.match(/(\d{4})\s*[-–to]+\s*(\d{4})/i);
   if (yearMatch) {
     return { start: yearMatch[1], end: yearMatch[2] };
   }
-  
+
   // Handle "Jan 2020 to Dec 2022" format
-  const monthYearMatch = dateStr.match(/([A-Za-z]+\s+\d{4})\s*[-–to]+\s*([A-Za-z]+\s+\d{4})/i);
+  const monthYearMatch = dateStr.match(
+    /([A-Za-z]+\s+\d{4})\s*[-–to]+\s*([A-Za-z]+\s+\d{4})/i
+  );
   if (monthYearMatch) {
     return { start: monthYearMatch[1], end: monthYearMatch[2] };
   }
-  
+
   return null;
 }
 
@@ -212,7 +242,7 @@ Return ONLY the JSON object, no markdown formatting, no explanations outside the
     if (parsedResponse.success && parsedResponse.updatedData) {
       // Normalize the AI response to match expected field names
       const normalizedData = normalizeResumeData(parsedResponse.updatedData);
-      
+
       return {
         success: true,
         message: parsedResponse.message || "Resume updated successfully!",
@@ -256,17 +286,17 @@ export async function getChatSuggestions(
   } else {
     suggestions.push("Improve my work experience descriptions");
   }
-  
+
   if (resumeData.education.length === 0) {
     suggestions.push("Add your education details");
   }
-  
+
   if (resumeData.skills.length === 0) {
     suggestions.push("Add your skills");
   } else if (resumeData.skills.length < 10) {
     suggestions.push("Suggest more relevant skills");
   }
-  
+
   if (!resumeData.personalInfo.summary) {
     suggestions.push("Add a professional summary");
   } else {
@@ -281,4 +311,113 @@ export async function getChatSuggestions(
   }
 
   return suggestions.slice(0, 3);
+}
+
+export async function tailorResumeToJobDescription(
+  jobDescription: string,
+  currentResumeData: ResumeData
+): Promise<ResumeUpdate> {
+  if (!groq) {
+    return {
+      success: false,
+      message:
+        "AI service not available. Please check your API key configuration.",
+    };
+  }
+
+  try {
+    const prompt = `You are an expert resume writer and ATS optimization specialist. Your task is to comprehensively tailor the user's resume to match the provided job description, making substantial updates while maintaining truthfulness.
+
+Current Resume Data (JSON):
+${JSON.stringify(currentResumeData, null, 2)}
+
+Job Description:
+${jobDescription}
+
+Your task is to COMPLETELY REWRITE the resume to perfectly match this job description:
+
+1. **Professional Summary**: Write a NEW compelling summary (2-3 sentences) that directly addresses the job requirements and highlights the most relevant skills and experiences for THIS specific role.
+
+2. **Work Experience**: 
+   - Completely rewrite ALL bullet points to emphasize achievements and responsibilities that match the job description
+   - Use specific keywords and terminology from the job description
+   - Add quantifiable metrics where possible (%, numbers, scale)
+   - Focus on relevant accomplishments that demonstrate the required skills
+   - Use strong action verbs from the job posting
+   - Each bullet should be 1-2 lines and demonstrate impact
+
+3. **Skills**: 
+   - Reorganize and prioritize skills to match the "Required Skills" and "Good to Have" sections
+   - Add any missing relevant skills from the job description that the candidate would reasonably have
+   - Group skills by category (Technical, Design Tools, Frontend, etc.) as mentioned in the job
+   - Put the most important skills for this role first
+
+4. **Projects/Portfolio** (if applicable):
+   - Highlight or add projects that demonstrate the required skills
+   - Ensure project descriptions use terminology from the job description
+
+5. **Overall Optimization**:
+   - Ensure heavy use of keywords from the job description throughout
+   - Match the tone and language style of the job posting
+   - Make the resume feel like it was written specifically for this exact position
+   - Focus on the experience level mentioned (e.g., 0-3 years for freshers)
+
+IMPORTANT RULES:
+- Return ONLY valid JSON with "resumeData" and "explanation"
+- Be AGGRESSIVE in rewriting - this should look like a completely tailored resume
+- Keep company names, job titles, dates, and education credentials unchanged
+- You CAN add new skills if they're reasonably related to existing experience
+- You CAN completely rewrite experience descriptions to be more relevant
+- Every section should scream "perfect fit for this role"
+- Don't fabricate job positions or education, but DO maximize relevance
+
+Return format:
+{
+  "resumeData": { /* complete updated resume with all sections fully rewritten */ },
+  "explanation": "Summary of major changes: new summary focus, key experience rewrites, skills added/prioritized, overall optimization for [role name]"
+}`;
+
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      max_tokens: 8000,
+    });
+
+    const response = completion.choices[0]?.message?.content || "";
+
+    // Extract JSON from response
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("Failed to parse AI response");
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    if (parsed.resumeData && parsed.explanation) {
+      const updatedData = normalizeResumeData(parsed.resumeData);
+      return {
+        success: true,
+        message: ` Resume tailored successfully!\n\n${parsed.explanation}\n\nYour resume now highlights relevant experiences and uses keywords from the job description to improve ATS compatibility.`,
+        updatedData,
+      };
+    }
+
+    throw new Error("Invalid response format");
+  } catch (error: any) {
+    console.error("Error tailoring resume:", error);
+
+    if (error?.error?.code === "rate_limit_exceeded") {
+      return {
+        success: false,
+        message: "Rate limit exceeded. Please wait a moment and try again.",
+      };
+    }
+
+    return {
+      success: false,
+      message:
+        "Failed to tailor resume. Please try again or make manual adjustments.",
+    };
+  }
 }
