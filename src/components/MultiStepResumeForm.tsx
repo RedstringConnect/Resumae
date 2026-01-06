@@ -485,7 +485,7 @@ export default function MultiStepResumeForm({
           value={data.personalInfo.summary}
           onChange={(e) => handlePersonalInfoChange("summary", e.target.value)}
           className="mt-1.5 min-h-[100px] bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
-          style={{ scrollbarWidth: 'thin' }}
+          style={{ scrollbarWidth: "thin" }}
         />
       </div>
     </div>
@@ -624,7 +624,7 @@ export default function MultiStepResumeForm({
                           updateWorkExperience(exp.id, "description", newDesc);
                         }}
                         className="min-h-[60px] bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
-                        style={{ scrollbarWidth: 'thin' }}
+                        style={{ scrollbarWidth: "thin" }}
                       />
                       <Button
                         variant="ghost"
@@ -1275,7 +1275,7 @@ export default function MultiStepResumeForm({
                     updateProject(project.id, "description", e.target.value)
                   }
                   className="min-h-[80px] bg-white/85 dark:bg-zinc-900/80 border-gray-200 dark:border-[#2c2c2d] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
-                  style={{ scrollbarWidth: 'thin' }}
+                  style={{ scrollbarWidth: "thin" }}
                 />
                 <Input
                   id={`project-tech-${project.id}`}
